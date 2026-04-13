@@ -1,10 +1,10 @@
 name: Auto Blogger Engine
 
-# यह टाइमर रोज़ सुबह चलेगा (UTC टाइम के हिसाब से)
 on:
+  push: # यह जादुई लाइन फाइल सेव करते ही रोबोट को तुरंत दौड़ा देगी!
   schedule:
-    - cron: '30 2 * * *' # भारतीय समयानुसार यह रोज़ सुबह लगभग 8:00 बजे ट्रिगर होगा
-  workflow_dispatch: # यह बटन आपको मैन्युअल रन करने की ताक़त देगा
+    - cron: '30 2 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -13,11 +13,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-
-      - name: इंसानी देरी (Random Delay for Google AdSense)
-        run: |
-          echo "इंसान की तरह एक्टिंग कर रहे हैं..."
-          sleep $((RANDOM % 3600)) # 0 से 60 मिनट के बीच कभी भी रन होगा
 
       - name: Set up Python
         uses: actions/setup-python@v4
