@@ -11,14 +11,16 @@ print("AI khud photo laga raha hai aur design kar raha hai... kripya intezaar ka
 
 url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={API_KEY}"
 
+# गुरु का नया सख्त आदेश
 master_prompt = """
-तुम एक प्रोफेशनल वेब डेवलपर और SEO ब्लॉगर हो। 'ब्लॉगिंग से पैसे कैसे कमाएं' पर एक शानदार हिंदी ब्लॉग लिखो।
+तुम एक प्रोफेशनल वेब डेवलपर और SEO ब्लॉगर हो। 'यूट्यूब से पैसे कैसे कमाएं' पर एक शानदार हिंदी ब्लॉग लिखो।
 सख्त नियम (STRICT RULES):
 1. सिर्फ और सिर्फ HTML कोड देना। शुरुआत या अंत में ```html या ``` मत लिखना।
 2. एक शानदार <style> टैग लगाओ ताकि वेबसाइट मोबाइल पर बहुत सुंदर (Responsive) दिखे। बैकग्राउंड हल्का ग्रे, टेक्स्ट डार्क, हेडिंग्स नीले रंग की हों।
-3. **ऑटोमैटिक इमेजेस:** ब्लॉग में 3 जगह फोटो लगाओ। फोटो लगाने के लिए इस <img> टैग का इस्तेमाल करो:
+3. **ऑटोमैटिक इमेजेस (VERY STRICT):** ब्लॉग में 3 जगह फोटो लगाओ। फोटो लगाने के लिए STRICTLY इस <img> टैग का इस्तेमाल करो:
 <img src="https://image.pollinations.ai/prompt/YOUR_ENGLISH_PROMPT_HERE" style="width:100%; border-radius:10px; margin:20px 0;">
-ध्यान रहे: 'YOUR_ENGLISH_PROMPT_HERE' की जगह तुम्हें उस फोटो का अंग्रेजी में एक छोटा डिस्क्रिप्शन लिखना है (जैसे: modern_laptop_with_money). कोई भी पीला बक्सा मत बनाना!
+
+⚠️ सबसे बड़ी चेतावनी: 'YOUR_ENGLISH_PROMPT_HERE' की जगह सिर्फ और सिर्फ ENGLISH (अंग्रेजी) के शब्द लिखने हैं (बिना स्पेस के, underscores के साथ)। जैसे: youtube_money, creator_setup. भूलकर भी URL के अंदर हिंदी के शब्द या स्पेस का प्रयोग मत करना, वरना फोटो टूट जाएगी!
 """
 
 data = {
@@ -34,7 +36,7 @@ try:
         
         clean_html = ai_response.replace("```html", "").replace("```", "").strip()
         
-        # YAHAN BADA BADLAV KIYA HAI: Ab hamesha index.html banegi
+        # फाइल हमेशा index.html बनेगी ताकि लाइव वेबसाइट काम करे
         file_name = "index.html"
         
         with open(file_name, "w", encoding="utf-8") as f:
