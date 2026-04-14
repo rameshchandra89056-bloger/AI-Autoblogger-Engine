@@ -1,34 +1,37 @@
-name: Auto Blogger Engine
+name: AI Auto-Blogger Engine 🤖
 
+# यह अलार्म घड़ी है (Triggers)
 on:
-  push:
+  workflow_dispatch: # यह तुम्हारा पुराना वाला बटन है (ताकि तुम चाहो तो हाथ से भी चला सको)
   schedule:
+    # 02:30 UTC = सुबह 8:00 बजे (भारतीय समय)
     - cron: '30 2 * * *'
-  workflow_dispatch:
+    # 12:30 UTC = शाम 6:00 बजे (भारतीय समय)
+    - cron: '30 12 * * *'
 
 jobs:
-  build:
+  build_and_publish:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: 📂 रिपॉजिटरी का कोड ला रहे हैं...
         uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: 🐍 Python चालू कर रहे हैं...
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      - name: Run AI Engine
+      - name: 🚀 AI रोबोट को जगा रहे हैं (main.py)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python main.py
 
-      - name: Save New HTML File to GitHub
+      - name: 💾 नया ब्लॉग वेबसाइट पर सेव (Commit) कर रहे हैं...
         run: |
-          git config --global user.name "AI Autoblogger"
-          git config --global user.email "actions@github.com"
+          git config --global user.name "AI Robot"
+          git config --global user.email "bot@digitalkamai.com"
           git add .
-          git commit -m "Auto-generated new blog post" || echo "No changes to commit"
+          git commit -m "🤖 Auto-published new blog via Engine v17.0" || echo "No changes to commit"
           git push
-          
+        
