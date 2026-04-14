@@ -199,4 +199,3 @@ homepage_html = f"""<!DOCTYPE html>
 
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(homepage_html)
-    
