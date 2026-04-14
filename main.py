@@ -6,7 +6,7 @@ import time
 import random
 
 # ==========================================
-# DIGITAL KAMAI HUB - MULTI-PAGE ENGINE v13.0
+# DIGITAL KAMAI HUB - MULTI-PAGE OMNI ENGINE v13.1
 # ==========================================
 
 raw_key = os.environ.get("GEMINI_API_KEY", "")
@@ -16,7 +16,7 @@ if not API_KEY:
     print("❌ ERROR: API Key गायब है!")
     sys.exit(1)
 
-# गुरु के 5 शानदार टॉपिक्स (रोबोट हर बार इनमें से कोई एक नया टॉपिक खुद चुनेगा)
+# गुरु के शानदार टॉपिक्स
 topics = [
     "2026 में यूट्यूब से पैसे कैसे कमाएं - फुल गाइड",
     "फ्रीलांसिंग से घर बैठे महीने का 1 लाख कैसे कमाएं",
@@ -27,46 +27,56 @@ topics = [
 current_topic = random.choice(topics)
 
 def get_ai_blog(topic):
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={API_KEY}"
+    # गुरु का मास्टरस्ट्रोक वापस आ गया (सारे ताज़ा मॉडल्स की लिस्ट)
+    models_2026 = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-pro-latest", "gemini-pro"]
     prompt = f"तुम एक प्रो ब्लॉगर हो। '{topic}' पर एक शानदार और विस्तृत हिंदी लेख लिखो। सिर्फ HTML tags (h2, p, ul, strong) देना।"
     data = {"contents": [{"parts": [{"text": prompt}]}]}
 
     print(f"🚀 AI से '{topic}' पर लेख लिखवा रहे हैं...")
-    try:
-        req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'})
-        with urllib.request.urlopen(req, timeout=50) as response:
-            res = json.loads(response.read().decode('utf-8'))
-            return res['candidates'][0]['content']['parts'][0]['text']
-    except Exception as e:
-        print(f"❌ Error: {e}")
-        return None
+
+    for model in models_2026:
+        print(f"🔄 दरवाज़ा खटखटा रहे हैं: {model}...")
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={API_KEY}"
+        try:
+            req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'})
+            with urllib.request.urlopen(req, timeout=50) as response:
+                res = json.loads(response.read().decode('utf-8'))
+                print(f"✅ SUCCESS! '{model}' ने जवाब दे दिया है!")
+                return res['candidates'][0]['content']['parts'][0]['text']
+        except Exception as e:
+            print(f"⚠️ फेल ({model}): {e}")
+            continue
+    return None
 
 blog_content = get_ai_blog(current_topic)
 
 if not blog_content:
+    print("❌ Critical Failure: सारे मॉडल फेल हो गए।")
     sys.exit(1)
 
 blog_content = blog_content.replace("```html", "").replace("```", "").strip()
 
-# 1. डेटाबेस (posts.json) को अपडेट करना - यह हमारी याददाश्त है!
+# 1. डेटाबेस (posts.json) को अपडेट करना
 posts_db = []
 if os.path.exists("posts.json"):
     with open("posts.json", "r", encoding="utf-8") as f:
-        posts_db = json.load(f)
+        try:
+            posts_db = json.load(f)
+        except:
+            posts_db = []
 
-# नई फाइल का नाम (Timestamp के हिसाब से ताकि कभी एक जैसा नाम न हो)
+# नई फाइल का नाम
 post_id = int(time.time())
 post_filename = f"post_{post_id}.html"
 today_date = time.strftime("%d %B %Y")
 
-# नया डेटा लिस्ट में सबसे ऊपर जोड़ें
 new_post = {"title": current_topic, "file": post_filename, "date": today_date}
 posts_db.insert(0, new_post)
 
 with open("posts.json", "w", encoding="utf-8") as f:
     json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
-# 2. नए ब्लॉग का HTML पेज बनाना (अंदर का पन्ना)
+# 2. नए ब्लॉग का HTML पेज
 nav_menu = """
     <nav style="background: #1a1a1a; padding: 15px; text-align: center; position: sticky; top: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.5);">
         <a href="index.html" style="color: white; text-decoration: none; margin: 0 15px; font-weight: bold;">🏠 Home</a>
@@ -111,7 +121,7 @@ with open(post_filename, "w", encoding="utf-8") as f:
     f.write(article_html)
 print(f"✅ नया ब्लॉग पन्ना बन गया: {post_filename}")
 
-# 3. होमपेज (index.html) को अपडेट करना (ताकि सारे ब्लॉग्स की लिस्ट दिखे)
+# 3. होमपेज (index.html) अपडेट करना
 post_links = ""
 for post in posts_db:
     post_links += f"""
