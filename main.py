@@ -6,7 +6,7 @@ import time
 import random
 
 # ==========================================
-# DIGITAL KAMAI HUB - MULTI-PAGE OMNI ENGINE v13.1
+# DIGITAL KAMAI HUB - MULTI-PAGE ENGINE v13.2 (STABLE)
 # ==========================================
 
 raw_key = os.environ.get("GEMINI_API_KEY", "")
@@ -16,7 +16,6 @@ if not API_KEY:
     print("❌ ERROR: API Key गायब है!")
     sys.exit(1)
 
-# गुरु के शानदार टॉपिक्स
 topics = [
     "2026 में यूट्यूब से पैसे कैसे कमाएं - फुल गाइड",
     "फ्रीलांसिंग से घर बैठे महीने का 1 लाख कैसे कमाएं",
@@ -27,14 +26,19 @@ topics = [
 current_topic = random.choice(topics)
 
 def get_ai_blog(topic):
-    # गुरु का मास्टरस्ट्रोक वापस आ गया (सारे ताज़ा मॉडल्स की लिस्ट)
-    models_2026 = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-pro-latest", "gemini-pro"]
+    # गुरु का सबसे भरोसेमंद और स्टेबल लाइन-अप!
+    models_to_try = [
+        "gemini-1.5-flash", # सबसे तेज़ और स्टेबल (अब यह काम करेगा!)
+        "gemini-2.0-flash", # बैकअप 1
+        "gemini-1.5-pro"    # बैकअप 2
+    ]
+    
     prompt = f"तुम एक प्रो ब्लॉगर हो। '{topic}' पर एक शानदार और विस्तृत हिंदी लेख लिखो। सिर्फ HTML tags (h2, p, ul, strong) देना।"
     data = {"contents": [{"parts": [{"text": prompt}]}]}
 
     print(f"🚀 AI से '{topic}' पर लेख लिखवा रहे हैं...")
 
-    for model in models_2026:
+    for model in models_to_try:
         print(f"🔄 दरवाज़ा खटखटा रहे हैं: {model}...")
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={API_KEY}"
         try:
@@ -51,12 +55,12 @@ def get_ai_blog(topic):
 blog_content = get_ai_blog(current_topic)
 
 if not blog_content:
-    print("❌ Critical Failure: सारे मॉडल फेल हो गए।")
+    print("❌ Critical Failure: सारे मॉडल फेल हो गए। कृपया 15 मिनट बाद कोशिश करें (Error 429)।")
     sys.exit(1)
 
 blog_content = blog_content.replace("```html", "").replace("```", "").strip()
 
-# 1. डेटाबेस (posts.json) को अपडेट करना
+# 1. डेटाबेस (posts.json) अपडेट
 posts_db = []
 if os.path.exists("posts.json"):
     with open("posts.json", "r", encoding="utf-8") as f:
@@ -65,7 +69,6 @@ if os.path.exists("posts.json"):
         except:
             posts_db = []
 
-# नई फाइल का नाम
 post_id = int(time.time())
 post_filename = f"post_{post_id}.html"
 today_date = time.strftime("%d %B %Y")
@@ -76,7 +79,7 @@ posts_db.insert(0, new_post)
 with open("posts.json", "w", encoding="utf-8") as f:
     json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
-# 2. नए ब्लॉग का HTML पेज
+# 2. नया ब्लॉग पन्ना
 nav_menu = """
     <nav style="background: #1a1a1a; padding: 15px; text-align: center; position: sticky; top: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.5);">
         <a href="index.html" style="color: white; text-decoration: none; margin: 0 15px; font-weight: bold;">🏠 Home</a>
@@ -110,7 +113,7 @@ article_html = f"""<!DOCTYPE html>
     <div class="container">
         <h1 style="color: #203a43; font-size: 32px; border-bottom: 2px solid #eee; padding-bottom: 10px;">{current_topic}</h1>
         <p style="color: #7f8c8d; font-size: 14px;">📅 Published on: {today_date}</p>
-        <img src="https://image.pollinations.ai/prompt/digital_marketing_laptop_2026_aesthetic" alt="Blog Image">
+        <img src="https://image.pollinations.ai/prompt/professional_laptop_earning_2026_aesthetic" alt="Blog Image">
         {blog_content}
     </div>
     <footer>&copy; 2026 Ramesh Chandra Enterprise</footer>
@@ -119,9 +122,8 @@ article_html = f"""<!DOCTYPE html>
 
 with open(post_filename, "w", encoding="utf-8") as f:
     f.write(article_html)
-print(f"✅ नया ब्लॉग पन्ना बन गया: {post_filename}")
 
-# 3. होमपेज (index.html) अपडेट करना
+# 3. होमपेज अपडेट
 post_links = ""
 for post in posts_db:
     post_links += f"""
@@ -161,5 +163,4 @@ homepage_html = f"""<!DOCTYPE html>
 
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(homepage_html)
-print("✅ SUCCESS! होमपेज पर लिस्ट अपडेट हो गई है!")
     
