@@ -7,26 +7,21 @@ from datetime import datetime
 # मशीन सीधे तिजोरी (Secrets) से चाबी निकालेगी
 API_KEY = os.environ.get("GEMINI_API_KEY")
 
-print("AI khud photo laga raha hai aur design kar raha hai... kripya intezaar karein...\n")
+print("AI blog likh raha hai... kripya intezaar karein...\n")
 
 url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={API_KEY}"
 
-# गुरु का 100% Foolproof प्रॉम्प्ट
+# गुरु का नया प्रॉम्प्ट: AI से फोटो की पावर छीन ली गई है
 master_prompt = """
 तुम एक प्रोफेशनल वेब डेवलपर और SEO ब्लॉगर हो। 'यूट्यूब से पैसे कैसे कमाएं' पर एक शानदार हिंदी ब्लॉग लिखो।
 सख्त नियम (STRICT RULES):
-1. सिर्फ और सिर्फ HTML कोड देना। शुरुआत या अंत में ```html या ``` मत लिखना।
+1. सिर्फ और सिर्फ HTML कोड देना। शुरुआत या अंत में ```html मत लिखना।
 2. एक शानदार <style> टैग लगाओ ताकि वेबसाइट मोबाइल पर बहुत सुंदर (Responsive) दिखे। बैकग्राउंड हल्का ग्रे, टेक्स्ट डार्क, हेडिंग्स नीले रंग की हों।
-3. **ऑटोमैटिक इमेजेस (100% STRICT):** तुम्हें ब्लॉग में 3 जगह फोटो लगानी हैं। मैंने नीचे 3 फिक्स (Fixed) इमेज कोड दिए हैं, तुम्हें बस इन्हें हूबहू (Exact) कॉपी करके सही हेडिंग के नीचे पेस्ट करना है। अपनी तरफ से कोई लिंक मत बनाना!
-
-Image 1 कोड (शुरुआत में, यूट्यूब पार्टनर प्रोग्राम के पास लगाएं):
-<img src="https://image.pollinations.ai/prompt/happy_youtube_creator_earning_money_laptop" style="width:100%; border-radius:10px; margin:20px 0;">
-
-Image 2 कोड (बीच में, एफिलिएट मार्केटिंग के पास लगाएं):
-<img src="https://image.pollinations.ai/prompt/affiliate_marketing_concept_graphs_laptop" style="width:100%; border-radius:10px; margin:20px 0;">
-
-Image 3 कोड (अंत में, डिजिटल प्रोडक्ट या मर्चेंडाइज के पास लगाएं):
-<img src="https://image.pollinations.ai/prompt/selling_digital_products_online_store" style="width:100%; border-radius:10px; margin:20px 0;">
+3. **फोटो के लिए सख्त निर्देश (NO IMAGES):** अपनी तरफ से कोई भी <img> टैग या लिंक मत बनाना! तुम्हें बस सही जगह पर ये तीन कोड वर्ड (Tags) लिखने हैं:
+   - जहाँ पहली फोटो आनी चाहिए वहाँ हूबहू लिखो: [PHOTO_1]
+   - जहाँ दूसरी फोटो आनी चाहिए वहाँ हूबहू लिखो: [PHOTO_2]
+   - जहाँ तीसरी फोटो आनी चाहिए वहाँ हूबहू लिखो: [PHOTO_3]
+बस ये कोड वर्ड लिख दो, तुम्हें कोई लिंक नहीं बनाना है।
 """
 
 data = {
@@ -41,6 +36,16 @@ try:
         ai_response = result['candidates'][0]['content']['parts'][0]['text']
         
         clean_html = ai_response.replace("```html", "").replace("```", "").strip()
+        
+        # Python खुद AI की जगह असली फोटो लगाएगा (100% Foolproof)
+        img1 = '<img src="[https://image.pollinations.ai/prompt/youtube_creator_earning_money_laptop_setup](https://image.pollinations.ai/prompt/youtube_creator_earning_money_laptop_setup)" style="width:100%; border-radius:10px; margin:20px 0;">'
+        img2 = '<img src="[https://image.pollinations.ai/prompt/affiliate_marketing_graphs_on_laptop_screen](https://image.pollinations.ai/prompt/affiliate_marketing_graphs_on_laptop_screen)" style="width:100%; border-radius:10px; margin:20px 0;">'
+        img3 = '<img src="[https://image.pollinations.ai/prompt/selling_digital_products_on_online_store](https://image.pollinations.ai/prompt/selling_digital_products_on_online_store)" style="width:100%; border-radius:10px; margin:20px 0;">'
+        
+        # कोड वर्ड्स को असली फोटो से बदल रहे हैं
+        clean_html = clean_html.replace("[PHOTO_1]", img1)
+        clean_html = clean_html.replace("[PHOTO_2]", img2)
+        clean_html = clean_html.replace("[PHOTO_3]", img3)
         
         # फाइल हमेशा index.html बनेगी
         file_name = "index.html"
