@@ -6,7 +6,7 @@ import time
 import random
 
 # ==========================================
-# DIGITAL KAMAI HUB - MULTI-PAGE ENGINE v13.2 (STABLE)
+# DIGITAL KAMAI HUB - THE TRUTH ENGINE v14.0
 # ==========================================
 
 raw_key = os.environ.get("GEMINI_API_KEY", "")
@@ -26,11 +26,11 @@ topics = [
 current_topic = random.choice(topics)
 
 def get_ai_blog(topic):
-    # गुरु का सबसे भरोसेमंद और स्टेबल लाइन-अप!
+    # गुरु के नए और सबसे ताज़ा 2026 मॉडल्स
     models_to_try = [
-        "gemini-1.5-flash", # सबसे तेज़ और स्टेबल (अब यह काम करेगा!)
-        "gemini-2.0-flash", # बैकअप 1
-        "gemini-1.5-pro"    # बैकअप 2
+        "gemini-1.5-flash-latest", 
+        "gemini-1.5-flash",
+        "gemini-pro"
     ]
     
     prompt = f"तुम एक प्रो ब्लॉगर हो। '{topic}' पर एक शानदार और विस्तृत हिंदी लेख लिखो। सिर्फ HTML tags (h2, p, ul, strong) देना।"
@@ -47,6 +47,11 @@ def get_ai_blog(topic):
                 res = json.loads(response.read().decode('utf-8'))
                 print(f"✅ SUCCESS! '{model}' ने जवाब दे दिया है!")
                 return res['candidates'][0]['content']['parts'][0]['text']
+        except urllib.error.HTTPError as e:
+            # अब यह रोबोट तोते की तरह नहीं बोलेगा, बल्कि गूगल का असली एरर बताएगा!
+            error_msg = e.read().decode('utf-8')
+            print(f"⚠️ फेल ({model}): {e.code} - {error_msg}")
+            continue
         except Exception as e:
             print(f"⚠️ फेल ({model}): {e}")
             continue
@@ -55,7 +60,7 @@ def get_ai_blog(topic):
 blog_content = get_ai_blog(current_topic)
 
 if not blog_content:
-    print("❌ Critical Failure: सारे मॉडल फेल हो गए। कृपया 15 मिनट बाद कोशिश करें (Error 429)।")
+    print("❌ Critical Failure: सारे मॉडल फेल हो गए। (अगर 429 आ रहा है, तो आज का डेली कोटा खत्म हो गया है!)")
     sys.exit(1)
 
 blog_content = blog_content.replace("```html", "").replace("```", "").strip()
@@ -113,7 +118,7 @@ article_html = f"""<!DOCTYPE html>
     <div class="container">
         <h1 style="color: #203a43; font-size: 32px; border-bottom: 2px solid #eee; padding-bottom: 10px;">{current_topic}</h1>
         <p style="color: #7f8c8d; font-size: 14px;">📅 Published on: {today_date}</p>
-        <img src="https://image.pollinations.ai/prompt/professional_laptop_earning_2026_aesthetic" alt="Blog Image">
+        <img src="https://image.pollinations.ai/prompt/digital_growth_chart_laptop_2026" alt="Blog Image">
         {blog_content}
     </div>
     <footer>&copy; 2026 Ramesh Chandra Enterprise</footer>
@@ -163,4 +168,3 @@ homepage_html = f"""<!DOCTYPE html>
 
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(homepage_html)
-    
