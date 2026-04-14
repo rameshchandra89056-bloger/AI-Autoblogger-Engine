@@ -1,7 +1,7 @@
 name: Auto Blogger Engine
 
 on:
-  push: # यह जादुई लाइन फाइल सेव करते ही रोबोट को तुरंत दौड़ा देगी!
+  push:
   schedule:
     - cron: '30 2 * * *'
   workflow_dispatch:
@@ -20,6 +20,8 @@ jobs:
           python-version: '3.10'
 
       - name: Run AI Engine
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python main.py
 
       - name: Save New HTML File to GitHub
