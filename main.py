@@ -7,7 +7,7 @@ from datetime import datetime
 # मशीन सीधे तिजोरी (Secrets) से चाबी निकालेगी
 API_KEY = os.environ.get("GEMINI_API_KEY")
 
-print("एआई खुद फोटो लगा रहा है और डिज़ाइन कर रहा है... कृपया इंतज़ार करें...\n")
+print("AI khud photo laga raha hai aur design kar raha hai... kripya intezaar karein...\n")
 
 url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={API_KEY}"
 
@@ -34,14 +34,14 @@ try:
         
         clean_html = ai_response.replace("```html", "").replace("```", "").strip()
         
-        current_time = datetime.now().strftime("%I_%M_%p")
-        file_name = f"Auto_Blog_{current_time}.html"
+        # YAHAN BADA BADLAV KIYA HAI: Ab hamesha index.html banegi
+        file_name = "index.html"
         
         with open(file_name, "w", encoding="utf-8") as f:
             f.write(clean_html)
         
-        print(f"✅ सफलता! आपका ऑटोमैटिक फोटो वाला ब्लॉग '{file_name}' में सेव हो गया है।")
+        print(f"✅ Safalta! Aapka automatic blog '{file_name}' mein save ho gaya hai.")
 
 except Exception as e:
-    print("❌ कुछ गड़बड़ हुई:", e)
+    print("❌ Kuch gadbad hui:", e)
     
