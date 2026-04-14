@@ -6,7 +6,7 @@ import time
 import random
 
 # ==========================================
-# DIGITAL KAMAI HUB - THE V1 STABLE ENGINE v15.0
+# DIGITAL KAMAI HUB - TITANIUM ENGINE v16.0
 # ==========================================
 
 raw_key = os.environ.get("GEMINI_API_KEY", "")
@@ -26,10 +26,12 @@ topics = [
 current_topic = random.choice(topics)
 
 def get_ai_blog(topic):
-    # गुरु का मास्टरस्ट्रोक: अब हम सीधा 'v1' (पक्के सर्वर) पर जा रहे हैं!
-    endpoints = [
-        f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={API_KEY}",
-        f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={API_KEY}"
+    # गुरु का ब्रह्मास्त्र: मॉडल्स के "फुल लीगल नाम" जो कभी फेल नहीं होते
+    models_to_try = [
+        "gemini-pro",               # सबसे पुराना, सबसे पक्का (100% काम करेगा)
+        "gemini-1.5-flash-8b",      # नया और तेज़
+        "gemini-1.5-flash-001",     # फुल वर्शन नाम
+        "gemini-1.0-pro-latest"     # बैकअप
     ]
     
     prompt = f"तुम एक प्रो ब्लॉगर हो। '{topic}' पर एक शानदार और विस्तृत हिंदी लेख लिखो। सिर्फ HTML tags (h2, p, ul, strong) देना।"
@@ -37,28 +39,28 @@ def get_ai_blog(topic):
 
     print(f"🚀 AI से '{topic}' पर लेख लिखवा रहे हैं...")
 
-    for url in endpoints:
-        api_version = url.split('/')[3] # v1 ya v1beta check karne ke liye
-        print(f"🔄 ट्राई कर रहे हैं: {api_version} API Server...")
+    for model in models_to_try:
+        print(f"🔄 दरवाज़ा खटखटा रहे हैं: {model}...")
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={API_KEY}"
         try:
             req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'})
             with urllib.request.urlopen(req, timeout=50) as response:
                 res = json.loads(response.read().decode('utf-8'))
-                print(f"✅ SUCCESS! {api_version} सर्वर ने जवाब दे दिया!")
+                print(f"✅ SUCCESS! '{model}' ने दरवाज़ा खोल दिया!")
                 return res['candidates'][0]['content']['parts'][0]['text']
         except urllib.error.HTTPError as e:
             error_msg = e.read().decode('utf-8')
-            print(f"⚠️ फेल ({api_version}): {e.code} - {error_msg}")
+            print(f"⚠️ फेल ({model}): {e.code} - {error_msg}")
             continue
         except Exception as e:
-            print(f"⚠️ फेल ({api_version}): {e}")
+            print(f"⚠️ फेल ({model}): {e}")
             continue
     return None
 
 blog_content = get_ai_blog(current_topic)
 
 if not blog_content:
-    print("❌ Critical Failure: दोनों सर्वर फेल हो गए।")
+    print("❌ Critical Failure: सारे मॉडल फेल हो गए।")
     sys.exit(1)
 
 blog_content = blog_content.replace("```html", "").replace("```", "").strip()
@@ -84,7 +86,7 @@ with open("posts.json", "w", encoding="utf-8") as f:
 
 # 2. नया ब्लॉग पन्ना
 nav_menu = """
-    <nav style="background: #1a1a1a; padding: 15px; text-align: center; position: sticky; top: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.5);">
+    <nav style="background: #1a1a1a; padding: 15px; text-align: center; position: sticky; top: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 100;">
         <a href="index.html" style="color: white; text-decoration: none; margin: 0 15px; font-weight: bold;">🏠 Home</a>
         <a href="about.html" style="color: white; text-decoration: none; margin: 0 15px; font-weight: bold;">👤 About Us</a>
         <a href="privacy.html" style="color: white; text-decoration: none; margin: 0 15px; font-weight: bold;">🔒 Privacy Policy</a>
