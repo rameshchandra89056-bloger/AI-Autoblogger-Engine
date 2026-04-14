@@ -1,17 +1,16 @@
 import urllib.request
 import json
 import urllib.error
+import os
 from datetime import datetime
 
-# आपकी API Key
-API_KEY = "AIzaSyDTEf0K8uxa7usTsbw7UViRGe0T-Ny_6ec"
+# मशीन सीधे तिजोरी (Secrets) से चाबी निकालेगी
+API_KEY = os.environ.get("GEMINI_API_KEY")
 
 print("एआई खुद फोटो लगा रहा है और डिज़ाइन कर रहा है... कृपया इंतज़ार करें...\n")
 
-# यहाँ गलती से [ लग गया था, मैंने उसे हटा दिया है। यह एकदम सही है:
 url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={API_KEY}"
 
-# हमारा सख्त मास्टर प्रॉम्प्ट
 master_prompt = """
 तुम एक प्रोफेशनल वेब डेवलपर और SEO ब्लॉगर हो। 'ब्लॉगिंग से पैसे कैसे कमाएं' पर एक शानदार हिंदी ब्लॉग लिखो।
 सख्त नियम (STRICT RULES):
@@ -33,7 +32,6 @@ try:
         result = json.loads(response.read().decode('utf-8'))
         ai_response = result['candidates'][0]['content']['parts'][0]['text']
         
-        # एआई की फालतू मार्किंग साफ करना
         clean_html = ai_response.replace("```html", "").replace("```", "").strip()
         
         current_time = datetime.now().strftime("%I_%M_%p")
@@ -43,8 +41,7 @@ try:
             f.write(clean_html)
         
         print(f"✅ सफलता! आपका ऑटोमैटिक फोटो वाला ब्लॉग '{file_name}' में सेव हो गया है।")
-        print("💡 अब अपने फाइल मैनेजर में जाकर इस फाइल को Chrome में खोलिए!")
 
 except Exception as e:
     print("❌ कुछ गड़बड़ हुई:", e)
-  
+    
