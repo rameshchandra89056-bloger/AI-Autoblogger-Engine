@@ -3,69 +3,81 @@ import json
 import os
 import sys
 
-# Digital Kamai Hub - Hyper-Engine v5.0 (Super Stable)
+# ==========================================
+# DIGITAL KAMAI HUB - ENGINE v6.0 (2026 PRO)
+# ==========================================
+
 API_KEY = os.environ.get("GEMINI_API_KEY")
 
-if not API_KEY:
-    print("❌ ERROR: API_KEY missing!")
-    sys.exit(1)
-
-def ask_ai():
-    # हम दो अलग-अलग रास्तों की लिस्ट बना रहे हैं
-    urls = [
-        f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={API_KEY}",
-        f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={API_KEY}"
-    ]
+def build_modern_blog():
+    # 2026 ka sabse stable endpoint
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={API_KEY}"
     
-    prompt = "तुम एक एक्सपर्ट ब्लॉगर हो। '2026 में ऑनलाइन पैसे कमाने के 5 गुप्त तरीके' पर एक जबरदस्त हिंदी ब्लॉग लिखो। नियम: सिर्फ HTML tags (h2, p, ul) देना। [PHOTO_1] और [PHOTO_2] सही जगह लगा देना।"
-    data = {"contents": [{"parts": [{"text": prompt}]}]}
+    print("🚀 AI Engine v6.0 starts firing...")
+    
+    prompt = {
+        "contents": [{
+            "parts": [{
+                "text": "तुम एक वर्ल्ड-क्लास ब्लॉगर हो। '2026 में बिना निवेश के पैसे कैसे कमाएं' पर एक प्रीमियम हिंदी लेख लिखो। सिर्फ HTML टैग्स (h2, p, ul) देना। [IMAGE] टैग का इस्तेमाल 2 बार करो।"
+            }]
+        }]
+    }
 
-    for url in urls:
-        try:
-            print(f"🔄 AI से संपर्क करने की कोशिश (Path: {url.split('/')[3]})...")
-            req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'})
-            with urllib.request.urlopen(req, timeout=30) as response:
-                result = json.loads(response.read().decode('utf-8'))
-                return result['candidates'][0]['content']['parts'][0]['text']
-        except Exception as e:
-            print(f"⚠️ Is raste par error aaya: {e}")
-            continue # Agla rasta try karo
-    return None
+    try:
+        req = urllib.request.Request(url, data=json.dumps(prompt).encode('utf-8'), headers={'Content-Type': 'application/json'})
+        with urllib.request.urlopen(req, timeout=30) as response:
+            res_data = json.loads(response.read().decode('utf-8'))
+            raw_text = res_data['candidates'][0]['content']['parts'][0]['text']
+            return raw_text.replace("```html", "").replace("```", "").strip()
+    except Exception as e:
+        print(f"❌ Error during AI Call: {e}")
+        return None
 
-# जादू यहाँ शुरू होता है
-blog_body = ask_ai()
+# वेबसाइट का नया और लग्जरी डिज़ाइन
+def create_ui(content):
+    img_tag = '<img src="https://image.pollinations.ai/prompt/wealth_luxury_digital_lifestyle_2026" style="width:100%; border-radius:20px; margin:30px 0; box-shadow: 0 10px 40px rgba(0,0,0,0.15);">'
+    clean_content = content.replace("[IMAGE]", img_tag)
 
-if blog_body:
-    blog_body = blog_body.replace("```html", "").replace("```", "").strip()
-    img = '<img src="https://image.pollinations.ai/prompt/future_money_2026_digital_income" style="width:100%; border-radius:15px; margin:20px 0;">'
-    blog_body = blog_body.replace("[PHOTO_1]", img).replace("[PHOTO_2]", img)
-
-    final_page = f"""<!DOCTYPE html>
+    html_code = f"""<!DOCTYPE html>
 <html lang="hi">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Kamai Hub</title>
+    <title>Digital Kamai Hub | 2026 Money Guide</title>
     <style>
-        body {{ font-family: sans-serif; margin: 0; background: #f0f2f5; }}
-        header {{ background: linear-gradient(to right, #0056b3, #00a2ff); color: white; padding: 40px; text-align: center; border-bottom: 5px solid #ffdd57; }}
-        nav {{ background: #004494; padding: 10px; text-align: center; }}
-        nav a {{ color: white; margin: 0 15px; text-decoration: none; font-weight: bold; }}
-        .box {{ max-width: 800px; margin: 30px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }}
-        footer {{ background: #1a1a1a; color: white; text-align: center; padding: 30px; margin-top: 40px; }}
+        :root {{ --primary: #0a84ff; --bg: #ffffff; --text: #1d1d1f; }}
+        body {{ font-family: 'Inter', -apple-system, sans-serif; margin: 0; background: #f5f5f7; color: var(--text); }}
+        header {{ background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); padding: 20px; position: sticky; top: 0; z-index: 100; text-align: center; border-bottom: 1px solid #d2d2d7; }}
+        header h1 {{ margin: 0; font-size: 24px; color: var(--primary); font-weight: 700; }}
+        .hero {{ background: linear-gradient(135deg, #0071e3, #00c6fb); color: white; padding: 60px 20px; text-align: center; }}
+        .container {{ max-width: 800px; margin: -40px auto 40px; background: white; padding: 50px; border-radius: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.05); }}
+        h2 {{ color: var(--primary); font-size: 28px; margin-top: 40px; }}
+        p {{ font-size: 18px; line-height: 1.8; color: #424245; }}
+        footer {{ text-align: center; padding: 50px; color: #86868b; font-size: 14px; }}
     </style>
 </head>
 <body>
-    <header><h1>🚀 Digital Kamai Hub</h1><p>इंटरनेट से कमाई का असली अड्डा</p></header>
-    <nav><a href="#">Home</a><a href="#">About</a><a href="#">Privacy</a></nav>
-    <div class="box">{blog_body}</div>
-    <footer><p>&copy; 2026 Digital Kamai Hub | Created by Ramesh Chandra</p></footer>
+    <header><h1>🚀 Digital Kamai Hub</h1></header>
+    <div class="hero">
+        <h1 style="font-size: 48px;">इंटरनेट से कमाई का भविष्य</h1>
+        <p style="color: rgba(255,255,255,0.9);">Ramesh Chandra की विशेष डिजिटल डायरी</p>
+    </div>
+    <div class="container">{clean_content}</div>
+    <footer>
+        <p>&copy; 2026 Digital Kamai Hub. All rights reserved.</p>
+        <nav><a href="#" style="color:#0a84ff; text-decoration:none;">Privacy</a> | <a href="#" style="color:#0a84ff; text-decoration:none;">Terms</a></nav>
+    </footer>
 </body>
 </html>"""
+    return html_code
 
+# Run Engine
+article = build_modern_blog()
+if article:
+    final_web = create_ui(article)
     with open("index.html", "w", encoding="utf-8") as f:
-        f.write(final_page)
-    print("✅ MUBARAK HO! Website update ho gayi!")
+        f.write(final_web)
+    print("✅ SUCCESS! Website is now Live and Branded.")
 else:
-    print("❌ Critical Error: AI ne jawab nahi diya.")
+    print("❌ Critical Failure. Please check API Key in GitHub Secrets.")
     sys.exit(1)
     
