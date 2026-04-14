@@ -6,7 +6,7 @@ import time
 import random
 
 # ==========================================
-# DIGITAL KAMAI HUB - TITANIUM ENGINE v16.0
+# DIGITAL KAMAI HUB - AUTO-DIAGNOSTIC ENGINE v17.0
 # ==========================================
 
 raw_key = os.environ.get("GEMINI_API_KEY", "")
@@ -16,6 +16,36 @@ if not API_KEY:
     print("❌ ERROR: API Key गायब है!")
     sys.exit(1)
 
+print("🔍 DIAGNOSTIC MODE: गूगल से पूछ रहे हैं कि कौन से ताले खुले हैं...")
+
+# 1. गुरु का मास्टरमाइंड: गूगल से मॉडल्स की लिस्ट माँगना
+list_url = f"https://generativelanguage.googleapis.com/v1beta/models?key={API_KEY}"
+available_model = None
+
+try:
+    req = urllib.request.Request(list_url)
+    with urllib.request.urlopen(req, timeout=30) as response:
+        res = json.loads(response.read().decode('utf-8'))
+        models = res.get('models', [])
+        print(f"✅ Google ने {len(models)} मॉडल्स की लिस्ट भेज दी है!")
+        
+        # ऐसा मॉडल ढूँढना जो कंटेंट लिख सके
+        for m in models:
+            if 'generateContent' in m.get('supportedGenerationMethods', []) and 'gemini' in m.get('name', '').lower():
+                available_model = m['name'] # गूगल खुद नाम देगा (जैसे: models/gemini-1.5-flash)
+                if 'flash' in available_model:
+                    break # Flash सबसे तेज़ है, तो इसे ही चुनेंगे
+                    
+        if available_model:
+            print(f"🎯 Auto-Selected Model: '{available_model}' (ताला मिल गया!)")
+        else:
+            print("❌ ERROR: कोई भी काम का मॉडल नहीं मिला।")
+            sys.exit(1)
+except Exception as e:
+    print(f"❌ गूगल ने लिस्ट नहीं दी: {e}")
+    sys.exit(1)
+
+# 2. अब उसी 'खुले हुए ताले' से ब्लॉग लिखवाना
 topics = [
     "2026 में यूट्यूब से पैसे कैसे कमाएं - फुल गाइड",
     "फ्रीलांसिंग से घर बैठे महीने का 1 लाख कैसे कमाएं",
@@ -25,47 +55,33 @@ topics = [
 ]
 current_topic = random.choice(topics)
 
-def get_ai_blog(topic):
-    # गुरु का ब्रह्मास्त्र: मॉडल्स के "फुल लीगल नाम" जो कभी फेल नहीं होते
-    models_to_try = [
-        "gemini-pro",               # सबसे पुराना, सबसे पक्का (100% काम करेगा)
-        "gemini-1.5-flash-8b",      # नया और तेज़
-        "gemini-1.5-flash-001",     # फुल वर्शन नाम
-        "gemini-1.0-pro-latest"     # बैकअप
-    ]
-    
-    prompt = f"तुम एक प्रो ब्लॉगर हो। '{topic}' पर एक शानदार और विस्तृत हिंदी लेख लिखो। सिर्फ HTML tags (h2, p, ul, strong) देना।"
-    data = {"contents": [{"parts": [{"text": prompt}]}]}
+# यहाँ हम वो नाम डालेंगे जो गूगल ने खुद दिया है
+url = f"https://generativelanguage.googleapis.com/v1beta/{available_model}:generateContent?key={API_KEY}"
+prompt = f"तुम एक प्रो ब्लॉगर हो। '{current_topic}' पर एक शानदार और विस्तृत हिंदी लेख लिखो। सिर्फ HTML tags (h2, p, ul, strong) देना।"
+data = {"contents": [{"parts": [{"text": prompt}]}]}
 
-    print(f"🚀 AI से '{topic}' पर लेख लिखवा रहे हैं...")
+print(f"🚀 AI से '{current_topic}' पर लेख लिखवा रहे हैं...")
 
-    for model in models_to_try:
-        print(f"🔄 दरवाज़ा खटखटा रहे हैं: {model}...")
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={API_KEY}"
-        try:
-            req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'})
-            with urllib.request.urlopen(req, timeout=50) as response:
-                res = json.loads(response.read().decode('utf-8'))
-                print(f"✅ SUCCESS! '{model}' ने दरवाज़ा खोल दिया!")
-                return res['candidates'][0]['content']['parts'][0]['text']
-        except urllib.error.HTTPError as e:
-            error_msg = e.read().decode('utf-8')
-            print(f"⚠️ फेल ({model}): {e.code} - {error_msg}")
-            continue
-        except Exception as e:
-            print(f"⚠️ फेल ({model}): {e}")
-            continue
-    return None
-
-blog_content = get_ai_blog(current_topic)
+blog_content = None
+try:
+    req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'})
+    with urllib.request.urlopen(req, timeout=50) as response:
+        res = json.loads(response.read().decode('utf-8'))
+        blog_content = res['candidates'][0]['content']['parts'][0]['text']
+        print("✅ SUCCESS! ब्लॉग 100% सफलतापूर्वक जनरेट हो गया!")
+except urllib.error.HTTPError as e:
+    print(f"⚠️ API Error ({e.code}): {e.read().decode('utf-8')}")
+    sys.exit(1)
+except Exception as e:
+    print(f"⚠️ Error: {e}")
+    sys.exit(1)
 
 if not blog_content:
-    print("❌ Critical Failure: सारे मॉडल फेल हो गए।")
     sys.exit(1)
 
 blog_content = blog_content.replace("```html", "").replace("```", "").strip()
 
-# 1. डेटाबेस (posts.json) अपडेट
+# 3. डेटाबेस (posts.json) अपडेट
 posts_db = []
 if os.path.exists("posts.json"):
     with open("posts.json", "r", encoding="utf-8") as f:
@@ -84,7 +100,7 @@ posts_db.insert(0, new_post)
 with open("posts.json", "w", encoding="utf-8") as f:
     json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
-# 2. नया ब्लॉग पन्ना
+# 4. नया ब्लॉग पन्ना बनाना
 nav_menu = """
     <nav style="background: #1a1a1a; padding: 15px; text-align: center; position: sticky; top: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.5); z-index: 100;">
         <a href="index.html" style="color: white; text-decoration: none; margin: 0 15px; font-weight: bold;">🏠 Home</a>
@@ -128,7 +144,7 @@ article_html = f"""<!DOCTYPE html>
 with open(post_filename, "w", encoding="utf-8") as f:
     f.write(article_html)
 
-# 3. होमपेज अपडेट
+# 5. होमपेज अपडेट करना
 post_links = ""
 for post in posts_db:
     post_links += f"""
