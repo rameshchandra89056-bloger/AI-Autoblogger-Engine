@@ -6,7 +6,7 @@ import time
 import random
 
 # ==========================================
-# DIGITAL KAMAI HUB - THE TRUTH ENGINE v14.0
+# DIGITAL KAMAI HUB - THE V1 STABLE ENGINE v15.0
 # ==========================================
 
 raw_key = os.environ.get("GEMINI_API_KEY", "")
@@ -26,11 +26,10 @@ topics = [
 current_topic = random.choice(topics)
 
 def get_ai_blog(topic):
-    # गुरु के नए और सबसे ताज़ा 2026 मॉडल्स
-    models_to_try = [
-        "gemini-1.5-flash-latest", 
-        "gemini-1.5-flash",
-        "gemini-pro"
+    # गुरु का मास्टरस्ट्रोक: अब हम सीधा 'v1' (पक्के सर्वर) पर जा रहे हैं!
+    endpoints = [
+        f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={API_KEY}",
+        f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={API_KEY}"
     ]
     
     prompt = f"तुम एक प्रो ब्लॉगर हो। '{topic}' पर एक शानदार और विस्तृत हिंदी लेख लिखो। सिर्फ HTML tags (h2, p, ul, strong) देना।"
@@ -38,29 +37,28 @@ def get_ai_blog(topic):
 
     print(f"🚀 AI से '{topic}' पर लेख लिखवा रहे हैं...")
 
-    for model in models_to_try:
-        print(f"🔄 दरवाज़ा खटखटा रहे हैं: {model}...")
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={API_KEY}"
+    for url in endpoints:
+        api_version = url.split('/')[3] # v1 ya v1beta check karne ke liye
+        print(f"🔄 ट्राई कर रहे हैं: {api_version} API Server...")
         try:
             req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'})
             with urllib.request.urlopen(req, timeout=50) as response:
                 res = json.loads(response.read().decode('utf-8'))
-                print(f"✅ SUCCESS! '{model}' ने जवाब दे दिया है!")
+                print(f"✅ SUCCESS! {api_version} सर्वर ने जवाब दे दिया!")
                 return res['candidates'][0]['content']['parts'][0]['text']
         except urllib.error.HTTPError as e:
-            # अब यह रोबोट तोते की तरह नहीं बोलेगा, बल्कि गूगल का असली एरर बताएगा!
             error_msg = e.read().decode('utf-8')
-            print(f"⚠️ फेल ({model}): {e.code} - {error_msg}")
+            print(f"⚠️ फेल ({api_version}): {e.code} - {error_msg}")
             continue
         except Exception as e:
-            print(f"⚠️ फेल ({model}): {e}")
+            print(f"⚠️ फेल ({api_version}): {e}")
             continue
     return None
 
 blog_content = get_ai_blog(current_topic)
 
 if not blog_content:
-    print("❌ Critical Failure: सारे मॉडल फेल हो गए। (अगर 429 आ रहा है, तो आज का डेली कोटा खत्म हो गया है!)")
+    print("❌ Critical Failure: दोनों सर्वर फेल हो गए।")
     sys.exit(1)
 
 blog_content = blog_content.replace("```html", "").replace("```", "").strip()
@@ -168,3 +166,4 @@ homepage_html = f"""<!DOCTYPE html>
 
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(homepage_html)
+    
