@@ -1,39 +1,36 @@
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Disclaimer - Digital Kamai Hub</title>
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #eef2f5; margin: 0; color: #2c3e50; line-height: 1.6; }
-        header { background: #1a1a1a; color: white; padding: 40px 20px; text-align: center; }
-        .container { max-width: 800px; margin: 40px auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h2 { color: #d9534f; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        footer { text-align: center; padding: 20px; background: #1a1a1a; color: #ecf0f1; margin-top: 40px; }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Disclaimer</h1>
-        <p>Digital Kamai Hub</p>
-    </header>
-    <div class="container">
-        <h2>1. जानकारी की सटीकता</h2>
-        <p>Digital Kamai Hub पर दी गई सभी जानकारी केवल शिक्षा और सामान्य ज्ञान के उद्देश्य से है। हम जानकारी की 100% सटीकता की गारंटी नहीं देते हैं, हालांकि हम इसे लेटेस्ट रखने का पूरा प्रयास करते हैं।</p>
-        
-        <h2>2. कोई वित्तीय सलाह नहीं</h2>
-        <p>इस वेबसाइट पर बताई गई कमाई के तरीके वित्तीय सलाह नहीं हैं। ऑनलाइन पैसे कमाने में जोखिम हो सकता है और परिणाम हर व्यक्ति की मेहनत और कौशल पर निर्भर करते हैं।</p>
-        
-        <h2>3. बाहरी लिंक</h2>
-        <p>हम समय-समय पर अन्य उपयोगी वेबसाइटों के लिंक दे सकते हैं। उन वेबसाइटों की सामग्री और नीतियों के लिए हम जिम्मेदार नहीं हैं।</p>
+<html><head>
+<style>
+    :root { --main-red: #da251c; --dark-bg: #1a1a1a; --text-gray: #555; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { background: #f4f4f4; color: #333; }
+    
+    /* Aaj Tak Style Header */
+    header { background: white; border-top: 4px solid var(--main-red); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+    .nav-top { max-width: 1200px; margin: 0 auto; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 28px; font-weight: 900; color: var(--main-red); text-decoration: none; text-transform: uppercase; }
+    .trending-bar { background: var(--main-red); color: white; padding: 5px 0; font-size: 13px; text-align: center; }
 
-        <p><em>कृपया अपनी रिसर्च खुद करें।</em></p>
-        
-        <div style="text-align: center; margin-top: 30px;">
-            <a href="index.html" style="background: #1a1a1a; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">🔙 वापस होमपेज पर जाएँ</a>
-        </div>
-    </div>
-    <footer>&copy; 2026 Ramesh Chandra Enterprise</footer>
-</body>
-</html>
+    /* Article UI */
+    .container { max-width: 900px; margin: 30px auto; background: white; padding: 40px; border-radius: 4px; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+    h1 { font-size: 38px; line-height: 1.3; color: #000; margin-bottom: 20px; font-weight: 800; }
+    .meta { border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 10px 0; margin-bottom: 25px; color: var(--text-gray); font-size: 14px; }
+    .hero-img { width: 100%; border-radius: 8px; margin-bottom: 30px; }
+    .post-img { width: 100%; border-radius: 5px; margin: 25px 0; border: 1px solid #ddd; }
+    
+    /* TTS Floating Button */
+    .tts-player { position: fixed; bottom: 30px; right: 30px; background: var(--main-red); color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 10px 20px rgba(218, 37, 28, 0.4); z-index: 1000; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+    .tts-player:hover { transform: scale(1.05); background: #000; }
 
+    /* News Button */
+    .news-yt-btn { display: inline-block; background: #FF0000; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 20px 0; }
+
+    /* Footer - Professional */
+    footer { background: var(--dark-bg); color: white; padding: 60px 20px 30px; margin-top: 50px; }
+    .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; }
+    .footer-section h4 { border-left: 4px solid var(--main-red); padding-left: 10px; margin-bottom: 20px; }
+    .footer-links a { display: block; color: #ccc; text-decoration: none; margin-bottom: 10px; font-size: 14px; }
+    .footer-bottom { border-top: 1px solid #333; margin-top: 40px; padding-top: 20px; text-align: center; font-size: 12px; color: #777; }
+
+    @media (max-width: 768px) { .container { padding: 20px; } h1 { font-size: 28px; } }
+</style>
+</head><body><header><div class='nav-top'><a href='index.html' class='logo'>Digital Kamai Hub</a></div></header><div class='container'><h1>Disclaimer Us</h1><p>यह पन्ना अभी अपडेट हो रहा है...</p></div></body></html>

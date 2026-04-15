@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+    
+<style>
+    :root { --main-red: #da251c; --dark-bg: #1a1a1a; --text-gray: #555; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { background: #f4f4f4; color: #333; }
+    
+    /* Aaj Tak Style Header */
+    header { background: white; border-top: 4px solid var(--main-red); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+    .nav-top { max-width: 1200px; margin: 0 auto; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 28px; font-weight: 900; color: var(--main-red); text-decoration: none; text-transform: uppercase; }
+    .trending-bar { background: var(--main-red); color: white; padding: 5px 0; font-size: 13px; text-align: center; }
+
+    /* Article UI */
+    .container { max-width: 900px; margin: 30px auto; background: white; padding: 40px; border-radius: 4px; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+    h1 { font-size: 38px; line-height: 1.3; color: #000; margin-bottom: 20px; font-weight: 800; }
+    .meta { border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 10px 0; margin-bottom: 25px; color: var(--text-gray); font-size: 14px; }
+    .hero-img { width: 100%; border-radius: 8px; margin-bottom: 30px; }
+    .post-img { width: 100%; border-radius: 5px; margin: 25px 0; border: 1px solid #ddd; }
+    
+    /* TTS Floating Button */
+    .tts-player { position: fixed; bottom: 30px; right: 30px; background: var(--main-red); color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 10px 20px rgba(218, 37, 28, 0.4); z-index: 1000; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+    .tts-player:hover { transform: scale(1.05); background: #000; }
+
+    /* News Button */
+    .news-yt-btn { display: inline-block; background: #FF0000; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 20px 0; }
+
+    /* Footer - Professional */
+    footer { background: var(--dark-bg); color: white; padding: 60px 20px 30px; margin-top: 50px; }
+    .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; }
+    .footer-section h4 { border-left: 4px solid var(--main-red); padding-left: 10px; margin-bottom: 20px; }
+    .footer-links a { display: block; color: #ccc; text-decoration: none; margin-bottom: 10px; font-size: 14px; }
+    .footer-bottom { border-top: 1px solid #333; margin-top: 40px; padding-top: 20px; text-align: center; font-size: 12px; color: #777; }
+
+    @media (max-width: 768px) { .container { padding: 20px; } h1 { font-size: 28px; } }
+</style>
+
+</head>
+<body>
+    <div class="trending-bar">🔥 Trending: AI Automation, 24/7 Digital Income, Passive Wealth 2026</div>
+    <header>
+        <div class="nav-top">
+            <a href="index.html" class="logo">Digital Kamai Hub</a>
+            <nav><a href="index.html" style="text-decoration:none; color:black; font-weight:bold;">Home</a></nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1></h1>
+        <div class="meta">प्रकाशित: 15 April 2026 | लेखक: AI Expert | 5 मिनट रीडिंग</div>
+        <img src="https://image.pollinations.ai/prompt/business%20technology?width=1200&height=600&nologo=true" class="hero-img" alt="Headline Image">
+        <div id="read-area"></div>
+    </div>
+
+    <button class="tts-player" onclick="toggleTTS()" id="ttsBtn">🔊 लेख सुनें</button>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h4>About Hub</h4>
+                <p style="font-size:14px; color:#ccc;">हम भारत के नंबर 1 ऑटोमेशन ब्लॉग हैं जो आपको भविष्य की तकनीक से अमीर बनाना सिखाते हैं।</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <div class="footer-links">
+                    <a href="about.html">About Us</a><a href="privacy.html">Privacy Policy</a><a href="disclaimer.html">Disclaimer</a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <div class="footer-links"><a href="#">Support: help@digitalkamai.com</a></div>
+            </div>
+        </div>
+        <div class="footer-bottom">&copy; 2026 Digital Kamai Hub | All Rights Reserved.</div>
+    </footer>
+
+    <script>
+        let synth = window.speechSynthesis;
+        let isReading = false;
+        function toggleTTS() {
+            if (isReading) {
+                synth.cancel();
+                document.getElementById('ttsBtn').innerHTML = '🔊 लेख सुनें';
+                isReading = False;
+            } else {
+                let text = document.getElementById('read-area').innerText;
+                let utter = new SpeechSynthesisUtterance(text);
+                utter.lang = 'hi-IN';
+                utter.rate = 0.9;
+                utter.pitch = 1.1;
+                synth.speak(utter);
+                document.getElementById('ttsBtn').innerHTML = '⏹️ आवाज़ बंद करें';
+                isReading = true;
+                utter.onend = () => { document.getElementById('ttsBtn').innerHTML = '🔊 लेख सुनें'; isReading = false; };
+            }
+        }
+    </script>
+</body>
+</html>
