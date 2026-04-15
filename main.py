@@ -6,8 +6,8 @@ import sys
 import time
 
 # ==========================================
-# THE IMMORTAL SYSTEM - X-RAY EDITION (v29.0)
-# Advanced Error Logging & Premium UI
+# THE IMMORTAL SYSTEM - THE AUTO-ADAPT ENGINE (v30.0)
+# Dynamic Model Hunting + Premium UI + TTS
 # ==========================================
 
 raw_key = os.environ.get("GEMINI_API_KEY", "")
@@ -29,20 +29,36 @@ if os.path.exists("posts.json"):
             past_titles = [post["title"] for post in posts_db][:20] 
         except: pass
 
+# ---------------------------------------------------------
+# SMART MODEL HUNTER (अब 404 एरर कभी नहीं आएगा)
+# ---------------------------------------------------------
+print("🔍 गूगल के सर्वर पर एक्टिव मॉडल ढूँढ रहे हैं...")
 list_url = f"https://generativelanguage.googleapis.com/v1beta/models?key={API_KEY}"
-available_model = "models/gemini-1.5-flash"
+available_model = None
+
 try:
     req = urllib.request.Request(list_url)
     with urllib.request.urlopen(req, timeout=30) as response:
         res = json.loads(response.read().decode('utf-8'))
         for m in res.get('models', []):
-            if 'generateContent' in m.get('supportedGenerationMethods', []) and 'gemini-1.5-flash' in m.get('name', '').lower():
-                available_model = m['name']; break
-except Exception as e: pass
+            name = m.get('name', '')
+            methods = m.get('supportedGenerationMethods', [])
+            if 'generateContent' in methods and 'gemini' in name.lower():
+                available_model = name
+                # अगर flash नाम का कोई भी मॉडल मिले, तो उसे तुरंत पकड़ लो
+                if 'flash' in name.lower():
+                    break
+except Exception as e:
+    print(f"⚠️ मॉडल ढूँढने में दिक्कत: {e}")
+
+# अगर फिर भी नहीं मिला, तो सबसे बेसिक मॉडल यूज़ करो
+if not available_model:
+    available_model = "models/gemini-pro"
+
+print(f"🎯 रोबोट ने यह मॉडल चुना: {available_model}")
 
 api_url = f"https://generativelanguage.googleapis.com/v1beta/{available_model}:generateContent?key={API_KEY}"
 
-# मास्टर AI फंक्शन (X-Ray Scanner के साथ)
 def ask_ai(prompt, retries=5):
     for i in range(retries):
         try:
@@ -53,30 +69,23 @@ def ask_ai(prompt, retries=5):
                 return res['candidates'][0]['content']['parts'][0]['text'].strip()
         except urllib.error.HTTPError as e:
             err_msg = e.read().decode('utf-8')
-            print(f"❌ GOOGLE API ERROR: {err_msg}")
-            print(f"⏳ 15 सेकंड इंतज़ार कर रहे हैं... ({i+1}/{retries})")
+            print(f"❌ API ERROR: {err_msg}")
+            print(f"⏳ 15 सेकंड इंतज़ार... ({i+1}/{retries})")
             time.sleep(15)
         except Exception as e:
             print(f"⚠️ Network Error: {e}")
-            print(f"⏳ 15 सेकंड इंतज़ार कर रहे हैं... ({i+1}/{retries})")
             time.sleep(15)
     return ""
 
-print("🚀 रोबोट चालू हो गया है...")
+print("🚀 एजेंट काम पर लग गए हैं...")
 
 # --- AGENT 1: TOPIC ---
-print("🧠 एजेंट 1: टॉपिक ढूँढ रहा है...")
 topic_prompt = f"तुम एक ट्रेंड एनालिस्ट हो। {current_year} में मेक मनी ऑनलाइन या AI से जुड़ा एक वायरल ब्लॉग टाइटल (हिंदी में) दो। पुराने टाइटल्स: {past_titles} से अलग हो। सिर्फ 'टाइटल' लिखना।"
-topic_res = ask_ai(topic_prompt)
-if not topic_res: 
-    print("❌ AI ने कोई जवाब नहीं दिया (फेल)।")
-    sys.exit(1)
-
-current_topic = topic_res.replace('"', '').replace("'", "").replace("*", "")
-print(f"🎯 टॉपिक मिला: {current_topic}")
+current_topic = ask_ai(topic_prompt).replace('"', '').replace("'", "").replace("*", "")
+if not current_topic: sys.exit(1)
+print(f"🎯 टॉपिक फाइनल: {current_topic}")
 
 # --- AGENT 2: SEO ---
-print("📊 एजेंट 2: SEO डेटा बना रहा है...")
 seo_prompt = f"विषय: '{current_topic}'। सिर्फ इस एक लाइन के फॉर्मेट में जवाब दो: MAIN_IMAGE_ENGLISH_KEYWORD | HINDI_SEO_DESCRIPTION | 5_SEO_KEYWORDS_COMMA_SEPARATED. कोई और शब्द मत लिखना।"
 seo_raw = ask_ai(seo_prompt)
 
@@ -91,7 +100,7 @@ try:
 except: pass
 
 # --- AGENT 3: HTML CODER ---
-print("💻 एजेंट 3: HTML कोडिंग और मल्टीमीडिया लगा रहा है...")
+print("💻 आर्टिकल, वीडियो और फोटो सेट हो रहे हैं...")
 html_prompt = f"""विषय: '{current_topic}'। एक विस्तृत हिंदी ब्लॉग पोस्ट लिखो।
 नियम:
 1. लेख के बीच में 2 जगह ये फोटो कोड लगाओ: <img src="https://image.pollinations.ai/prompt/ENG_KEYWORD?width=800&height=400&nologo=true" class="article-img"> (ENG_KEYWORD की जगह पैराग्राफ से जुड़ा इंग्लिश शब्द डालना)।
@@ -99,9 +108,7 @@ html_prompt = f"""विषय: '{current_topic}'। एक विस्तृ�
 3. मुझे जवाब में सिर्फ HTML कोड (h2, p, ul) देना। कोई ```html मत लगाना।"""
 
 blog_content = ask_ai(html_prompt, retries=8).replace("```html", "").replace("```", "").strip()
-if not blog_content or len(blog_content) < 200: 
-    print("❌ HTML कोडिंग फेल हो गई।")
-    sys.exit(1)
+if not blog_content or len(blog_content) < 200: sys.exit(1)
 
 print("✅ पोस्ट तैयार है! पब्लिश हो रही है...")
 
@@ -189,3 +196,4 @@ post_links = "".join([f'<div style="background:var(--card); border-radius:12px; 
 home_html = f"""<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Digital Kamai Hub</title>{premium_css}<style>.grid-container {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }}</style></head><body><header><a href="index.html" class="logo">🚀 Digital Kamai Hub</a><nav><a href="index.html">Home</a></nav></header><div class="main-container"><h2 style="font-size:32px; color:#1e293b; border-bottom:2px solid #e2e8f0; padding-bottom:10px;">🔥 ताज़ा लेख</h2><div class="grid-container">{post_links}</div></div><footer><p>&copy; {current_year} Digital Kamai Hub</p></footer></body></html>"""
 
 with open("index.html", "w", encoding="utf-8") as f: f.write(home_html)
+           
