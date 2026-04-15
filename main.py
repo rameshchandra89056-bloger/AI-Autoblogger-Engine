@@ -7,8 +7,8 @@ import time
 import re
 
 # ==========================================
-# THE IMMORTAL SYSTEM - THE FINAL VOICE (v39.0)
-# Bulletproof Android TTS + Premium News UI
+# THE IMMORTAL SYSTEM - DYNAMIC IMAGES (v41.0)
+# Ultra-Safe DOM TTS + Unique In-Article Photos
 # ==========================================
 
 raw_keys = os.environ.get("GEMINI_API_KEY", "")
@@ -58,10 +58,11 @@ topic_prompt = f"तुम एक ट्रेंड एनालिस्ट �
 current_topic = ask_ai(topic_prompt).replace('"', '').replace("'", "").replace("*", "")
 if not current_topic: sys.exit(1)
 
-seo_prompt = f"विषय: '{current_topic}'। सिर्फ इस फॉर्मेट में जवाब दो: MAIN_IMG_ENGLISH_KEYWORD | SEO_DESCRIPTION | SEO_KEYWORDS"
+# AI को अलग तरह की फोटो सोचने का सख्त आदेश:
+seo_prompt = f"विषय: '{current_topic}'। सिर्फ इस फॉर्मेट में जवाब दो: MAIN_IMG_ENGLISH_KEYWORD | SEO_DESCRIPTION | SEO_KEYWORDS. (ध्यान दें: MAIN_IMG_ENGLISH_KEYWORD में 'Robot' या 'Cyborg' मत लिखना, कुछ अलग जैसे 'laptop workspace', 'financial growth', 'modern business' लिखना)"
 seo_raw = ask_ai(seo_prompt)
 
-main_img_words = "modern futuristic technology"
+main_img_words = "modern business laptop workspace"
 meta_desc = f"Digital Kamai Hub - {current_year} Best Article"
 meta_keywords = "AI, Make Money Online, Freelancing"
 try:
@@ -81,17 +82,28 @@ html_prompt = f"""तुम एक प्रो ब्लॉगर हो। व
 blog_content = ask_ai(html_prompt, retries=20).replace("```html", "").replace("```", "").strip()
 if not blog_content or len(blog_content) < 300: sys.exit(1)
 
-# पायथन खुद [PHOTO] की जगह असली इमेज लगाएगा 
-safe_keyword = urllib.parse.quote(main_img_words)
-inline_img_html = f"<img src='https://image.pollinations.ai/prompt/{safe_keyword}_detail?width=800&height=400&nologo=true' class='article-img'>"
-blog_content = blog_content.replace("[PHOTO]", inline_img_html)
+# ---------------------------------------------------------
+# 🎨 THE DYNAMIC IMAGE GENERATOR (BUG FIX)
+# ---------------------------------------------------------
+# अब हम तीनों [PHOTO] की जगह अलग-अलग 'थीम' (Theme) वाली फोटो लगाएंगे
+modifiers = ["creative_workspace_laptop", "financial_success_chart", "modern_minimalist_office"]
+
+for mod in modifiers:
+    if "[PHOTO]" in blog_content:
+        # हर फोटो के लिए कीवर्ड बदल जाएगा!
+        dynamic_keyword = urllib.parse.quote(f"{main_img_words} {mod}")
+        img_html = f"<img src='https://image.pollinations.ai/prompt/{dynamic_keyword}?width=800&height=400&nologo=true' class='article-img'>"
+        # replace(_, _, 1) का मतलब है सिर्फ 1 [PHOTO] को बदलो, बाकी को अगली बारी के लिए छोड़ दो
+        blog_content = blog_content.replace("[PHOTO]", img_html, 1)
+
+# मेन हीरो इमेज
+safe_main_keyword = urllib.parse.quote(main_img_words + " high quality editorial")
+main_img_url = f"https://image.pollinations.ai/prompt/{safe_main_keyword}?width=1200&height=600&nologo=true"
+post_filename = f"post_{post_id}.html"
 
 # ---------------------------------------------------------
 # DATABASE & CSS
 # ---------------------------------------------------------
-main_img_url = f"https://image.pollinations.ai/prompt/{safe_keyword}?width=1200&height=600&nologo=true"
-post_filename = f"post_{post_id}.html"
-
 posts_db.insert(0, {"title": current_topic, "file": post_filename, "date": today_date, "img": main_img_url})
 with open("posts.json", "w", encoding="utf-8") as f: json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
@@ -108,8 +120,8 @@ premium_css = """
     .container { max-width: 850px; margin: 40px auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
     h1 { font-size: 38px; line-height: 1.3; margin-bottom: 15px; color: #000; }
     .meta { font-size: 14px; color: #888; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 25px; }
-    .hero-img { width: 100%; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); background-color: #eee; min-height: 300px; }
-    .article-img { width: 100%; border-radius: 8px; margin: 35px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #ddd; background-color: #eee; min-height: 250px; }
+    .hero-img { width: 100%; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); background-color: #eee; min-height: 300px; object-fit: cover; }
+    .article-img { width: 100%; border-radius: 8px; margin: 35px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #ddd; background-color: #eee; min-height: 250px; object-fit: cover; }
     #article-body { font-size: 20px; color: var(--text-gray); }
     #article-body h2 { color: #000; margin: 35px 0 15px 0; border-left: 4px solid var(--main-red); padding-left: 15px; }
     .yt-btn { display: block; background: #ff0000; color: white; text-align: center; padding: 18px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 18px; margin: 40px 0; transition: 0.3s; box-shadow: 0 5px 15px rgba(255,0,0,0.3); }
@@ -118,14 +130,6 @@ premium_css = """
     .tts-btn:hover { transform: translateY(-5px); background: #000; }
     footer { background: var(--dark-bg); color: #888; padding: 60px 20px 30px; margin-top: 60px; text-align: center; }
     .footer-links a { color: #ccc; text-decoration: none; margin: 0 15px; font-size: 15px; }
-    .footer-links a:hover { color: white; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; margin-top: 30px; }
-    .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; }
-    .card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-    .card img { width: 100%; height: 220px; object-fit: cover; background-color: #eee; }
-    .card-content { padding: 25px; }
-    .card-content h3 { font-size: 22px; margin: 0 0 15px 0; line-height: 1.4; }
-    .card-content a { color: var(--main-red); font-weight: bold; text-decoration: none; }
 </style>
 """
 
@@ -147,15 +151,13 @@ footer_html = f"""
 """
 
 # ---------------------------------------------------------
-# GENERATE POST HTML (THE BULLETPROOF TTS FIX)
+# GENERATE POST HTML 
 # ---------------------------------------------------------
 article_page = f"""<!DOCTYPE html>
 <html lang="hi">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{current_topic}</title>
-    <meta name="description" content="{meta_desc}">
-    <meta name="keywords" content="{meta_keywords}">
     {premium_css}
 </head>
 <body>
@@ -176,24 +178,24 @@ article_page = f"""<!DOCTYPE html>
     <script>
         let synth = window.speechSynthesis;
         let isReading = false;
-        let textChunks = [];
-        let currentChunkIndex = 0;
+        let elementsToRead = [];
+        let currentIndex = 0;
         
-        function playNextChunk() {{
-            if (!isReading || currentChunkIndex >= textChunks.length) {{
+        function readNextElement() {{
+            if (!isReading || currentIndex >= elementsToRead.length) {{
                 isReading = false;
                 document.getElementById('ttsBtn').innerHTML = '🔊 लेख सुनें';
                 return;
             }}
             
-            let chunkText = textChunks[currentChunkIndex].trim();
-            if(chunkText === "") {{
-                currentChunkIndex++;
-                playNextChunk();
+            let text = elementsToRead[currentIndex].innerText.trim();
+            if(!text) {{
+                currentIndex++;
+                readNextElement();
                 return;
             }}
             
-            let utter = new SpeechSynthesisUtterance(chunkText + "।");
+            let utter = new SpeechSynthesisUtterance(text);
             utter.lang = 'hi-IN';
             utter.rate = 0.85; 
             
@@ -202,59 +204,52 @@ article_page = f"""<!DOCTYPE html>
             if(hiVoice) utter.voice = hiVoice;
 
             utter.onend = function() {{
-                currentChunkIndex++;
-                playNextChunk();
+                currentIndex++;
+                readNextElement();
             }};
             
             utter.onerror = function() {{
-                currentChunkIndex++;
-                playNextChunk();
+                currentIndex++;
+                readNextElement();
             }};
 
             synth.speak(utter);
         }}
 
         function toggleTTS() {{
-            if (!synth) {{
-                alert("आपके ब्राउज़र में आवाज़ का फीचर नहीं है। कृपया Chrome इस्तेमाल करें।");
-                return;
-            }}
+            if (!synth) return;
 
             if (isReading) {{
-                synth.cancel(); // आवाज़ को तुरंत रोको
+                synth.cancel(); 
                 isReading = false;
                 document.getElementById('ttsBtn').innerHTML = '🔊 लेख सुनें';
             }} else {{
-                synth.cancel(); // पुराना कुछ फंसा हो तो उसे साफ़ करो (Hard Reset)
+                synth.cancel(); 
+                let container = document.getElementById('article-body');
+                elementsToRead = Array.from(container.querySelectorAll('p, h2, h3, li'));
                 
-                let fullText = document.getElementById('article-body').innerText;
-                
-                // सबसे सुरक्षित तरीका: पूर्णविराम (।) और लाइन ब्रेक से वाक्यों को तोड़ना
-                textChunks = fullText.replace(/([।!?\\n])/g, "$1|").split("|");
-                
-                currentChunkIndex = 0;
+                if (elementsToRead.length === 0) {{
+                    let dummy = document.createElement('p');
+                    dummy.innerText = container.innerText;
+                    elementsToRead = [dummy];
+                }}
+
+                currentIndex = 0;
                 isReading = true;
-                
                 document.getElementById('ttsBtn').innerHTML = '⏹️ आवाज़ बंद करें';
                 
-                // थोड़ी देर रुककर बोलना शुरू करें (ताकि ब्राउज़र रिसेट हो जाए)
-                setTimeout(() => {{ playNextChunk(); }}, 200);
+                setTimeout(() => {{ readNextElement(); }}, 300);
             }}
         }}
-        
-        window.speechSynthesis.onvoiceschanged = function() {{ window.speechSynthesis.getVoices(); }};
     </script>
 </body>
 </html>"""
 
 with open(post_filename, "w", encoding="utf-8") as f: f.write(article_page)
 
-# ---------------------------------------------------------
-# GENERATE HOME PAGE & STATIC PAGES
-# ---------------------------------------------------------
 home_cards = "".join([f"""
     <div class="card">
-        <img src="{p['img']}" alt="Thumbnail" onerror="this.src='https://via.placeholder.com/800x400?text=Digital+Kamai+Hub'">
+        <img src="{p['img']}" alt="Thumbnail">
         <div class="card-content">
             <h3><a href="{p['file']}" style="color:#000; text-decoration:none;">{p['title']}</a></h3>
             <p style="color:#888; font-size:14px; margin-bottom:15px;">🗓 {p['date']}</p>
@@ -267,11 +262,11 @@ with open("index.html", "w", encoding="utf-8") as f:
     f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Digital Kamai Hub</title>{premium_css}</head><body>{header_html}<div style='max-width:1100px; margin:40px auto; padding:0 20px;'><h2 style='font-size:32px; border-bottom:3px solid #da251c; padding-bottom:10px; display:inline-block;'>🔥 ताज़ा ख़बरें</h2><div class='grid'>{home_cards}</div></div>{footer_html}</body></html>")
 
 pages = {
-    "about": ("About Us", "Digital Kamai Hub भारत का नंबर 1 AI और टेक्नोलॉजी ब्लॉग है। हम आपको भविष्य की तकनीक से पैसे कमाने के तरीके सिखाते हैं।"),
-    "privacy": ("Privacy Policy", "आपकी प्राइवेसी हमारे लिए महत्वपूर्ण है। हम आपकी कोई भी व्यक्तिगत जानकारी बिना अनुमति के किसी तीसरे पक्ष (Third Party) को नहीं बेचते।"),
-    "disclaimer": ("Disclaimer", "इस वेबसाइट पर दी गई सभी जानकारी केवल शिक्षा और जागरूकता के लिए है। कृपया कोई भी वित्तीय निर्णय लेने से पहले सलाहकार से बात करें।")
+    "about": ("About Us", "Digital Kamai Hub भारत का नंबर 1 AI और टेक्नोलॉजी ब्लॉग है।"),
+    "privacy": ("Privacy Policy", "आपकी प्राइवेसी हमारे लिए महत्वपूर्ण है।"),
+    "disclaimer": ("Disclaimer", "इस वेबसाइट पर दी गई सभी जानकारी केवल शिक्षा के लिए है।")
 }
 for p_file, (p_title, p_content) in pages.items():
     with open(f"{p_file}.html", "w", encoding="utf-8") as f:
-        f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>{p_title} | Digital Kamai Hub</title>{premium_css}</head><body>{header_html}<div class='container'><h1>{p_title}</h1><p style='font-size:18px; color:#555;'>{p_content}</p></div>{footer_html}</body></html>")
-                                        
+        f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>{p_title}</title>{premium_css}</head><body>{header_html}<div class='container'><h1>{p_title}</h1><p>{p_content}</p></div>{footer_html}</body></html>")
+        
