@@ -6,8 +6,8 @@ import sys
 import time
 
 # ==========================================
-# THE IMMORTAL SYSTEM - THE PERFECTIONIST (v33.0)
-# Ultra-Soft TTS + Auto-Cleanup + Multi-Key Solar
+# THE IMMORTAL SYSTEM - NEWS PORTAL ELITE (v34.0)
+# Aaj Tak Level Design + Ultra-Soft TTS + Professional Footer
 # ==========================================
 
 raw_keys = os.environ.get("GEMINI_API_KEY", "")
@@ -18,145 +18,181 @@ current_year = time.strftime("%Y")
 today_date = time.strftime("%d %B %Y")
 post_id = int(time.time())
 
-# 1. डेटाबेस लोड (पुरानी बिना फोटो वाली पोस्ट्स की छुट्टी)
 posts_db = []
-past_titles = []
 if os.path.exists("posts.json"):
     with open("posts.json", "r", encoding="utf-8") as f:
         try:
             raw_db = json.load(f)
-            # सिर्फ वही पोस्ट दिखाओ जिनमें फोटो (img) है!
             posts_db = [p for p in raw_db if "img" in p]
-            past_titles = [post["title"] for post in posts_db][:20] 
         except: pass
 
-# मॉडल हंटर
 available_model = "models/gemini-1.5-flash"
-list_url = f"https://generativelanguage.googleapis.com/v1beta/models?key={API_KEYS[0]}"
-try:
-    req = urllib.request.Request(list_url)
-    with urllib.request.urlopen(req, timeout=30) as response:
-        res = json.loads(response.read().decode('utf-8'))
-        for m in res.get('models', []):
-            if 'generateContent' in m.get('supportedGenerationMethods', []) and 'flash' in m.get('name', '').lower():
-                available_model = m['name']; break
-except: pass
+api_url = f"https://generativelanguage.googleapis.com/v1beta/{available_model}:generateContent?key={API_KEYS[0]}"
 
 def ask_ai(prompt, retries=10):
     for i in range(retries):
         current_key = API_KEYS[i % len(API_KEYS)]
-        api_url = f"https://generativelanguage.googleapis.com/v1beta/{available_model}:generateContent?key={current_key}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/{available_model}:generateContent?key={current_key}"
         try:
             data = json.dumps({"contents": [{"parts": [{"text": prompt}]}]}).encode('utf-8')
-            req = urllib.request.Request(api_url, data=data, headers={'Content-Type': 'application/json'})
+            req = urllib.request.Request(url, data=data, headers={'Content-Type': 'application/json'})
             with urllib.request.urlopen(req, timeout=60) as response:
                 res = json.loads(response.read().decode('utf-8'))
                 return res['candidates'][0]['content']['parts'][0]['text'].strip()
         except: time.sleep(5)
     return ""
 
-# --- AGENT 1: TOPIC ---
-topic_prompt = f"तुम एक ट्रेंड एनालिस्ट हो। {current_year} में ऑनलाइन कमाई या AI पर एक नया वायरल ब्लॉग टाइटल (हिंदी में) दो। पुराने टाइटल्स: {past_titles} से अलग हो। सिर्फ 'टाइटल' लिखना।"
-current_topic = ask_ai(topic_prompt).replace('"', '').replace("'", "").replace("*", "")
-if not current_topic: sys.exit(1)
+# --- AGENTS WORK ---
+topic_prompt = f"मेक मनी ऑनलाइन पर आज का सबसे ट्रेंडिंग वायरल हिंदी टाइटल दो। पुराने: {[p['title'] for p in posts_db[:5]]} से अलग हो।"
+current_topic = ask_ai(topic_prompt).replace('"', '').replace("'", "")
 
-# --- AGENT 2: SEO ---
-seo_prompt = f"विषय: '{current_topic}'। सिर्फ इस फॉर्मेट में जवाब दो: MAIN_IMG_KEYWORD | SEO_DESC | SEO_KEYWORDS. कोई और शब्द मत लिखना।"
+seo_prompt = f"विषय: '{current_topic}'। फॉर्मेट: KEYWORD | DESC | KEYWORDS"
 seo_raw = ask_ai(seo_prompt)
-main_img_words = "futuristic AI"
-meta_desc = "Digital Kamai Hub Post"
-meta_keywords = "AI, Make Money"
-try:
-    if "|" in seo_raw:
-        parts = seo_raw.split("|")
-        main_img_words, meta_desc, meta_keywords = parts[0].strip(), parts[1].strip(), parts[2].strip()
-except: pass
+img_k = "business technology"
+m_desc = "Trending News"
+if "|" in seo_raw:
+    parts = seo_raw.split("|")
+    img_k, m_desc = parts[0].strip(), parts[1].strip()
 
-# --- AGENT 3: HTML CODER ---
-html_prompt = f"""विषय: '{current_topic}'। एक विस्तृत हिंदी ब्लॉग पोस्ट लिखो।
-नियम:
-1. लेख के बीच में 2 जगह फोटो: <img src="https://image.pollinations.ai/prompt/ENG_KEYWORD?width=800&height=400&nologo=true" class="article-img">
-2. 1 जगह यूट्यूब बटन: <a href="https://www.youtube.com/results?search_query={urllib.parse.quote(current_topic)}" target="_blank" class="yt-btn">📺 यूट्यूब पर इस विषय का वीडियो देखें</a>
-3. सिर्फ HTML कोड (h2, p, ul) देना।"""
-
+html_prompt = f"विषय: '{current_topic}' पर 1500 शब्दों का प्रीमियम न्यूज़ लेख लिखो। इसमें 2 फोटो <img src='https://image.pollinations.ai/prompt/ENG_KEYWORD?width=800&height=400&nologo=true' class='post-img'> और 1 यूट्यूब बटन <a href='https://www.youtube.com/results?search_query={urllib.parse.quote(current_topic)}' target='_blank' class='news-yt-btn'>📺 वीडियो देखें</a> जरूर डालें।"
 blog_content = ask_ai(html_prompt, retries=15).replace("```html", "").replace("```", "").strip()
-if not blog_content or len(blog_content) < 200: sys.exit(1)
 
-# --- PUBLISHING ---
-main_img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote(main_img_words)}?width=1200&height=600&nologo=true"
+# --- DATABASE UPDATE ---
+main_img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote(img_k)}?width=1200&height=600&nologo=true"
 post_filename = f"post_{post_id}.html"
 posts_db.insert(0, {"title": current_topic, "file": post_filename, "date": today_date, "img": main_img_url})
 with open("posts.json", "w", encoding="utf-8") as f: json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
-# PREMIUM CSS
-premium_css = """
-    <style>
-        :root { --primary: #2563eb; --bg: #f8fafc; --text: #0f172a; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); line-height: 1.8; margin: 0; }
-        header { background: white; padding: 15px 20px; position: sticky; top: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 100; text-align: center; }
-        .logo { font-size: 24px; font-weight: 800; color: var(--primary); text-decoration: none; }
-        .main-container { max-width: 800px; margin: 40px auto; padding: 0 20px; background: white; border-radius: 15px; padding: 30px; }
-        .hero-img, .article-img { width: 100%; border-radius: 12px; margin: 20px 0; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .yt-btn { display: block; background: #ff0000; color: white; text-align: center; padding: 15px; border-radius: 8px; text-decoration: none; font-weight: bold; margin: 30px 0; box-shadow: 0 4px 10px rgba(255,0,0,0.2); }
-        .tts-btn { position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4); z-index: 1000; transition: 0.3s; }
-        footer { text-align: center; padding: 40px; background: #0f172a; color: white; margin-top: 50px; }
-    </style>
+# --- PREMIUM NEWS CSS (Aaj Tak Level) ---
+news_css = """
+<style>
+    :root { --main-red: #da251c; --dark-bg: #1a1a1a; --text-gray: #555; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { background: #f4f4f4; color: #333; }
+    
+    /* Aaj Tak Style Header */
+    header { background: white; border-top: 4px solid var(--main-red); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+    .nav-top { max-width: 1200px; margin: 0 auto; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 28px; font-weight: 900; color: var(--main-red); text-decoration: none; text-transform: uppercase; }
+    .trending-bar { background: var(--main-red); color: white; padding: 5px 0; font-size: 13px; text-align: center; }
+
+    /* Article UI */
+    .container { max-width: 900px; margin: 30px auto; background: white; padding: 40px; border-radius: 4px; box-shadow: 0 0 20px rgba(0,0,0,0.05); }
+    h1 { font-size: 38px; line-height: 1.3; color: #000; margin-bottom: 20px; font-weight: 800; }
+    .meta { border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 10px 0; margin-bottom: 25px; color: var(--text-gray); font-size: 14px; }
+    .hero-img { width: 100%; border-radius: 8px; margin-bottom: 30px; }
+    .post-img { width: 100%; border-radius: 5px; margin: 25px 0; border: 1px solid #ddd; }
+    
+    /* TTS Floating Button */
+    .tts-player { position: fixed; bottom: 30px; right: 30px; background: var(--main-red); color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 10px 20px rgba(218, 37, 28, 0.4); z-index: 1000; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+    .tts-player:hover { transform: scale(1.05); background: #000; }
+
+    /* News Button */
+    .news-yt-btn { display: inline-block; background: #FF0000; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 20px 0; }
+
+    /* Footer - Professional */
+    footer { background: var(--dark-bg); color: white; padding: 60px 20px 30px; margin-top: 50px; }
+    .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; }
+    .footer-section h4 { border-left: 4px solid var(--main-red); padding-left: 10px; margin-bottom: 20px; }
+    .footer-links a { display: block; color: #ccc; text-decoration: none; margin-bottom: 10px; font-size: 14px; }
+    .footer-bottom { border-top: 1px solid #333; margin-top: 40px; padding-top: 20px; text-align: center; font-size: 12px; color: #777; }
+
+    @media (max-width: 768px) { .container { padding: 20px; } h1 { font-size: 28px; } }
+</style>
 """
 
-article_html = f"""<!DOCTYPE html>
+# --- PAGE GENERATOR ---
+article_html = f"""
+<!DOCTYPE html>
 <html lang="hi">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{current_topic}</title>
-    <meta name="description" content="{meta_desc}">
-    {premium_css}
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+    {news_css}
 </head>
 <body>
-    <header><a href="index.html" class="logo">🚀 Digital Kamai Hub</a></header>
-    <div class="main-container">
+    <div class="trending-bar">🔥 Trending: AI Automation, 24/7 Digital Income, Passive Wealth 2026</div>
+    <header>
+        <div class="nav-top">
+            <a href="index.html" class="logo">Digital Kamai Hub</a>
+            <nav><a href="index.html" style="text-decoration:none; color:black; font-weight:bold;">Home</a></nav>
+        </div>
+    </header>
+
+    <div class="container">
         <h1>{current_topic}</h1>
-        <p style="color:#64748b;">🗓️ {today_date}</p>
-        <img src="{main_img_url}" class="hero-img">
-        <div id="article-content">{blog_content}</div>
+        <div class="meta">प्रकाशित: {today_date} | लेखक: AI Expert | 5 मिनट रीडिंग</div>
+        <img src="{main_img_url}" class="hero-img" alt="Headline Image">
+        <div id="read-area">{blog_content}</div>
     </div>
-    <button class="tts-btn" onclick="speakArticle()" id="speakBtn">🔊 लेख सुनें (Soft Voice)</button>
-    <footer><p>&copy; {current_year} Digital Kamai Hub</p></footer>
-    
+
+    <button class="tts-player" onclick="toggleTTS()" id="ttsBtn">🔊 लेख सुनें</button>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h4>About Hub</h4>
+                <p style="font-size:14px; color:#ccc;">हम भारत के नंबर 1 ऑटोमेशन ब्लॉग हैं जो आपको भविष्य की तकनीक से अमीर बनाना सिखाते हैं।</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <div class="footer-links">
+                    <a href="about.html">About Us</a><a href="privacy.html">Privacy Policy</a><a href="disclaimer.html">Disclaimer</a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <div class="footer-links"><a href="#">Support: help@digitalkamai.com</a></div>
+            </div>
+        </div>
+        <div class="footer-bottom">&copy; {current_year} Digital Kamai Hub | All Rights Reserved.</div>
+    </footer>
+
     <script>
-        let isPlaying = false;
-        let speech = new SpeechSynthesisUtterance();
-
-        function speakArticle() {{
-            if (isPlaying) {{
-                window.speechSynthesis.cancel();
-                document.getElementById("speakBtn").innerHTML = "🔊 लेख सुनें";
-                isPlaying = false;
+        let synth = window.speechSynthesis;
+        let isReading = false;
+        function toggleTTS() {{
+            if (isReading) {{
+                synth.cancel();
+                document.getElementById('ttsBtn').innerHTML = '🔊 लेख सुनें';
+                isReading = False;
             }} else {{
-                let text = document.getElementById("article-content").innerText;
-                speech.text = text;
-                speech.lang = 'hi-IN';
-                speech.rate = 0.85; // सॉफ्ट और धीरे पढ़ने के लिए
-                speech.pitch = 1.1; // मीठी आवाज़ के लिए
-                
-                // बेहतरीन आवाज़ ढूँढना
-                let voices = window.speechSynthesis.getVoices();
-                let hindiVoice = voices.find(v => v.lang.includes('hi'));
-                if(hindiVoice) speech.voice = hindiVoice;
-
-                window.speechSynthesis.speak(speech);
-                document.getElementById("speakBtn").innerHTML = "⏹️ आवाज़ बंद करें";
-                isPlaying = true;
-                speech.onend = () => {{ document.getElementById("speakBtn").innerHTML = "🔊 लेख सुनें"; isPlaying = false; }};
+                let text = document.getElementById('read-area').innerText;
+                let utter = new SpeechSynthesisUtterance(text);
+                utter.lang = 'hi-IN';
+                utter.rate = 0.9;
+                utter.pitch = 1.1;
+                synth.speak(utter);
+                document.getElementById('ttsBtn').innerHTML = '⏹️ आवाज़ बंद करें';
+                isReading = true;
+                utter.onend = () => {{ document.getElementById('ttsBtn').innerHTML = '🔊 लेख सुनें'; isReading = false; }};
             }}
         }}
     </script>
 </body>
-</html>"""
+</html>
+"""
 
 with open(post_filename, "w", encoding="utf-8") as f: f.write(article_html)
 
-# HOME PAGE
-post_links = "".join([f'<div style="background:white; border-radius:12px; overflow:hidden; box-shadow:0 4px 6px rgba(0,0,0,0.05); border:1px solid #e2e8f0; margin-bottom:20px;"><img src="{p["img"]}" style="width:100%; height:200px; object-fit:cover;"><div style="padding:20px;"><h3><a href="{p["file"]}" style="color:var(--text); text-decoration:none;">{p["title"]}</a></h3><p style="color:#64748b;">{p["date"]}</p></div></div>' for p in posts_db])
+# --- HOME PAGE GENERATOR ---
+cards = "".join([f"""
+    <div style="background:white; margin-bottom:25px; border-radius:8px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.1); display:flex; flex-wrap:wrap;">
+        <img src="{p['img']}" style="width:300px; height:200px; object-fit:cover;">
+        <div style="padding:20px; flex:1; min-width:300px;">
+            <h3 style="margin-bottom:15px; font-size:22px;"><a href="{p['file']}" style="color:black; text-decoration:none;">{p['title']}</a></h3>
+            <p style="color:#666; font-size:14px;">🗓 {p['date']}</p>
+            <a href="{p['file']}" style="display:inline-block; margin-top:15px; color:var(--main-red); font-weight:bold; text-decoration:none;">पूरा लेख पढ़ें →</a>
+        </div>
+    </div>
+""" for p in posts_db])
 
-home_html = f"""<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Digital Kamai Hub</title>{premium_css}</head><body><header><a href="index.html" class="logo">🚀 Digital Kamai Hub</a></header><div class="main-container"><h2>🔥 ताज़ा लेख</h2>{post_links}</div><footer><p>&copy; {current_year} Digital Kamai Hub</p></footer></body></html>"""
-with open("index.html", "w", encoding="utf-8") as f: f.write(home_html)
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'>{news_css}<title>Digital Kamai Hub</title></head><body style='background:#f4f4f4;'><header><div class='nav-top'><a href='index.html' class='logo'>Digital Kamai Hub</a></div></header><div class='main-container' style='max-width:1100px; margin:40px auto; padding:0 20px;'>{cards}</div></body></html>")
+
+# --- STATIC PAGES GENERATOR (About, Privacy, etc.) ---
+for page in ['about', 'privacy', 'disclaimer']:
+    with open(f"{page}.html", "w", encoding="utf-8") as f:
+        f.write(f"<html><head>{news_css}</head><body><header><div class='nav-top'><a href='index.html' class='logo'>Digital Kamai Hub</a></div></header><div class='container'><h1>{page.capitalize()} Us</h1><p>यह पन्ना अभी अपडेट हो रहा है...</p></div></body></html>")
+
