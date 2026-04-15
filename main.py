@@ -6,20 +6,19 @@ import sys
 import time
 
 # ==========================================
-# THE IMMORTAL SYSTEM - THE TERMINATOR EDITION (v23.0)
-# Strict Validation & 10-Strike Healing Loop
+# THE IMMORTAL SYSTEM - MULTIMEDIA AGENT (v25.0)
+# Text-to-Speech (TTS) & Auto Video Embedding
 # ==========================================
 
 raw_key = os.environ.get("GEMINI_API_KEY", "")
 API_KEY = raw_key.strip()
-
-if not API_KEY:
-    sys.exit(1)
+if not API_KEY: sys.exit(1)
 
 current_year = time.strftime("%Y")
 today_date = time.strftime("%d %B %Y")
 post_id = int(time.time())
 
+# 1. Memory Load
 posts_db = []
 past_titles = []
 if os.path.exists("posts.json"):
@@ -27,8 +26,7 @@ if os.path.exists("posts.json"):
         try:
             posts_db = json.load(f)
             past_titles = [post["title"] for post in posts_db][:20] 
-        except:
-            pass
+        except: pass
 
 list_url = f"https://generativelanguage.googleapis.com/v1beta/models?key={API_KEY}"
 available_model = None
@@ -37,18 +35,18 @@ try:
     with urllib.request.urlopen(req, timeout=30) as response:
         res = json.loads(response.read().decode('utf-8'))
         for m in res.get('models', []):
-            if 'generateContent' in m.get('supportedGenerationMethods', []) and 'gemini' in m.get('name', '').lower():
+            if 'generateContent' in m.get('supportedGenerationMethods', []) and 'gemini-1.5' in m.get('name', '').lower():
                 available_model = m['name']
-                if 'flash' in available_model: break
-except: pass
-if not available_model: sys.exit(1)
+                break
+        if not available_model: available_model = "models/gemini-1.5-flash"
+except: available_model = "models/gemini-1.5-flash"
 
 api_url = f"https://generativelanguage.googleapis.com/v1beta/{available_model}:generateContent?key={API_KEY}"
 
 # ---------------------------------------------------------
-# STEP 1: THE BRAIN (नया टॉपिक सोचना)
+# STEP 1: TOPIC RESEARCH
 # ---------------------------------------------------------
-topic_prompt = f"तुम एक SEO एक्सपर्ट हो। 'मेक मनी ऑनलाइन', 'AI टूल्स' या 'फ्रीलांसिंग' पर साल {current_year} का एक नया और वायरल ब्लॉग टाइटल (हिंदी में) दो। पुराने टाइटल्स: {past_titles} से अलग होना चाहिए। जवाब में सिर्फ 'टाइटल' लिखना।"
+topic_prompt = f"तुम एक ट्रेंड-एनालिस्ट AI हो। {current_year} में ऑनलाइन कमाई और AI के क्षेत्र में क्या सबसे ज्यादा सर्च हो रहा है? एक वायरल ब्लॉग टाइटल दो जो इनसे अलग हो: {past_titles}। सिर्फ टाइटल लिखना।"
 
 try:
     req = urllib.request.Request(api_url, data=json.dumps({"contents": [{"parts": [{"text": topic_prompt}]}]}).encode('utf-8'), headers={'Content-Type': 'application/json'})
@@ -57,184 +55,130 @@ try:
         current_topic = res['candidates'][0]['content']['parts'][0]['text'].strip().replace('"', '').replace("'", "")
 except: sys.exit(1)
 
-if not current_topic: sys.exit(1)
-
 # ---------------------------------------------------------
-# STEP 2: THE TERMINATOR LOOP (MAX 10 ATTEMPTS)
+# STEP 2: MULTIMEDIA AUTONOMOUS LOOP
 # ---------------------------------------------------------
 success = False
-main_img_words = ""
-meta_desc = ""
-meta_keywords = ""
-blog_content = ""
+final_data = {}
 
-max_attempts = 10
+for attempt in range(10):
+    print(f"🤖 [मल्टीमीडिया एजेंट] कोशिश {attempt+1}: वीडियो और टेक्स्ट सेट कर रहा हूँ...")
+    
+    master_prompt = f"""तुम एक प्रोफेशनल AI एजेंट हो। विषय: '{current_topic}'।
+तुम्हें इस आर्टिकल का पूरा लॉजिक, SEO, इमेजेज और वीडियो खुद तय करना है।
 
-for attempt in range(max_attempts):
-    print(f"\n🔄 [ATTEMPT {attempt + 1}/{max_attempts}] रोबोट आर्टिकल लिख रहा है...")
-    try:
-        content_prompt = f"""तुम एक प्रो ब्लॉगर हो। विषय: '{current_topic}'।
 नियम:
-1. लेख में 2-3 जगहों पर यह HTML कोड लगा देना: <img src="https://image.pollinations.ai/prompt/YOUR_KEYWORD?width=800&height=400&nologo=true" style="width:100%; border-radius:8px; margin:20px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"> (YOUR_KEYWORD की जगह उस लाइन से जुड़ा कोई 1 इंग्लिश शब्द लिखना)।
-2. मुझे जवाब में सिर्फ ये 4 बॉक्स चाहिए (बिल्कुल इसी स्पेलिंग के साथ):
+1. फोटो के लिए: <img src="https://image.pollinations.ai/prompt/DYNAMIC_KEYWORD?width=800&height=400&nologo=true" class="article-img"> (2-3 बार लगाओ)
+2. वीडियो के लिए: लेख में जहाँ वीडियो की ज़रूरत हो, वहाँ यह कोड लगाओ: <iframe width="100%" height="315" src="https://www.youtube.com/embed?listType=search&list=ENGLISH_KEYWORD" frameborder="0" allowfullscreen class="article-video"></iframe> (ENGLISH_KEYWORD में टॉपिक से जुड़ा इंग्लिश शब्द डालो)।
+3. लेख {current_year} के हिसाब से एकदम आधुनिक होना चाहिए।
 
-[MAIN_IMG]
-(मुख्य फोटो के लिए 3 इंग्लिश शब्द)
-[/MAIN_IMG]
+मुझे सिर्फ इस JSON फॉर्मेट में जवाब दो:
+{{
+  "meta_desc": "SEO के लिए 150 शब्दों का हिंदी डिस्क्रिप्शन",
+  "keywords": "5-6 कॉमा सेपरेटेड कीवर्ड्स",
+  "main_img_prompt": "मुख्य फोटो के लिए 3-4 इंग्लिश शब्द",
+  "html_body": "पूरा HTML कंटेंट (h2, p, ul, tags, तस्वीरें और वीडियो)"
+}}"""
 
-[META_DESC]
-(2 लाइन का SEO डिस्क्रिप्शन)
-[/META_DESC]
-
-[KEYWORDS]
-(5 SEO कीवर्ड्स)
-[/KEYWORDS]
-
-[HTML_CONTENT]
-(यहाँ पूरा HTML लेख h2, p, ul, strong के साथ)
-[/HTML_CONTENT]"""
-        
-        req = urllib.request.Request(api_url, data=json.dumps({"contents": [{"parts": [{"text": content_prompt}]}]}).encode('utf-8'), headers={'Content-Type': 'application/json'})
-        with urllib.request.urlopen(req, timeout=80) as response:
+    try:
+        req = urllib.request.Request(api_url, data=json.dumps({"contents": [{"parts": [{"text": master_prompt}]}], "generationConfig": {"response_mime_type": "application/json"}}).encode('utf-8'), headers={'Content-Type': 'application/json'})
+        with urllib.request.urlopen(req, timeout=90) as response:
             res = json.loads(response.read().decode('utf-8'))
-            full_text = res['candidates'][0]['content']['parts'][0]['text']
-
-        # बुलेटप्रूफ पार्सर
-        def get_section(start_tag, end_tag):
-            if start_tag in full_text and end_tag in full_text:
-                return full_text.split(start_tag)[1].split(end_tag)[0].strip()
-            return ""
-
-        main_img_words = get_section("[MAIN_IMG]", "[/MAIN_IMG]")
-        meta_desc = get_section("[META_DESC]", "[/META_DESC]")
-        meta_keywords = get_section("[KEYWORDS]", "[/KEYWORDS]")
-        blog_content = get_section("[HTML_CONTENT]", "[/HTML_CONTENT]")
-
-        # 🛑 STRICT VALIDATION (जब तक 100% सही नहीं, तब तक रिजेक्ट!)
-        if not main_img_words or not meta_desc or not meta_keywords or not blog_content:
-            print("⚠️ AI ने फॉर्मेट बिगाड़ दिया। रोबोट इसे रिजेक्ट कर रहा है!")
-            time.sleep(10) # 10 सेकंड आराम ताकि API बैन न हो
-            continue # दोबारा कोशिश करो
-
-        if len(blog_content) < 300:
-            print("⚠️ आर्टिकल बहुत छोटा है। रिजेक्ट!")
-            time.sleep(10)
-            continue
-
-        blog_content = blog_content.replace("```html", "").replace("```", "").strip()
-        print("✅ 100% परफेक्ट फॉर्मेट मिल गया! लूप लॉक किया जा रहा है।")
-        success = True
-        break # लूप तोड़कर बाहर आओ
-
+            raw_json = res['candidates'][0]['content']['parts'][0]['text']
+            final_data = json.loads(raw_json)
+            
+            if all(k in final_data for k in ["meta_desc", "keywords", "main_img_prompt", "html_body"]) and len(final_data["html_body"]) > 500:
+                success = True
+                break
     except Exception as e:
-        print(f"⚠️ नेटवर्क या API एरर: {e}। रोबोट फिर से कोशिश कर रहा है...")
+        print(f"⚠️ सुधार हो रहा है: {e}")
         time.sleep(10)
 
-if not success:
-    print("❌ 10 बार कोशिश करने के बाद भी परफेक्ट फॉर्मेट नहीं मिला। रोबोट कचरा अपलोड नहीं करेगा। सिस्टम बंद हो रहा है।")
-    sys.exit(1)
+if not success: sys.exit(1)
 
 # ---------------------------------------------------------
-# STEP 3: DATABASE & HTML PUBLISHING
+# STEP 3: PUBLISHING WITH TEXT-TO-SPEECH (TTS) ENGINE
 # ---------------------------------------------------------
-main_img_safe = urllib.parse.quote(main_img_words)
-main_img_url = f"https://image.pollinations.ai/prompt/{main_img_safe}?width=800&height=400&nologo=true"
-
+main_img_url = f"https://image.pollinations.ai/prompt/{urllib.parse.quote(final_data['main_img_prompt'])}?width=800&height=400&nologo=true"
 post_filename = f"post_{post_id}.html"
-new_post = {"title": current_topic, "file": post_filename, "date": today_date}
-posts_db.insert(0, new_post)
 
+posts_db.insert(0, {"title": current_topic, "file": post_filename, "date": today_date})
 with open("posts.json", "w", encoding="utf-8") as f:
     json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
-header_menu = """
-    <nav style="background: white; padding: 15px; text-align: center; position: sticky; top: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 100;">
-        <a href="index.html" style="color: #203a43; text-decoration: none; margin: 0 15px; font-weight: bold; font-size: 18px;">🏠 होम</a>
-        <a href="index.html" style="color: #203a43; text-decoration: none; margin: 0 15px; font-weight: bold; font-size: 18px;">🔥 लेटेस्ट न्यूज़</a>
-    </nav>
-"""
-
-footer_html = """
-    <footer style="text-align: center; padding: 40px 20px; background: #111; color: #aaa; margin-top: 50px; font-size: 14px;">
-        <div style="margin-bottom: 20px;">
-            <a href="about.html" style="color: #aaa; text-decoration: none; margin: 0 15px;">About Us</a> |
-            <a href="privacy.html" style="color: #aaa; text-decoration: none; margin: 0 15px;">Privacy Policy</a> |
-            <a href="disclaimer.html" style="color: #aaa; text-decoration: none; margin: 0 15px;">Disclaimer</a>
-        </div>
-        <p>&copy; 2026 Digital Kamai Hub. All Rights Reserved.</p>
-    </footer>
-"""
-
-article_html = f"""<!DOCTYPE html>
+full_html = f"""<!DOCTYPE html>
 <html lang="hi">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{current_topic} | Digital Kamai Hub</title>
-    <meta name="description" content="{meta_desc}">
-    <meta name="keywords" content="{meta_keywords}">
+    <meta name="description" content="{final_data['meta_desc']}">
+    <meta name="keywords" content="{final_data['keywords']}">
     <style>
-        body {{ font-family: 'Segoe UI', Tahoma, sans-serif; background: #f8f9fa; margin: 0; color: #333; }}
-        header {{ background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); color: white; padding: 40px 20px; text-align: center; }}
-        .container {{ max-width: 800px; margin: 40px auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 15px rgba(0,0,0,0.05); line-height: 1.8; font-size: 18px; }}
-        h1 {{ color: #f1c40f; margin: 0; }}
-        h2 {{ color: #203a43; border-left: 4px solid #f1c40f; padding-left: 15px; margin-top: 30px; }}
-        .main-img {{ width: 100%; border-radius: 8px; margin: 20px 0; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); background-color: #0f2027; min-height: 250px; }}
+        body {{ font-family: 'Segoe UI', Tahoma, sans-serif; background: #f4f7f9; margin: 0; color: #333; }}
+        header {{ background: #1a2a3a; color: white; padding: 40px 20px; text-align: center; }}
+        nav {{ background: white; padding: 15px; text-align: center; position: sticky; top: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 100; }}
+        nav a {{ color: #1a2a3a; text-decoration: none; margin: 0 15px; font-weight: bold; }}
+        .container {{ max-width: 850px; margin: 30px auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }}
+        .article-img, .article-video {{ width: 100%; border-radius: 10px; margin: 25px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }}
+        h1 {{ color: #1a2a3a; font-size: 34px; line-height: 1.4; }}
+        h2 {{ color: #2c3e50; border-left: 5px solid #3498db; padding-left: 15px; margin-top: 35px; }}
+        p {{ line-height: 1.8; font-size: 18px; color: #444; }}
+        .tts-btn {{ background: linear-gradient(135deg, #3498db, #2980b9); color: white; border: none; padding: 12px 25px; border-radius: 50px; cursor: pointer; font-size: 16px; font-weight: bold; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3); transition: 0.3s; margin-bottom: 20px; }}
+        .tts-btn:hover {{ transform: scale(1.05); }}
+        footer {{ background: #111; color: #888; text-align: center; padding: 40px; margin-top: 50px; }}
     </style>
 </head>
 <body>
-    <header>
-        <h1 style="font-size: 36px; letter-spacing: 1px;">🚀 Digital Kamai Hub</h1>
-        <p style="font-size: 18px; color: #ddd;">भारत का No.1 AI ऑटोमेशन ब्लॉग</p>
-    </header>
-    {header_menu}
+    <header><h1>🚀 Digital Kamai Hub</h1><p>The Future of AI Automation</p></header>
+    <nav><a href="index.html">🏠 होम</a><a href="index.html">🔥 लेटेस्ट न्यूज़</a></nav>
     <div class="container">
-        <h1 style="color: #111; font-size: 32px; border-bottom: 1px solid #eee; padding-bottom: 15px;">{current_topic}</h1>
-        <p style="color: #777; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">📅 Published: {today_date}</p>
-        <img src="{main_img_url}" class="main-img" alt="Blog Main Image">
-        {blog_content}
+        <h1>{current_topic}</h1>
+        <p style="color:#999;">📅 {today_date}</p>
+        
+        <button class="tts-btn" onclick="speakArticle()" id="speakBtn">🔊 लेख सुनें (Listen)</button>
+        
+        <img src="{main_img_url}" class="article-img" alt="Main Header">
+        
+        <div id="article-content">
+            {final_data['html_body']}
+        </div>
     </div>
-    {footer_html}
+    <footer>
+        <p>&copy; 2026 Digital Kamai Hub</p>
+    </footer>
+
+    <script>
+        let isPlaying = false;
+        let speech = new SpeechSynthesisUtterance();
+        
+        function speakArticle() {{
+            if (isPlaying) {{
+                window.speechSynthesis.cancel();
+                document.getElementById("speakBtn").innerHTML = "🔊 लेख सुनें (Listen)";
+                isPlaying = false;
+            }} else {{
+                let textToRead = document.getElementById("article-content").innerText;
+                speech.text = textToRead;
+                speech.lang = 'hi-IN'; // हिंदी आवाज़
+                speech.rate = 0.9; // पढ़ने की स्पीड (थोड़ी नेचुरल)
+                window.speechSynthesis.speak(speech);
+                document.getElementById("speakBtn").innerHTML = "⏹️ सुनना बंद करें (Stop)";
+                isPlaying = true;
+
+                speech.onend = function() {{
+                    document.getElementById("speakBtn").innerHTML = "🔊 लेख सुनें (Listen)";
+                    isPlaying = false;
+                }};
+            }}
+        }}
+    </script>
 </body>
 </html>"""
 
 with open(post_filename, "w", encoding="utf-8") as f:
-    f.write(article_html)
+    f.write(full_html)
 
-post_links = ""
-for post in posts_db:
-    post_links += f"""
-    <div style="background: white; padding: 25px; margin-bottom: 25px; border-radius: 8px; border: 1px solid #eee; transition: 0.3s; display: flex; flex-direction: column;">
-        <h3 style="margin: 0 0 10px 0; font-size: 22px;"><a href="{post['file']}" style="color: #203a43; text-decoration: none;">{post['title']}</a></h3>
-        <p style="color: #777; margin: 0 0 15px 0; font-size: 14px;">📅 {post['date']}</p>
-        <a href="{post['file']}" style="background: #203a43; color: white; padding: 10px 20px; text-decoration: none; font-weight: bold; border-radius: 5px; width: fit-content;">📖 पूरा लेख पढ़ें</a>
-    </div>
-    """
-
-homepage_html = f"""<!DOCTYPE html>
-<html lang="hi">
-<head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Kamai Hub | Home</title>
-    <style>
-        body {{ font-family: 'Segoe UI', Tahoma, sans-serif; background: #f8f9fa; margin: 0; color: #333; }}
-        header {{ background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); color: white; padding: 50px 20px; text-align: center; }}
-        header h1 {{ margin: 0; font-size: 42px; color: #f1c40f; }}
-        .container {{ max-width: 850px; margin: 40px auto; padding: 20px; }}
-    </style>
-</head>
-<body>
-    <header>
-        <h1>🚀 Digital Kamai Hub</h1>
-        <p style="font-size: 20px; color: #ddd;">भारत का No.1 AI ऑटोमेशन ब्लॉग</p>
-    </header>
-    {header_menu}
-    <div class="container">
-        <h2 style="color: #203a43; border-left: 4px solid #f1c40f; padding-left: 15px; font-size: 28px; margin-bottom: 30px;">ताज़ा लेख (Latest Posts)</h2>
-        {post_links}
-    </div>
-    {footer_html}
-</body>
-</html>"""
-
+# Homepage Update
+post_links = "".join([f'<div style="background:white; padding:20px; margin-bottom:20px; border-radius:10px; border:1px solid #eee;"><h3><a href="{p["file"]}" style="color:#1a2a3a; text-decoration:none;">{p["title"]}</a></h3><p style="color:#666;">📅 {p["date"]}</p></div>' for p in posts_db])
 with open("index.html", "w", encoding="utf-8") as f:
-    f.write(homepage_html)
+    f.write(f'<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"><title>Digital Kamai Hub</title><style>body{{font-family:sans-serif; background:#f4f7f9; margin:0;}} header{{background:#1a2a3a; color:white; padding:50px; text-align:center;}} .container{{max-width:800px; margin:30px auto; padding:20px;}}</style></head><body><header><h1>🚀 Digital Kamai Hub</h1></header><div class="container"><h2>ताज़ा लेख</h2>{post_links}</div></body></html>')
