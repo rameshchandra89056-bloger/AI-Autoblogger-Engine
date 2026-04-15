@@ -6,16 +6,14 @@ import sys
 import time
 
 # ==========================================
-# THE IMMORTAL SYSTEM - MASTER PLAN EDITION (v20.0)
-# Day 10: AI Image Engine (Pollinations)
-# Day 11-14: Advanced SEO & Meta Tags
+# THE IMMORTAL SYSTEM - MASTER PLAN EDITION (v21.0)
+# Multi-Image Support & Unbreakable SEO Parser
 # ==========================================
 
 raw_key = os.environ.get("GEMINI_API_KEY", "")
 API_KEY = raw_key.strip()
 
 if not API_KEY:
-    print("❌ ERROR: API Key गायब है!")
     sys.exit(1)
 
 current_year = time.strftime("%Y")
@@ -32,107 +30,72 @@ if os.path.exists("posts.json"):
         except:
             pass
 
-print("🔍 DIAGNOSTIC MODE: मॉडल ढूंढ रहे हैं...")
 list_url = f"https://generativelanguage.googleapis.com/v1beta/models?key={API_KEY}"
 available_model = None
-
 try:
     req = urllib.request.Request(list_url)
     with urllib.request.urlopen(req, timeout=30) as response:
         res = json.loads(response.read().decode('utf-8'))
-        models = res.get('models', [])
-        for m in models:
+        for m in res.get('models', []):
             if 'generateContent' in m.get('supportedGenerationMethods', []) and 'gemini' in m.get('name', '').lower():
                 available_model = m['name']
-                if 'flash' in available_model:
-                    break
-        if not available_model:
-            sys.exit(1)
-except Exception as e:
-    sys.exit(1)
+                if 'flash' in available_model: break
+except: pass
+if not available_model: sys.exit(1)
 
 # ---------------------------------------------------------
 # STEP 1: THE BRAIN (नया टॉपिक सोचना)
 # ---------------------------------------------------------
 topic_prompt = f"तुम एक SEO एक्सपर्ट हो। 'मेक मनी ऑनलाइन', 'AI टूल्स' या 'फ्रीलांसिंग' पर साल {current_year} का एक नया और वायरल ब्लॉग टाइटल (हिंदी में) दो। यह इन पुराने टाइटल्स से अलग होना चाहिए: {past_titles}। जवाब में सिर्फ 'टाइटल' लिखना।"
-topic_data = {"contents": [{"parts": [{"text": topic_prompt}]}]}
 topic_url = f"https://generativelanguage.googleapis.com/v1beta/{available_model}:generateContent?key={API_KEY}"
 
-current_topic = ""
 try:
-    req = urllib.request.Request(topic_url, data=json.dumps(topic_data).encode('utf-8'), headers={'Content-Type': 'application/json'})
+    req = urllib.request.Request(topic_url, data=json.dumps({"contents": [{"parts": [{"text": topic_prompt}]}]}).encode('utf-8'), headers={'Content-Type': 'application/json'})
     with urllib.request.urlopen(req, timeout=50) as response:
         res = json.loads(response.read().decode('utf-8'))
         current_topic = res['candidates'][0]['content']['parts'][0]['text'].strip().replace('"', '').replace("'", "")
-except:
-    sys.exit(1)
-
-if not current_topic:
-    sys.exit(1)
+except: sys.exit(1)
+if not current_topic: sys.exit(1)
 
 # ---------------------------------------------------------
-# STEP 2: DAY 10 - AI IMAGE ENGINE (Pollinations Fix)
-# रोबोट पहले टॉपिक को इंग्लिश में ट्रांसलेट करेगा ताकि Pollinations क्रैश न हो!
+# STEP 2: MULTI-IMAGE & SEO CONTENT GENERATOR
 # ---------------------------------------------------------
-print("📸 AI Image Engine: Pollinations के लिए इंग्लिश प्रॉम्प्ट बना रहे हैं...")
-img_prompt_req = f"Translate this blog title into a highly descriptive, futuristic 5-word English prompt for an AI image generator: '{current_topic}'. Return ONLY the English words, no extra text."
-img_data = {"contents": [{"parts": [{"text": img_prompt_req}]}]}
+content_prompt = f"""तुम एक प्रो ब्लॉगर हो। विषय: '{current_topic}'।
+नियम:
+1. लेख में जहाँ भी किसी नई चीज़ या उदाहरण की बात हो, वहाँ यह HTML कोड लगा देना: <img src="https://image.pollinations.ai/prompt/YOUR_KEYWORD?width=800&height=400&nologo=true" style="width:100%; border-radius:8px; margin:20px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"> (YOUR_KEYWORD की जगह उस पैराग्राफ से जुड़ा एक इंग्लिश शब्द डालना जैसे futuristic_robot, office_laptop)। लेख के अंदर कम से कम 2-3 फोटो डालना।
+2. जवाब बिलकुल इसी फॉर्मेट में देना है (इन '~~~' निशानों को मत हटाना):
 
-english_img_prompt = "futuristic digital technology success" # Default fallback
+~~~MAIN_IMG~~~
+(मुख्य फोटो के लिए 5 इंग्लिश शब्द)
+~~~META_DESC~~~
+(2 लाइन का हिंदी SEO डिस्क्रिप्शन)
+~~~KEYWORDS~~~
+(5 SEO कीवर्ड्स कॉमा लगाकर)
+~~~HTML_CONTENT~~~
+(यहाँ पूरा HTML लेख h2, p, ul, strong और अंदरूनी <img> टैग्स के साथ)"""
+
 try:
-    req = urllib.request.Request(topic_url, data=json.dumps(img_data).encode('utf-8'), headers={'Content-Type': 'application/json'})
-    with urllib.request.urlopen(req, timeout=30) as response:
+    req = urllib.request.Request(topic_url, data=json.dumps({"contents": [{"parts": [{"text": content_prompt}]}]}).encode('utf-8'), headers={'Content-Type': 'application/json'})
+    with urllib.request.urlopen(req, timeout=80) as response:
         res = json.loads(response.read().decode('utf-8'))
-        english_img_prompt = res['candidates'][0]['content']['parts'][0]['text'].strip()
-except:
-    pass
+        full_text = res['candidates'][0]['content']['parts'][0]['text']
+except: sys.exit(1)
 
-safe_keyword = urllib.parse.quote(english_img_prompt)
-dynamic_img_url = f"https://image.pollinations.ai/prompt/{safe_keyword}?width=800&height=400&nologo=true"
-
-# ---------------------------------------------------------
-# STEP 3: DAY 11-14 - ADVANCED SEO & CONTENT
-# ---------------------------------------------------------
-print("✍️ SEO Engine: कंटेंट और Meta Tags लिख रहे हैं...")
-content_prompt = f"""तुम एक प्रो ब्लॉगर और SEO एक्सपर्ट हो। 
-विषय: '{current_topic}'
-नियम: 
-1. यह साल {current_year} है, हर जानकारी {current_year} की होनी चाहिए।
-2. मुझे जवाब इस फॉर्मेट में चाहिए (बिना किसी अतिरिक्त बातचीत के):
-META_DESC: (यहाँ 2 लाइन का धांसू SEO डिस्क्रिप्शन लिखें)
-KEYWORDS: (यहाँ 5-6 SEO कीवर्ड्स कॉमा लगाकर लिखें)
-CONTENT: (यहाँ से पूरा HTML ब्लॉग h2, p, ul, strong के साथ शुरू करें)"""
-
-content_data = {"contents": [{"parts": [{"text": content_prompt}]}]}
-
-full_response = ""
+# Parsing The Unbreakable Format
 try:
-    req = urllib.request.Request(topic_url, data=json.dumps(content_data).encode('utf-8'), headers={'Content-Type': 'application/json'})
-    with urllib.request.urlopen(req, timeout=60) as response:
-        res = json.loads(response.read().decode('utf-8'))
-        full_response = res['candidates'][0]['content']['parts'][0]['text']
+    parts = full_text.split("~~~")
+    main_img_words = parts[2].strip()
+    meta_desc = parts[4].strip()
+    meta_keywords = parts[6].strip()
+    blog_content = parts[8].replace("```html", "").replace("```", "").strip()
 except:
-    sys.exit(1)
+    sys.exit(1) # अगर AI ने गलती की, तो पोस्ट मत डालो
 
-# AI के जवाब को 3 हिस्सों में काटना (SEO और Content)
-meta_desc = "Digital Kamai Hub - भारत का No.1 AI ऑटोमेशन ब्लॉग"
-meta_keywords = "AI, Make Money, Technology, 2026"
-blog_content = full_response
-
-try:
-    parts = full_response.split("CONTENT:")
-    seo_part = parts[0]
-    blog_content = parts[1].replace("```html", "").replace("```", "").strip()
-    
-    if "META_DESC:" in seo_part:
-        meta_desc = seo_part.split("META_DESC:")[1].split("KEYWORDS:")[0].strip()
-    if "KEYWORDS:" in seo_part:
-        meta_keywords = seo_part.split("KEYWORDS:")[1].strip()
-except:
-    pass
+main_img_safe = urllib.parse.quote(main_img_words)
+main_img_url = f"https://image.pollinations.ai/prompt/{main_img_safe}?width=800&height=400&nologo=true"
 
 # ---------------------------------------------------------
-# STEP 4: DATABASE & PROFESSIONAL HTML DESIGN
+# STEP 3: DATABASE & HTML PUBLISHING
 # ---------------------------------------------------------
 post_filename = f"post_{post_id}.html"
 new_post = {"title": current_topic, "file": post_filename, "date": today_date}
@@ -159,7 +122,6 @@ footer_html = """
     </footer>
 """
 
-# HTML में SEO Tags जोड़े गए हैं (<meta name="description" ...>)
 article_html = f"""<!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -173,7 +135,7 @@ article_html = f"""<!DOCTYPE html>
         .container {{ max-width: 800px; margin: 40px auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 15px rgba(0,0,0,0.05); line-height: 1.8; font-size: 18px; }}
         h1 {{ color: #f1c40f; margin: 0; }}
         h2 {{ color: #203a43; border-left: 4px solid #f1c40f; padding-left: 15px; margin-top: 30px; }}
-        img {{ width: 100%; border-radius: 8px; margin: 20px 0; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); background-color: #0f2027; min-height: 250px; }}
+        .main-img {{ width: 100%; border-radius: 8px; margin: 20px 0; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); background-color: #0f2027; min-height: 250px; }}
     </style>
 </head>
 <body>
@@ -185,7 +147,7 @@ article_html = f"""<!DOCTYPE html>
     <div class="container">
         <h1 style="color: #111; font-size: 32px; border-bottom: 1px solid #eee; padding-bottom: 15px;">{current_topic}</h1>
         <p style="color: #777; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">📅 Published: {today_date}</p>
-        <img src="{dynamic_img_url}" alt="AI Generated Image from Pollinations">
+        <img src="{main_img_url}" class="main-img" alt="Blog Main Image">
         {blog_content}
     </div>
     {footer_html}
