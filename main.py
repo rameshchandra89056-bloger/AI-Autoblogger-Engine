@@ -7,8 +7,8 @@ import time
 import re
 
 # ==========================================
-# THE IMMORTAL SYSTEM - BULLETPROOF EDITION (v37.0)
-# TTS Android Crash Fix + Safe Image URL Fix
+# THE IMMORTAL SYSTEM - THE ANDROID FIX EDITION (v38.0)
+# TTS Sequential Queue Fix + Guaranteed Inline Images
 # ==========================================
 
 raw_keys = os.environ.get("GEMINI_API_KEY", "")
@@ -52,41 +52,45 @@ def ask_ai(prompt, retries=15):
     return ""
 
 # ---------------------------------------------------------
-# THE 3 AGENTS IN ACTION
+# THE AGENTS
 # ---------------------------------------------------------
 topic_prompt = f"तुम एक ट्रेंड एनालिस्ट हो। {current_year} में मेक मनी ऑनलाइन या AI पर एक धांसू और वायरल हिंदी ब्लॉग टाइटल दो। पुराने टाइटल्स: {[p['title'] for p in posts_db[:5]]} से अलग हो। सिर्फ 'टाइटल' लिखना।"
 current_topic = ask_ai(topic_prompt).replace('"', '').replace("'", "").replace("*", "")
 if not current_topic: sys.exit(1)
 
-seo_prompt = f"विषय: '{current_topic}'। सिर्फ इस फॉर्मेट में जवाब दो: MAIN_IMG_ENGLISH_KEYWORD | SEO_DESCRIPTION | SEO_KEYWORDS. (Keyword सिर्फ 2-3 इंग्लिश के शब्द हों)"
+seo_prompt = f"विषय: '{current_topic}'। सिर्फ इस फॉर्मेट में जवाब दो: MAIN_IMG_ENGLISH_KEYWORD | SEO_DESCRIPTION | SEO_KEYWORDS"
 seo_raw = ask_ai(seo_prompt)
 
-main_img_words = "futuristic technology success"
+main_img_words = "modern futuristic technology"
 meta_desc = f"Digital Kamai Hub - {current_year} Best Article"
 meta_keywords = "AI, Make Money Online, Freelancing"
 try:
     if "|" in seo_raw:
         parts = seo_raw.split("|")
-        # सिर्फ इंग्लिश लेटर्स और स्पेस रखेंगे (ताकि फोटो का लिंक न टूटे)
         clean_words = re.sub(r'[^a-zA-Z0-9\s]', '', parts[0]).strip()
         if clean_words: main_img_words = clean_words
         meta_desc, meta_keywords = parts[1].strip(), parts[2].strip()
 except: pass
 
+# ध्यान दें: अब AI को HTML इमेज टैग लिखने को नहीं कह रहे हैं, बस [PHOTO] लिखने को कह रहे हैं।
 html_prompt = f"""तुम एक प्रो ब्लॉगर हो। विषय: '{current_topic}'। 
 कम से कम 1000 शब्दों का एक बहुत शानदार हिंदी ब्लॉग पोस्ट लिखो।
 नियम:
-1. पोस्ट के बीच में 2 बार यह कोड लगाओ: <img src="https://image.pollinations.ai/prompt/SINGLE_ENGLISH_WORD?width=800&height=400&nologo=true" class="article-img"> (SINGLE_ENGLISH_WORD की जगह सिर्फ 1 इंग्लिश का शब्द लिखना, बिना स्पेस के)।
-2. सिर्फ HTML कोड (h2, p, strong, ul) देना। कोई फालतू बात मत लिखना।"""
+1. पोस्ट के बीच-बीच में 3 अलग-अलग जगह बिलकुल ऐसे ही लिख दो: [PHOTO]
+2. सिर्फ HTML कोड (h2, p, strong, ul) देना।"""
 
 blog_content = ask_ai(html_prompt, retries=20).replace("```html", "").replace("```", "").strip()
 if not blog_content or len(blog_content) < 300: sys.exit(1)
 
+# पायथन खुद [PHOTO] की जगह असली इमेज लगाएगा (Guaranteed Inline Images)
+safe_keyword = urllib.parse.quote(main_img_words)
+inline_img_html = f"<img src='https://image.pollinations.ai/prompt/{safe_keyword}_detail?width=800&height=400&nologo=true' class='article-img'>"
+blog_content = blog_content.replace("[PHOTO]", inline_img_html)
+
 # ---------------------------------------------------------
 # DATABASE & CSS
 # ---------------------------------------------------------
-main_img_safe = urllib.parse.quote(main_img_words)
-main_img_url = f"https://image.pollinations.ai/prompt/{main_img_safe}?width=1200&height=600&nologo=true"
+main_img_url = f"https://image.pollinations.ai/prompt/{safe_keyword}?width=1200&height=600&nologo=true"
 post_filename = f"post_{post_id}.html"
 
 posts_db.insert(0, {"title": current_topic, "file": post_filename, "date": today_date, "img": main_img_url})
@@ -106,7 +110,7 @@ premium_css = """
     h1 { font-size: 38px; line-height: 1.3; margin-bottom: 15px; color: #000; }
     .meta { font-size: 14px; color: #888; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 25px; }
     .hero-img { width: 100%; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); background-color: #eee; min-height: 300px; }
-    .article-img { width: 100%; border-radius: 8px; margin: 25px 0; border: 1px solid #eee; background-color: #eee; min-height: 200px; }
+    .article-img { width: 100%; border-radius: 8px; margin: 35px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #ddd; background-color: #eee; min-height: 250px; }
     #article-body { font-size: 20px; color: var(--text-gray); }
     #article-body h2 { color: #000; margin: 35px 0 15px 0; border-left: 4px solid var(--main-red); padding-left: 15px; }
     .yt-btn { display: block; background: #ff0000; color: white; text-align: center; padding: 18px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 18px; margin: 40px 0; transition: 0.3s; box-shadow: 0 5px 15px rgba(255,0,0,0.3); }
@@ -144,7 +148,7 @@ footer_html = f"""
 """
 
 # ---------------------------------------------------------
-# GENERATE POST HTML (WITH TTS ANDROID CRASH FIX)
+# GENERATE POST HTML (WITH RECURSIVE TTS QUEUE)
 # ---------------------------------------------------------
 article_page = f"""<!DOCTYPE html>
 <html lang="hi">
@@ -161,7 +165,9 @@ article_page = f"""<!DOCTYPE html>
         <h1>{current_topic}</h1>
         <div class="meta">📅 प्रकाशित: {today_date} | ✍️ लेखक: AI Expert</div>
         <img src="{main_img_url}" class="hero-img" alt="Hero Image">
+        
         <div id="article-body">{blog_content}</div>
+        
         <a href="https://www.youtube.com/results?search_query={urllib.parse.quote(current_topic)}" target="_blank" class="yt-btn">📺 यूट्यूब पर इस विषय का वीडियो देखें</a>
     </div>
     
@@ -171,43 +177,61 @@ article_page = f"""<!DOCTYPE html>
     <script>
         let synth = window.speechSynthesis;
         let isReading = false;
+        let textChunks = [];
+        let currentChunkIndex = 0;
         
-        function toggleTTS() {{
-            if (isReading) {{
-                synth.cancel();
-                document.getElementById('ttsBtn').innerHTML = '🔊 लेख सुनें';
+        // एक-एक करके लाइन पढ़ने वाला 'स्मार्ट इंजन'
+        function playNextChunk() {{
+            if (!isReading || currentChunkIndex >= textChunks.length) {{
                 isReading = false;
+                document.getElementById('ttsBtn').innerHTML = '🔊 लेख सुनें';
                 return;
             }}
             
-            // TTS Android Crash Fix (Chunking Logic)
-            // यह कोड पैराग्राफ को छोटे टुकड़ों (पूर्णविराम) में बाँट देगा ताकि ब्राउज़र क्रैश न हो।
-            let text = document.getElementById('article-body').innerText;
-            let chunks = text.match(/[^।.\n]+[।.\n]+/g) || [text]; 
+            let utter = new SpeechSynthesisUtterance(textChunks[currentChunkIndex]);
+            utter.lang = 'hi-IN';
+            utter.rate = 0.85; 
+            utter.pitch = 1.0;
             
-            synth.cancel(); // पुरानी आवाज़ साफ़ करें
-            isReading = true;
-            document.getElementById('ttsBtn').innerHTML = '⏹️ आवाज़ बंद करें';
+            let voices = synth.getVoices();
+            let hiVoice = voices.find(v => v.lang === 'hi-IN' || v.lang.includes('hi'));
+            if(hiVoice) utter.voice = hiVoice;
 
-            chunks.forEach((chunk, index) => {{
-                let utter = new SpeechSynthesisUtterance(chunk.trim());
-                utter.lang = 'hi-IN';
-                utter.rate = 0.85; 
-                utter.pitch = 1.0;
+            // जब एक लाइन खत्म हो, तभी दूसरी लाइन शुरू करो
+            utter.onend = function() {{
+                currentChunkIndex++;
+                playNextChunk();
+            }};
+            
+            utter.onerror = function() {{
+                currentChunkIndex++;
+                playNextChunk();
+            }};
+
+            synth.speak(utter);
+        }}
+
+        function toggleTTS() {{
+            if (isReading) {{
+                synth.cancel();
+                isReading = false;
+                document.getElementById('ttsBtn').innerHTML = '🔊 लेख सुनें';
+            }} else {{
+                let fullText = document.getElementById('article-body').innerText;
+                // टेक्स्ट को पूर्णविराम या एंटर के हिसाब से छोटे टुकड़ों में बाँटना
+                textChunks = fullText.match(/[^।.\n]+[।.\n]+/g) || [fullText]; 
+                currentChunkIndex = 0;
+                isReading = true;
                 
-                let voices = synth.getVoices();
-                let hiVoice = voices.find(v => v.lang === 'hi-IN' || v.lang.includes('hi'));
-                if(hiVoice) utter.voice = hiVoice;
-
-                if (index === chunks.length - 1) {{
-                    utter.onend = () => {{
-                        document.getElementById('ttsBtn').innerHTML = '🔊 लेख सुनें';
-                        isReading = false;
-                    }};
+                document.getElementById('ttsBtn').innerHTML = '⏹️ आवाज़ बंद करें';
+                
+                // अगर सिस्टम में कोई आवाज़ नहीं है, तो अलर्ट दिखाओ
+                if(synth.getVoices().length === 0) {{
+                    setTimeout(() => {{ playNextChunk(); }}, 1000);
+                }} else {{
+                    playNextChunk();
                 }}
-                
-                synth.speak(utter);
-            }});
+            }}
         }}
         
         window.speechSynthesis.onvoiceschanged = function() {{ window.speechSynthesis.getVoices(); }};
