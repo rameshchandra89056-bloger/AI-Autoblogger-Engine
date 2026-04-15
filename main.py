@@ -6,8 +6,8 @@ import sys
 import time
 
 # ==========================================
-# THE IMMORTAL SYSTEM - HYBRID ENGINE (v26.0)
-# Unbreakable Text Parser + TTS + Auto Video
+# THE IMMORTAL SYSTEM - MASTER ARCHITECT (v27.0)
+# Multi-Agent System (No Formatting Errors!)
 # ==========================================
 
 raw_key = os.environ.get("GEMINI_API_KEY", "")
@@ -28,106 +28,90 @@ if os.path.exists("posts.json"):
             past_titles = [post["title"] for post in posts_db][:20] 
         except: pass
 
+# मॉडल सेटअप
 list_url = f"https://generativelanguage.googleapis.com/v1beta/models?key={API_KEY}"
-available_model = None
+available_model = "models/gemini-1.5-flash"
 try:
     req = urllib.request.Request(list_url)
     with urllib.request.urlopen(req, timeout=30) as response:
         res = json.loads(response.read().decode('utf-8'))
         for m in res.get('models', []):
-            if 'generateContent' in m.get('supportedGenerationMethods', []) and 'gemini' in m.get('name', '').lower():
-                available_model = m['name']
-                if 'flash' in available_model: break
+            if 'generateContent' in m.get('supportedGenerationMethods', []) and 'gemini-1.5-flash' in m.get('name', '').lower():
+                available_model = m['name']; break
 except: pass
-if not available_model: sys.exit(1)
 
 api_url = f"https://generativelanguage.googleapis.com/v1beta/{available_model}:generateContent?key={API_KEY}"
 
+# मास्टर AI फंक्शन (ऑटो-रिकवरी के साथ)
+def ask_ai(prompt, retries=5):
+    for i in range(retries):
+        try:
+            data = json.dumps({"contents": [{"parts": [{"text": prompt}]}]}).encode('utf-8')
+            req = urllib.request.Request(api_url, data=data, headers={'Content-Type': 'application/json'})
+            with urllib.request.urlopen(req, timeout=60) as response:
+                res = json.loads(response.read().decode('utf-8'))
+                return res['candidates'][0]['content']['parts'][0]['text'].strip()
+        except Exception as e:
+            print(f"⚠️ API लोड एरर, 5 सेकंड बाद फिर कोशिश... ({i+1}/{retries})")
+            time.sleep(5)
+    return ""
+
+print("🚀 रोबोट चालू हो गया है...")
+
 # ---------------------------------------------------------
-# STEP 1: TOPIC RESEARCH (नया टॉपिक खोजना)
+# AGENT 1: TOPIC RESEARCH
 # ---------------------------------------------------------
-topic_prompt = f"तुम एक ट्रेंड-एनालिस्ट हो। {current_year} में ऑनलाइन कमाई और AI के क्षेत्र में एक नया वायरल ब्लॉग टाइटल (हिंदी में) दो। पुराने टाइटल्स: {past_titles} से अलग हो। सिर्फ 'टाइटल' लिखना।"
+print("🧠 एजेंट 1: टॉपिक ढूँढ रहा है...")
+topic_prompt = f"तुम एक ट्रेंड एनालिस्ट हो। {current_year} में मेक मनी ऑनलाइन या AI से जुड़ा एक वायरल ब्लॉग टाइटल (हिंदी में) दो। पुराने टाइटल्स: {past_titles} से अलग हो। जवाब में सिर्फ 'टाइटल' लिखना, कोई फालतू शब्द नहीं।"
+current_topic = ask_ai(topic_prompt).replace('"', '').replace("'", "").replace("*", "")
+if not current_topic: sys.exit(1)
+print(f"🎯 टॉपिक: {current_topic}")
+
+# ---------------------------------------------------------
+# AGENT 2: SEO & METADATA
+# ---------------------------------------------------------
+print("📊 एजेंट 2: SEO डेटा बना रहा है...")
+seo_prompt = f"विषय: '{current_topic}'। मुझे सिर्फ इस एक लाइन के फॉर्मेट में जवाब दो: MAIN_IMAGE_ENGLISH_KEYWORD | HINDI_SEO_DESCRIPTION | 5_SEO_KEYWORDS_COMMA_SEPARATED. कोई और शब्द मत लिखना।"
+seo_raw = ask_ai(seo_prompt)
+
+# डिफ़ॉल्ट SEO (अगर AI ने गड़बड़ की)
+main_img_words = "futuristic digital technology"
+meta_desc = f"{current_year} का बेस्ट ब्लॉग पोस्ट।"
+meta_keywords = f"AI, Make Money, {current_year}"
 
 try:
-    req = urllib.request.Request(api_url, data=json.dumps({"contents": [{"parts": [{"text": topic_prompt}]}]}).encode('utf-8'), headers={'Content-Type': 'application/json'})
-    with urllib.request.urlopen(req, timeout=50) as response:
-        res = json.loads(response.read().decode('utf-8'))
-        current_topic = res['candidates'][0]['content']['parts'][0]['text'].strip().replace('"', '').replace("'", "")
-except: sys.exit(1)
-
-if not current_topic: sys.exit(1)
+    if "|" in seo_raw:
+        parts = seo_raw.split("|")
+        if len(parts) >= 3:
+            main_img_words = parts[0].strip()
+            meta_desc = parts[1].strip()
+            meta_keywords = parts[2].strip()
+except: pass
 
 # ---------------------------------------------------------
-# STEP 2: MULTIMEDIA TERMINATOR LOOP
+# AGENT 3: HTML CODER (Video + Images)
 # ---------------------------------------------------------
-success = False
-main_img_words = ""
-meta_desc = ""
-meta_keywords = ""
-blog_content = ""
-
-for attempt in range(10):
-    print(f"\n🔄 [ATTEMPT {attempt + 1}/10] रोबोट मल्टीमीडिया आर्टिकल लिख रहा है...")
-    try:
-        content_prompt = f"""तुम एक प्रो ब्लॉगर हो। विषय: '{current_topic}'।
+print("💻 एजेंट 3: HTML कोडिंग और मल्टीमीडिया लगा रहा है...")
+html_prompt = f"""तुम एक वेब डेवलपर और ब्लॉगर हो। विषय: '{current_topic}'।
+एक विस्तृत हिंदी ब्लॉग पोस्ट लिखो।
 नियम:
-1. लेख में 2-3 फोटो के लिए यह कोड लगाओ: <img src="https://image.pollinations.ai/prompt/YOUR_KEYWORD?width=800&height=400&nologo=true" class="article-img"> (YOUR_KEYWORD की जगह कोई 1 इंग्लिश शब्द लिखो)।
-2. लेख के बीच में 1 यूट्यूब वीडियो के लिए यह कोड लगाओ: <iframe class="article-video" src="https://www.youtube.com/embed?listType=search&list=ENGLISH_SEARCH_QUERY" frameborder="0" allowfullscreen></iframe> (ENGLISH_SEARCH_QUERY की जगह टॉपिक से जुड़ा इंग्लिश शब्द डालो)।
-3. जवाब सिर्फ नीचे दिए गए 4 बॉक्स में देना:
+1. लेख के बीच में कम से कम 2 जगह ये फोटो कोड लगाओ: <img src="https://image.pollinations.ai/prompt/ENG_KEYWORD?width=800&height=400&nologo=true" class="article-img"> (ENG_KEYWORD की जगह पैराग्राफ से जुड़ा इंग्लिश शब्द डालना)।
+2. लेख के बीच में 1 जगह यूट्यूब वीडियो लगाओ: <iframe class="article-video" src="https://www.youtube.com/embed?listType=search&list=ENG_SEARCH_TERM" frameborder="0" allowfullscreen></iframe> (ENG_SEARCH_TERM की जगह इंग्लिश सर्च कीवर्ड डालना)।
+3. मुझे जवाब में सिर्फ और सिर्फ HTML कोड (h2, p, ul) देना। कोई ```html या markdown मत लगाना। कोई Introduction मत देना।"""
 
-[MAIN_IMG]
-(मुख्य फोटो के लिए 3 इंग्लिश शब्द)
-[/MAIN_IMG]
+blog_content = ask_ai(html_prompt, retries=10)
+if not blog_content or len(blog_content) < 200:
+    print("❌ HTML कोडिंग फेल हो गई।")
+    sys.exit(1)
 
-[META_DESC]
-(2 लाइन का SEO डिस्क्रिप्शन)
-[/META_DESC]
-
-[KEYWORDS]
-(5 SEO कीवर्ड्स)
-[/KEYWORDS]
-
-[HTML_CONTENT]
-(यहाँ पूरा HTML लेख फोटो और वीडियो कोड के साथ)
-[/HTML_CONTENT]"""
-        
-        req = urllib.request.Request(api_url, data=json.dumps({"contents": [{"parts": [{"text": content_prompt}]}]}).encode('utf-8'), headers={'Content-Type': 'application/json'})
-        with urllib.request.urlopen(req, timeout=90) as response:
-            res = json.loads(response.read().decode('utf-8'))
-            full_text = res['candidates'][0]['content']['parts'][0]['text']
-
-        # बुलेटप्रूफ टेक्स्ट पार्सर
-        def get_section(start_tag, end_tag):
-            if start_tag in full_text and end_tag in full_text:
-                return full_text.split(start_tag)[1].split(end_tag)[0].strip()
-            return ""
-
-        main_img_words = get_section("[MAIN_IMG]", "[/MAIN_IMG]")
-        meta_desc = get_section("[META_DESC]", "[/META_DESC]")
-        meta_keywords = get_section("[KEYWORDS]", "[/KEYWORDS]")
-        blog_content = get_section("[HTML_CONTENT]", "[/HTML_CONTENT]")
-
-        if not blog_content or len(blog_content) < 300:
-            print("⚠️ कंटेंट सही नहीं आया। दोबारा कोशिश...")
-            time.sleep(10)
-            continue
-
-        blog_content = blog_content.replace("```html", "").replace("```", "").strip()
-        print("✅ 100% परफेक्ट कंटेंट मिल गया!")
-        success = True
-        break
-
-    except Exception as e:
-        print(f"⚠️ एरर: {e}। रिकवर कर रहा हूँ...")
-        time.sleep(10)
-
-if not success: sys.exit(1)
+blog_content = blog_content.replace("```html", "").replace("```", "").strip()
 
 # ---------------------------------------------------------
-# STEP 3: PUBLISHING & TEXT-TO-SPEECH
+# STEP 4: PUBLISHING & TEXT-TO-SPEECH
 # ---------------------------------------------------------
+print("✅ पोस्ट तैयार है! पब्लिश हो रही है...")
 main_img_safe = urllib.parse.quote(main_img_words)
-main_img_url = f"https://image.pollinations.ai/prompt/{main_img_safe}?width=800&height=400&nologo=true"
+main_img_url = f"[https://image.pollinations.ai/prompt/](https://image.pollinations.ai/prompt/){main_img_safe}?width=800&height=400&nologo=true"
 
 post_filename = f"post_{post_id}.html"
 posts_db.insert(0, {"title": current_topic, "file": post_filename, "date": today_date})
