@@ -1,11 +1,12 @@
 import urllib.request
+import urllib.parse
 import json
 import os
 import sys
 import time
 
 # ==========================================
-# DIGITAL KAMAI HUB - FULLY AUTONOMOUS ENGINE
+# DIGITAL KAMAI HUB - THE PROFESSIONAL ENGINE v19.0
 # ==========================================
 
 raw_key = os.environ.get("GEMINI_API_KEY", "")
@@ -15,14 +16,16 @@ if not API_KEY:
     print("❌ ERROR: API Key गायब है!")
     sys.exit(1)
 
-# 1. रोबोट की याददाश्त (Memory) लोड करना
+# पार्टनर का मास्टरस्ट्रोक: रोबोट को आज का साल और तारीख बताना
+current_year = time.strftime("%Y")
+today_date = time.strftime("%d %B %Y")
+
 posts_db = []
 past_titles = []
 if os.path.exists("posts.json"):
     with open("posts.json", "r", encoding="utf-8") as f:
         try:
             posts_db = json.load(f)
-            # पिछले 20 आर्टिकल्स की लिस्ट निकाल रहे हैं ताकि AI को बता सकें कि क्या नहीं लिखना है
             past_titles = [post["title"] for post in posts_db][:20] 
         except:
             pass
@@ -42,15 +45,13 @@ try:
                 if 'flash' in available_model:
                     break
         if not available_model:
-            print("❌ ERROR: कोई मॉडल नहीं मिला।")
             sys.exit(1)
 except Exception as e:
-    print(f"❌ API Error: {e}")
     sys.exit(1)
 
-# 2. THE BRAIN: खुद इंटरनेट/डेटाबेस से ट्रेंडिंग टॉपिक सोचना
+# 1. THE BRAIN: ट्रेंडिंग टॉपिक सोचना (साल के साथ)
 print("🧠 रोबोट खुद एक नया और ट्रेंडिंग टॉपिक सोच रहा है...")
-topic_prompt = f"""तुम एक एक्सपर्ट SEO रिसर्चर हो। 'मेक मनी ऑनलाइन', 'AI टूल्स', 'फ्रीलांसिंग' या 'यूट्यूब ग्रोथ' से जुड़ा आज का सबसे ट्रेंडिंग और वायरल ब्लॉग टाइटल (हिंदी में) बताओ। 
+topic_prompt = f"""तुम एक एक्सपर्ट SEO रिसर्चर हो। 'मेक मनी ऑनलाइन', 'AI टूल्स', 'फ्रीलांसिंग' या 'यूट्यूब ग्रोथ' से जुड़ा साल {current_year} का सबसे ट्रेंडिंग और वायरल ब्लॉग टाइटल (हिंदी में) बताओ। 
 नियम: यह टाइटल इन पुराने टाइटल्स से बिल्कुल अलग होना चाहिए: {past_titles}। 
 जवाब में सिर्फ और सिर्फ एक 'टाइटल' लिखना, कोई और शब्द नहीं।"""
 
@@ -63,18 +64,20 @@ try:
     with urllib.request.urlopen(req, timeout=50) as response:
         res = json.loads(response.read().decode('utf-8'))
         current_topic = res['candidates'][0]['content']['parts'][0]['text'].strip()
-        current_topic = current_topic.replace('"', '').replace("'", "") # फालतू निशान हटाना
-        print(f"🎯 रोबोट ने नया ट्रेंडिंग टॉपिक चुना: {current_topic}")
-except Exception as e:
-    print(f"❌ टॉपिक चुनने में एरर: {e}")
+        current_topic = current_topic.replace('"', '').replace("'", "") 
+        print(f"🎯 रोबोट ने चुना: {current_topic}")
+except:
     sys.exit(1)
 
 if not current_topic:
     sys.exit(1)
 
-# 3. कंटेंट लिखना
-print("✍️ रोबोट ब्लॉग लिख रहा है...")
-content_prompt = f"तुम एक प्रो ब्लॉगर हो। '{current_topic}' पर एक शानदार और विस्तृत हिंदी लेख लिखो। सिर्फ HTML tags (h2, p, ul, strong) देना। ```html या body tags मत लगाना।"
+# 2. कंटेंट लिखना (सख्त निर्देश: पुरानी बातें नहीं!)
+print(f"✍️ रोबोट {current_year} के हिसाब से ब्लॉग लिख रहा है...")
+content_prompt = f"""तुम एक प्रो ब्लॉगर हो। '{current_topic}' पर एक शानदार और विस्तृत हिंदी लेख लिखो। 
+सबसे सख्त नियम: अभी साल {current_year} चल रहा है। लेख में हर जानकारी, डेटा और तरीके {current_year} के अनुसार ही होने चाहिए। 2023, 2024 या 2025 की कोई भी पुरानी बात मत लिखना।
+सिर्फ HTML tags (h2, p, ul, strong) देना। ```html या body tags मत लगाना।"""
+
 content_data = {"contents": [{"parts": [{"text": content_prompt}]}]}
 
 blog_content = None
@@ -83,9 +86,7 @@ try:
     with urllib.request.urlopen(req, timeout=60) as response:
         res = json.loads(response.read().decode('utf-8'))
         blog_content = res['candidates'][0]['content']['parts'][0]['text']
-        print("✅ SUCCESS! ब्लॉग लिख लिया गया है।")
-except Exception as e:
-    print(f"❌ कंटेंट लिखने में एरर: {e}")
+except:
     sys.exit(1)
 
 if not blog_content:
@@ -93,10 +94,14 @@ if not blog_content:
 
 blog_content = blog_content.replace("```html", "").replace("```", "").strip()
 
+# 3. स्मार्ट इमेज जनरेटर (कभी नहीं टूटेगा)
+# टॉपिक के शब्दों को इंटरनेट लिंक के लायक बनाना
+safe_keyword = urllib.parse.quote(current_topic[:40] + " modern technology illustration")
+dynamic_img_url = f"[https://image.pollinations.ai/prompt/](https://image.pollinations.ai/prompt/){safe_keyword}?width=800&height=400&nologo=true"
+
 # 4. डेटाबेस सेव करना
 post_id = int(time.time())
 post_filename = f"post_{post_id}.html"
-today_date = time.strftime("%d %B %Y")
 
 new_post = {"title": current_topic, "file": post_filename, "date": today_date}
 posts_db.insert(0, new_post)
@@ -105,7 +110,7 @@ with open("posts.json", "w", encoding="utf-8") as f:
     json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
 # ==========================================
-# 5. PROFESSIONAL UI/UX DESIGN (आपका बताया हुआ)
+# 5. PROFESSIONAL UI/UX DESIGN
 # ==========================================
 
 header_menu = """
@@ -126,7 +131,6 @@ footer_html = """
     </footer>
 """
 
-# आर्टिकल का पन्ना
 article_html = f"""<!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -138,7 +142,7 @@ article_html = f"""<!DOCTYPE html>
         .container {{ max-width: 800px; margin: 40px auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 15px rgba(0,0,0,0.05); line-height: 1.8; font-size: 18px; }}
         h1 {{ color: #f1c40f; margin: 0; }}
         h2 {{ color: #203a43; border-left: 4px solid #f1c40f; padding-left: 15px; margin-top: 30px; }}
-        img {{ width: 100%; border-radius: 8px; margin: 20px 0; }}
+        img {{ width: 100%; border-radius: 8px; margin: 20px 0; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }}
     </style>
 </head>
 <body>
@@ -150,7 +154,7 @@ article_html = f"""<!DOCTYPE html>
     <div class="container">
         <h1 style="color: #111; font-size: 32px; border-bottom: 1px solid #eee; padding-bottom: 15px;">{current_topic}</h1>
         <p style="color: #777; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">📅 Published: {today_date}</p>
-        <img src="[https://image.pollinations.ai/prompt/digital_growth_chart_laptop_2026](https://image.pollinations.ai/prompt/digital_growth_chart_laptop_2026)" alt="Blog Image">
+        <img src="{dynamic_img_url}" alt="Blog Image">
         {blog_content}
     </div>
     {footer_html}
@@ -160,7 +164,6 @@ article_html = f"""<!DOCTYPE html>
 with open(post_filename, "w", encoding="utf-8") as f:
     f.write(article_html)
 
-# होमपेज
 post_links = ""
 for post in posts_db:
     post_links += f"""
@@ -199,3 +202,4 @@ homepage_html = f"""<!DOCTYPE html>
 
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(homepage_html)
+    
