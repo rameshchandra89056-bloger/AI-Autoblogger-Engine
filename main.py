@@ -6,7 +6,7 @@ import sys
 import time
 
 # ==========================================
-# THE IMMORTAL SYSTEM - ULTIMATE EDITION (v36.0)
+# THE IMMORTAL SYSTEM - ULTIMATE EDITION (v36.1 - Bug Fix)
 # 1000 Level Pro: Multi-Key, Soft TTS, Premium UI, Auto-Pages
 # ==========================================
 
@@ -191,10 +191,9 @@ article_page = f"""<!DOCTYPE html>
                 let text = document.getElementById('article-body').innerText;
                 let utter = new SpeechSynthesisUtterance(text);
                 utter.lang = 'hi-IN'; 
-                utter.rate = 0.85; // बहुत सॉफ्ट और आराम से पढ़ने के लिए
+                utter.rate = 0.85; 
                 utter.pitch = 1.0;
                 
-                // बेहतरीन हिंदी आवाज़ ढूँढना
                 let voices = synth.getVoices();
                 let hiVoice = voices.find(v => v.lang === 'hi-IN' || v.lang.includes('hi'));
                 if(hiVoice) utter.voice = hiVoice;
@@ -205,7 +204,6 @@ article_page = f"""<!DOCTYPE html>
                 utter.onend = () => {{ document.getElementById('ttsBtn').innerHTML = '🔊 लेख सुनें'; isReading = false; }};
             }}
         }}
-        // ब्राउज़र को आवाज़ें लोड करने का टाइम देना
         window.speechSynthesis.onvoiceschanged = function() {{ window.speechSynthesis.getVoices(); }};
     </script>
 </body>
@@ -214,7 +212,7 @@ article_page = f"""<!DOCTYPE html>
 with open(post_filename, "w", encoding="utf-8") as f: f.write(article_page)
 
 # ---------------------------------------------------------
-# GENERATE HOME PAGE
+# GENERATE HOME PAGE (BUG FIXED HERE)
 # ---------------------------------------------------------
 home_cards = "".join([f"""
     <div class="card">
@@ -227,18 +225,52 @@ home_cards = "".join([f"""
     </div>
 """ for p in posts_db])
 
-with open("index.html", "w", encoding="utf-8") as f:
-    f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Digital Kamai Hub</title>{premium_css}</head><body>{header_html}<div style='max-width:1100px; margin:40px auto; padding:0 20px;'><h2 style='font-size:32px; border-bottom:3px solid #da251c; padding-bottom:10px; display:inline-block;'>🔥 ताज़ा ख़बरें</h2><div class='grid'>{home_cards}</div></div>{footer_html}</body></html>")
+home_page_html = f"""<!DOCTYPE html>
+<html lang='hi'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Digital Kamai Hub</title>
+    {premium_css}
+</head>
+<body>
+    {header_html}
+    <div style='max-width:1100px; margin:40px auto; padding:0 20px;'>
+        <h2 style='font-size:32px; border-bottom:3px solid #da251c; padding-bottom:10px; display:inline-block;'>🔥 ताज़ा ख़बरें</h2>
+        <div class='grid'>{home_cards}</div>
+    </div>
+    {footer_html}
+</body>
+</html>"""
+
+with open("index.html", "w", encoding="utf-8") as f: f.write(home_page_html)
 
 # ---------------------------------------------------------
-# GENERATE STATIC PAGES (About, Privacy, Disclaimer)
+# GENERATE STATIC PAGES (BUG FIXED HERE)
 # ---------------------------------------------------------
 pages = {
     "about": ("About Us", "Digital Kamai Hub भारत का नंबर 1 AI और टेक्नोलॉजी ब्लॉग है। हम आपको भविष्य की तकनीक से पैसे कमाने के तरीके सिखाते हैं।"),
     "privacy": ("Privacy Policy", "आपकी प्राइवेसी हमारे लिए महत्वपूर्ण है। हम आपकी कोई भी व्यक्तिगत जानकारी बिना अनुमति के किसी तीसरे पक्ष (Third Party) को नहीं बेचते।"),
-    "disclaimer": ("Disclaimer", "इस वेबसाइट पर दी गई सभी जानकारी केवल शिक्षा और जागरूकता के लिए है। कृपया कोई भी वित्तीय निर्णय (Financial Decision) लेने से पहले अपने सलाहकार से बात करें।")
+    "disclaimer": ("Disclaimer", "इस वेबसाइट पर दी गई सभी जानकारी केवल शिक्षा और जागरूकता के लिए है। कृपया कोई भी वित्तीय निर्णय लेने से पहले सलाहकार से बात करें।")
 }
 
 for p_file, (p_title, p_content) in pages.items():
-    with open(f"{p_file}.html", "w", encoding="utf-8") as f:
-        f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>{p_title} | Digital Kamai Hub</title>{premium_css}</head><body>{header_html}<div class='container'><h1>{p_title}</h1><p style='font-size:18px; color:#555;'>{p_content}</p></div>{footer_html}</body></html>")
+    page_html = f"""<!DOCTYPE html>
+<html lang='hi'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>{p_title} | Digital Kamai Hub</title>
+    {premium_css}
+</head>
+<body>
+    {header_html}
+    <div class='container'>
+        <h1>{p_title}</h1>
+        <p style='font-size:18px; color:#555;'>{p_content}</p>
+    </div>
+    {footer_html}
+</body>
+</html>"""
+    with open(f"{p_file}.html", "w", encoding="utf-8") as f: f.write(page_html)
+            
