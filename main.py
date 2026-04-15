@@ -1,12 +1,12 @@
 import urllib.request
-import urllib.parse
 import json
 import os
 import sys
 import time
+import random
 
 # ==========================================
-# DIGITAL KAMAI HUB - THE PROFESSIONAL ENGINE v19.0
+# DIGITAL KAMAI HUB - THE BULLETPROOF ENGINE v19.1
 # ==========================================
 
 raw_key = os.environ.get("GEMINI_API_KEY", "")
@@ -16,7 +16,6 @@ if not API_KEY:
     print("❌ ERROR: API Key गायब है!")
     sys.exit(1)
 
-# पार्टनर का मास्टरस्ट्रोक: रोबोट को आज का साल और तारीख बताना
 current_year = time.strftime("%Y")
 today_date = time.strftime("%d %B %Y")
 
@@ -30,7 +29,7 @@ if os.path.exists("posts.json"):
         except:
             pass
 
-print("🔍 DIAGNOSTIC MODE: सबसे अच्छा AI मॉडल ढूंढ रहे हैं...")
+print("🔍 DIAGNOSTIC MODE: मॉडल ढूंढ रहे हैं...")
 list_url = f"https://generativelanguage.googleapis.com/v1beta/models?key={API_KEY}"
 available_model = None
 
@@ -49,11 +48,9 @@ try:
 except Exception as e:
     sys.exit(1)
 
-# 1. THE BRAIN: ट्रेंडिंग टॉपिक सोचना (साल के साथ)
-print("🧠 रोबोट खुद एक नया और ट्रेंडिंग टॉपिक सोच रहा है...")
-topic_prompt = f"""तुम एक एक्सपर्ट SEO रिसर्चर हो। 'मेक मनी ऑनलाइन', 'AI टूल्स', 'फ्रीलांसिंग' या 'यूट्यूब ग्रोथ' से जुड़ा साल {current_year} का सबसे ट्रेंडिंग और वायरल ब्लॉग टाइटल (हिंदी में) बताओ। 
-नियम: यह टाइटल इन पुराने टाइटल्स से बिल्कुल अलग होना चाहिए: {past_titles}। 
-जवाब में सिर्फ और सिर्फ एक 'टाइटल' लिखना, कोई और शब्द नहीं।"""
+# 1. THE BRAIN: नया टॉपिक सोचना
+topic_prompt = f"""तुम एक एक्सपर्ट SEO रिसर्चर हो। 'मेक मनी ऑनलाइन', 'AI टूल्स', 'फ्रीलांसिंग' या 'यूट्यूब ग्रोथ' से जुड़ा साल {current_year} का सबसे ट्रेंडिंग ब्लॉग टाइटल (हिंदी में) बताओ। 
+नियम: यह टाइटल इन पुराने टाइटल्स से बिल्कुल अलग होना चाहिए: {past_titles}। सिर्फ 'टाइटल' लिखना।"""
 
 topic_data = {"contents": [{"parts": [{"text": topic_prompt}]}]}
 topic_url = f"https://generativelanguage.googleapis.com/v1beta/{available_model}:generateContent?key={API_KEY}"
@@ -63,20 +60,17 @@ try:
     req = urllib.request.Request(topic_url, data=json.dumps(topic_data).encode('utf-8'), headers={'Content-Type': 'application/json'})
     with urllib.request.urlopen(req, timeout=50) as response:
         res = json.loads(response.read().decode('utf-8'))
-        current_topic = res['candidates'][0]['content']['parts'][0]['text'].strip()
-        current_topic = current_topic.replace('"', '').replace("'", "") 
-        print(f"🎯 रोबोट ने चुना: {current_topic}")
+        current_topic = res['candidates'][0]['content']['parts'][0]['text'].strip().replace('"', '').replace("'", "")
 except:
     sys.exit(1)
 
 if not current_topic:
     sys.exit(1)
 
-# 2. कंटेंट लिखना (सख्त निर्देश: पुरानी बातें नहीं!)
-print(f"✍️ रोबोट {current_year} के हिसाब से ब्लॉग लिख रहा है...")
-content_prompt = f"""तुम एक प्रो ब्लॉगर हो। '{current_topic}' पर एक शानदार और विस्तृत हिंदी लेख लिखो। 
-सबसे सख्त नियम: अभी साल {current_year} चल रहा है। लेख में हर जानकारी, डेटा और तरीके {current_year} के अनुसार ही होने चाहिए। 2023, 2024 या 2025 की कोई भी पुरानी बात मत लिखना।
-सिर्फ HTML tags (h2, p, ul, strong) देना। ```html या body tags मत लगाना।"""
+# 2. कंटेंट लिखना
+content_prompt = f"""तुम एक प्रो ब्लॉगर हो। '{current_topic}' पर एक शानदार हिंदी लेख लिखो। 
+सख्त नियम: अभी साल {current_year} चल रहा है। लेख में हर बात {current_year} के अनुसार होनी चाहिए। 2023 या 2024 की कोई बात मत लिखना।
+सिर्फ HTML tags (h2, p, ul, strong) देना।"""
 
 content_data = {"contents": [{"parts": [{"text": content_prompt}]}]}
 
@@ -94,10 +88,16 @@ if not blog_content:
 
 blog_content = blog_content.replace("```html", "").replace("```", "").strip()
 
-# 3. स्मार्ट इमेज जनरेटर (कभी नहीं टूटेगा)
-# टॉपिक के शब्दों को इंटरनेट लिंक के लायक बनाना
-safe_keyword = urllib.parse.quote(current_topic[:40] + " modern technology illustration")
-dynamic_img_url = f"[https://image.pollinations.ai/prompt/](https://image.pollinations.ai/prompt/){safe_keyword}?width=800&height=400&nologo=true"
+# 3. पार्टनर का मास्टरस्ट्रोक: 100% पक्की इंग्लिश इमेजेज 📸
+english_prompts = [
+    "futuristic_AI_technology_laptop_neon",
+    "stock_market_growth_chart_digital",
+    "freelancer_working_on_laptop_modern",
+    "making_money_online_digital_coins",
+    "artificial_intelligence_brain_glowing"
+]
+safe_keyword = random.choice(english_prompts)
+dynamic_img_url = f"https://image.pollinations.ai/prompt/{safe_keyword}?width=800&height=400&nologo=true"
 
 # 4. डेटाबेस सेव करना
 post_id = int(time.time())
