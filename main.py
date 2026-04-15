@@ -7,8 +7,8 @@ import time
 import re
 
 # ==========================================
-# THE IMMORTAL SYSTEM - THE ANDROID FIX EDITION (v38.0)
-# TTS Sequential Queue Fix + Guaranteed Inline Images
+# THE IMMORTAL SYSTEM - THE FINAL VOICE (v39.0)
+# Bulletproof Android TTS + Premium News UI
 # ==========================================
 
 raw_keys = os.environ.get("GEMINI_API_KEY", "")
@@ -72,7 +72,6 @@ try:
         meta_desc, meta_keywords = parts[1].strip(), parts[2].strip()
 except: pass
 
-# ध्यान दें: अब AI को HTML इमेज टैग लिखने को नहीं कह रहे हैं, बस [PHOTO] लिखने को कह रहे हैं।
 html_prompt = f"""तुम एक प्रो ब्लॉगर हो। विषय: '{current_topic}'। 
 कम से कम 1000 शब्दों का एक बहुत शानदार हिंदी ब्लॉग पोस्ट लिखो।
 नियम:
@@ -82,7 +81,7 @@ html_prompt = f"""तुम एक प्रो ब्लॉगर हो। व
 blog_content = ask_ai(html_prompt, retries=20).replace("```html", "").replace("```", "").strip()
 if not blog_content or len(blog_content) < 300: sys.exit(1)
 
-# पायथन खुद [PHOTO] की जगह असली इमेज लगाएगा (Guaranteed Inline Images)
+# पायथन खुद [PHOTO] की जगह असली इमेज लगाएगा 
 safe_keyword = urllib.parse.quote(main_img_words)
 inline_img_html = f"<img src='https://image.pollinations.ai/prompt/{safe_keyword}_detail?width=800&height=400&nologo=true' class='article-img'>"
 blog_content = blog_content.replace("[PHOTO]", inline_img_html)
@@ -148,7 +147,7 @@ footer_html = f"""
 """
 
 # ---------------------------------------------------------
-# GENERATE POST HTML (WITH RECURSIVE TTS QUEUE)
+# GENERATE POST HTML (THE BULLETPROOF TTS FIX)
 # ---------------------------------------------------------
 article_page = f"""<!DOCTYPE html>
 <html lang="hi">
@@ -180,7 +179,6 @@ article_page = f"""<!DOCTYPE html>
         let textChunks = [];
         let currentChunkIndex = 0;
         
-        // एक-एक करके लाइन पढ़ने वाला 'स्मार्ट इंजन'
         function playNextChunk() {{
             if (!isReading || currentChunkIndex >= textChunks.length) {{
                 isReading = false;
@@ -188,16 +186,21 @@ article_page = f"""<!DOCTYPE html>
                 return;
             }}
             
-            let utter = new SpeechSynthesisUtterance(textChunks[currentChunkIndex]);
+            let chunkText = textChunks[currentChunkIndex].trim();
+            if(chunkText === "") {{
+                currentChunkIndex++;
+                playNextChunk();
+                return;
+            }}
+            
+            let utter = new SpeechSynthesisUtterance(chunkText + "।");
             utter.lang = 'hi-IN';
             utter.rate = 0.85; 
-            utter.pitch = 1.0;
             
             let voices = synth.getVoices();
-            let hiVoice = voices.find(v => v.lang === 'hi-IN' || v.lang.includes('hi'));
+            let hiVoice = voices.find(v => v.lang.includes('hi') || v.lang.includes('IN'));
             if(hiVoice) utter.voice = hiVoice;
 
-            // जब एक लाइन खत्म हो, तभी दूसरी लाइन शुरू करो
             utter.onend = function() {{
                 currentChunkIndex++;
                 playNextChunk();
@@ -212,25 +215,30 @@ article_page = f"""<!DOCTYPE html>
         }}
 
         function toggleTTS() {{
+            if (!synth) {{
+                alert("आपके ब्राउज़र में आवाज़ का फीचर नहीं है। कृपया Chrome इस्तेमाल करें।");
+                return;
+            }}
+
             if (isReading) {{
-                synth.cancel();
+                synth.cancel(); // आवाज़ को तुरंत रोको
                 isReading = false;
                 document.getElementById('ttsBtn').innerHTML = '🔊 लेख सुनें';
             }} else {{
+                synth.cancel(); // पुराना कुछ फंसा हो तो उसे साफ़ करो (Hard Reset)
+                
                 let fullText = document.getElementById('article-body').innerText;
-                // टेक्स्ट को पूर्णविराम या एंटर के हिसाब से छोटे टुकड़ों में बाँटना
-                textChunks = fullText.match(/[^।.\n]+[।.\n]+/g) || [fullText]; 
+                
+                // सबसे सुरक्षित तरीका: पूर्णविराम (।) और लाइन ब्रेक से वाक्यों को तोड़ना
+                textChunks = fullText.replace(/([।!?\\n])/g, "$1|").split("|");
+                
                 currentChunkIndex = 0;
                 isReading = true;
                 
                 document.getElementById('ttsBtn').innerHTML = '⏹️ आवाज़ बंद करें';
                 
-                // अगर सिस्टम में कोई आवाज़ नहीं है, तो अलर्ट दिखाओ
-                if(synth.getVoices().length === 0) {{
-                    setTimeout(() => {{ playNextChunk(); }}, 1000);
-                }} else {{
-                    playNextChunk();
-                }}
+                // थोड़ी देर रुककर बोलना शुरू करें (ताकि ब्राउज़र रिसेट हो जाए)
+                setTimeout(() => {{ playNextChunk(); }}, 200);
             }}
         }}
         
@@ -266,3 +274,4 @@ pages = {
 for p_file, (p_title, p_content) in pages.items():
     with open(f"{p_file}.html", "w", encoding="utf-8") as f:
         f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>{p_title} | Digital Kamai Hub</title>{premium_css}</head><body>{header_html}<div class='container'><h1>{p_title}</h1><p style='font-size:18px; color:#555;'>{p_content}</p></div>{footer_html}</body></html>")
+                                        
