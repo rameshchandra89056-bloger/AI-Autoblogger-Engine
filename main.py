@@ -6,8 +6,8 @@ import sys
 import time
 
 # ==========================================
-# THE IMMORTAL SYSTEM - MASTER PLAN EDITION (v21.0)
-# Multi-Image Support & Unbreakable SEO Parser
+# THE IMMORTAL SYSTEM - THE TERMINATOR EDITION (v23.0)
+# Strict Validation & 10-Strike Healing Loop
 # ==========================================
 
 raw_key = os.environ.get("GEMINI_API_KEY", "")
@@ -43,60 +43,103 @@ try:
 except: pass
 if not available_model: sys.exit(1)
 
+api_url = f"https://generativelanguage.googleapis.com/v1beta/{available_model}:generateContent?key={API_KEY}"
+
 # ---------------------------------------------------------
 # STEP 1: THE BRAIN (नया टॉपिक सोचना)
 # ---------------------------------------------------------
-topic_prompt = f"तुम एक SEO एक्सपर्ट हो। 'मेक मनी ऑनलाइन', 'AI टूल्स' या 'फ्रीलांसिंग' पर साल {current_year} का एक नया और वायरल ब्लॉग टाइटल (हिंदी में) दो। यह इन पुराने टाइटल्स से अलग होना चाहिए: {past_titles}। जवाब में सिर्फ 'टाइटल' लिखना।"
-topic_url = f"https://generativelanguage.googleapis.com/v1beta/{available_model}:generateContent?key={API_KEY}"
+topic_prompt = f"तुम एक SEO एक्सपर्ट हो। 'मेक मनी ऑनलाइन', 'AI टूल्स' या 'फ्रीलांसिंग' पर साल {current_year} का एक नया और वायरल ब्लॉग टाइटल (हिंदी में) दो। पुराने टाइटल्स: {past_titles} से अलग होना चाहिए। जवाब में सिर्फ 'टाइटल' लिखना।"
 
 try:
-    req = urllib.request.Request(topic_url, data=json.dumps({"contents": [{"parts": [{"text": topic_prompt}]}]}).encode('utf-8'), headers={'Content-Type': 'application/json'})
+    req = urllib.request.Request(api_url, data=json.dumps({"contents": [{"parts": [{"text": topic_prompt}]}]}).encode('utf-8'), headers={'Content-Type': 'application/json'})
     with urllib.request.urlopen(req, timeout=50) as response:
         res = json.loads(response.read().decode('utf-8'))
         current_topic = res['candidates'][0]['content']['parts'][0]['text'].strip().replace('"', '').replace("'", "")
 except: sys.exit(1)
+
 if not current_topic: sys.exit(1)
 
 # ---------------------------------------------------------
-# STEP 2: MULTI-IMAGE & SEO CONTENT GENERATOR
+# STEP 2: THE TERMINATOR LOOP (MAX 10 ATTEMPTS)
 # ---------------------------------------------------------
-content_prompt = f"""तुम एक प्रो ब्लॉगर हो। विषय: '{current_topic}'।
+success = False
+main_img_words = ""
+meta_desc = ""
+meta_keywords = ""
+blog_content = ""
+
+max_attempts = 10
+
+for attempt in range(max_attempts):
+    print(f"\n🔄 [ATTEMPT {attempt + 1}/{max_attempts}] रोबोट आर्टिकल लिख रहा है...")
+    try:
+        content_prompt = f"""तुम एक प्रो ब्लॉगर हो। विषय: '{current_topic}'।
 नियम:
-1. लेख में जहाँ भी किसी नई चीज़ या उदाहरण की बात हो, वहाँ यह HTML कोड लगा देना: <img src="https://image.pollinations.ai/prompt/YOUR_KEYWORD?width=800&height=400&nologo=true" style="width:100%; border-radius:8px; margin:20px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"> (YOUR_KEYWORD की जगह उस पैराग्राफ से जुड़ा एक इंग्लिश शब्द डालना जैसे futuristic_robot, office_laptop)। लेख के अंदर कम से कम 2-3 फोटो डालना।
-2. जवाब बिलकुल इसी फॉर्मेट में देना है (इन '~~~' निशानों को मत हटाना):
+1. लेख में 2-3 जगहों पर यह HTML कोड लगा देना: <img src="https://image.pollinations.ai/prompt/YOUR_KEYWORD?width=800&height=400&nologo=true" style="width:100%; border-radius:8px; margin:20px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"> (YOUR_KEYWORD की जगह उस लाइन से जुड़ा कोई 1 इंग्लिश शब्द लिखना)।
+2. मुझे जवाब में सिर्फ ये 4 बॉक्स चाहिए (बिल्कुल इसी स्पेलिंग के साथ):
 
-~~~MAIN_IMG~~~
-(मुख्य फोटो के लिए 5 इंग्लिश शब्द)
-~~~META_DESC~~~
-(2 लाइन का हिंदी SEO डिस्क्रिप्शन)
-~~~KEYWORDS~~~
-(5 SEO कीवर्ड्स कॉमा लगाकर)
-~~~HTML_CONTENT~~~
-(यहाँ पूरा HTML लेख h2, p, ul, strong और अंदरूनी <img> टैग्स के साथ)"""
+[MAIN_IMG]
+(मुख्य फोटो के लिए 3 इंग्लिश शब्द)
+[/MAIN_IMG]
 
-try:
-    req = urllib.request.Request(topic_url, data=json.dumps({"contents": [{"parts": [{"text": content_prompt}]}]}).encode('utf-8'), headers={'Content-Type': 'application/json'})
-    with urllib.request.urlopen(req, timeout=80) as response:
-        res = json.loads(response.read().decode('utf-8'))
-        full_text = res['candidates'][0]['content']['parts'][0]['text']
-except: sys.exit(1)
+[META_DESC]
+(2 लाइन का SEO डिस्क्रिप्शन)
+[/META_DESC]
 
-# Parsing The Unbreakable Format
-try:
-    parts = full_text.split("~~~")
-    main_img_words = parts[2].strip()
-    meta_desc = parts[4].strip()
-    meta_keywords = parts[6].strip()
-    blog_content = parts[8].replace("```html", "").replace("```", "").strip()
-except:
-    sys.exit(1) # अगर AI ने गलती की, तो पोस्ट मत डालो
+[KEYWORDS]
+(5 SEO कीवर्ड्स)
+[/KEYWORDS]
 
-main_img_safe = urllib.parse.quote(main_img_words)
-main_img_url = f"https://image.pollinations.ai/prompt/{main_img_safe}?width=800&height=400&nologo=true"
+[HTML_CONTENT]
+(यहाँ पूरा HTML लेख h2, p, ul, strong के साथ)
+[/HTML_CONTENT]"""
+        
+        req = urllib.request.Request(api_url, data=json.dumps({"contents": [{"parts": [{"text": content_prompt}]}]}).encode('utf-8'), headers={'Content-Type': 'application/json'})
+        with urllib.request.urlopen(req, timeout=80) as response:
+            res = json.loads(response.read().decode('utf-8'))
+            full_text = res['candidates'][0]['content']['parts'][0]['text']
+
+        # बुलेटप्रूफ पार्सर
+        def get_section(start_tag, end_tag):
+            if start_tag in full_text and end_tag in full_text:
+                return full_text.split(start_tag)[1].split(end_tag)[0].strip()
+            return ""
+
+        main_img_words = get_section("[MAIN_IMG]", "[/MAIN_IMG]")
+        meta_desc = get_section("[META_DESC]", "[/META_DESC]")
+        meta_keywords = get_section("[KEYWORDS]", "[/KEYWORDS]")
+        blog_content = get_section("[HTML_CONTENT]", "[/HTML_CONTENT]")
+
+        # 🛑 STRICT VALIDATION (जब तक 100% सही नहीं, तब तक रिजेक्ट!)
+        if not main_img_words or not meta_desc or not meta_keywords or not blog_content:
+            print("⚠️ AI ने फॉर्मेट बिगाड़ दिया। रोबोट इसे रिजेक्ट कर रहा है!")
+            time.sleep(10) # 10 सेकंड आराम ताकि API बैन न हो
+            continue # दोबारा कोशिश करो
+
+        if len(blog_content) < 300:
+            print("⚠️ आर्टिकल बहुत छोटा है। रिजेक्ट!")
+            time.sleep(10)
+            continue
+
+        blog_content = blog_content.replace("```html", "").replace("```", "").strip()
+        print("✅ 100% परफेक्ट फॉर्मेट मिल गया! लूप लॉक किया जा रहा है।")
+        success = True
+        break # लूप तोड़कर बाहर आओ
+
+    except Exception as e:
+        print(f"⚠️ नेटवर्क या API एरर: {e}। रोबोट फिर से कोशिश कर रहा है...")
+        time.sleep(10)
+
+if not success:
+    print("❌ 10 बार कोशिश करने के बाद भी परफेक्ट फॉर्मेट नहीं मिला। रोबोट कचरा अपलोड नहीं करेगा। सिस्टम बंद हो रहा है।")
+    sys.exit(1)
 
 # ---------------------------------------------------------
 # STEP 3: DATABASE & HTML PUBLISHING
 # ---------------------------------------------------------
+main_img_safe = urllib.parse.quote(main_img_words)
+main_img_url = f"https://image.pollinations.ai/prompt/{main_img_safe}?width=800&height=400&nologo=true"
+
 post_filename = f"post_{post_id}.html"
 new_post = {"title": current_topic, "file": post_filename, "date": today_date}
 posts_db.insert(0, new_post)
