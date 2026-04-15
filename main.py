@@ -1,12 +1,14 @@
 import urllib.request
+import urllib.parse
 import json
 import os
 import sys
 import time
-import random
 
 # ==========================================
-# DIGITAL KAMAI HUB - THE BULLETPROOF ENGINE v19.1
+# THE IMMORTAL SYSTEM - MASTER PLAN EDITION (v20.0)
+# Day 10: AI Image Engine (Pollinations)
+# Day 11-14: Advanced SEO & Meta Tags
 # ==========================================
 
 raw_key = os.environ.get("GEMINI_API_KEY", "")
@@ -18,6 +20,7 @@ if not API_KEY:
 
 current_year = time.strftime("%Y")
 today_date = time.strftime("%d %B %Y")
+post_id = int(time.time())
 
 posts_db = []
 past_titles = []
@@ -48,10 +51,10 @@ try:
 except Exception as e:
     sys.exit(1)
 
-# 1. THE BRAIN: नया टॉपिक सोचना
-topic_prompt = f"""तुम एक एक्सपर्ट SEO रिसर्चर हो। 'मेक मनी ऑनलाइन', 'AI टूल्स', 'फ्रीलांसिंग' या 'यूट्यूब ग्रोथ' से जुड़ा साल {current_year} का सबसे ट्रेंडिंग ब्लॉग टाइटल (हिंदी में) बताओ। 
-नियम: यह टाइटल इन पुराने टाइटल्स से बिल्कुल अलग होना चाहिए: {past_titles}। सिर्फ 'टाइटल' लिखना।"""
-
+# ---------------------------------------------------------
+# STEP 1: THE BRAIN (नया टॉपिक सोचना)
+# ---------------------------------------------------------
+topic_prompt = f"तुम एक SEO एक्सपर्ट हो। 'मेक मनी ऑनलाइन', 'AI टूल्स' या 'फ्रीलांसिंग' पर साल {current_year} का एक नया और वायरल ब्लॉग टाइटल (हिंदी में) दो। यह इन पुराने टाइटल्स से अलग होना चाहिए: {past_titles}। जवाब में सिर्फ 'टाइटल' लिखना।"
 topic_data = {"contents": [{"parts": [{"text": topic_prompt}]}]}
 topic_url = f"https://generativelanguage.googleapis.com/v1beta/{available_model}:generateContent?key={API_KEY}"
 
@@ -67,51 +70,76 @@ except:
 if not current_topic:
     sys.exit(1)
 
-# 2. कंटेंट लिखना
-content_prompt = f"""तुम एक प्रो ब्लॉगर हो। '{current_topic}' पर एक शानदार हिंदी लेख लिखो। 
-सख्त नियम: अभी साल {current_year} चल रहा है। लेख में हर बात {current_year} के अनुसार होनी चाहिए। 2023 या 2024 की कोई बात मत लिखना।
-सिर्फ HTML tags (h2, p, ul, strong) देना।"""
+# ---------------------------------------------------------
+# STEP 2: DAY 10 - AI IMAGE ENGINE (Pollinations Fix)
+# रोबोट पहले टॉपिक को इंग्लिश में ट्रांसलेट करेगा ताकि Pollinations क्रैश न हो!
+# ---------------------------------------------------------
+print("📸 AI Image Engine: Pollinations के लिए इंग्लिश प्रॉम्प्ट बना रहे हैं...")
+img_prompt_req = f"Translate this blog title into a highly descriptive, futuristic 5-word English prompt for an AI image generator: '{current_topic}'. Return ONLY the English words, no extra text."
+img_data = {"contents": [{"parts": [{"text": img_prompt_req}]}]}
+
+english_img_prompt = "futuristic digital technology success" # Default fallback
+try:
+    req = urllib.request.Request(topic_url, data=json.dumps(img_data).encode('utf-8'), headers={'Content-Type': 'application/json'})
+    with urllib.request.urlopen(req, timeout=30) as response:
+        res = json.loads(response.read().decode('utf-8'))
+        english_img_prompt = res['candidates'][0]['content']['parts'][0]['text'].strip()
+except:
+    pass
+
+safe_keyword = urllib.parse.quote(english_img_prompt)
+dynamic_img_url = f"https://image.pollinations.ai/prompt/{safe_keyword}?width=800&height=400&nologo=true"
+
+# ---------------------------------------------------------
+# STEP 3: DAY 11-14 - ADVANCED SEO & CONTENT
+# ---------------------------------------------------------
+print("✍️ SEO Engine: कंटेंट और Meta Tags लिख रहे हैं...")
+content_prompt = f"""तुम एक प्रो ब्लॉगर और SEO एक्सपर्ट हो। 
+विषय: '{current_topic}'
+नियम: 
+1. यह साल {current_year} है, हर जानकारी {current_year} की होनी चाहिए।
+2. मुझे जवाब इस फॉर्मेट में चाहिए (बिना किसी अतिरिक्त बातचीत के):
+META_DESC: (यहाँ 2 लाइन का धांसू SEO डिस्क्रिप्शन लिखें)
+KEYWORDS: (यहाँ 5-6 SEO कीवर्ड्स कॉमा लगाकर लिखें)
+CONTENT: (यहाँ से पूरा HTML ब्लॉग h2, p, ul, strong के साथ शुरू करें)"""
 
 content_data = {"contents": [{"parts": [{"text": content_prompt}]}]}
 
-blog_content = None
+full_response = ""
 try:
     req = urllib.request.Request(topic_url, data=json.dumps(content_data).encode('utf-8'), headers={'Content-Type': 'application/json'})
     with urllib.request.urlopen(req, timeout=60) as response:
         res = json.loads(response.read().decode('utf-8'))
-        blog_content = res['candidates'][0]['content']['parts'][0]['text']
+        full_response = res['candidates'][0]['content']['parts'][0]['text']
 except:
     sys.exit(1)
 
-if not blog_content:
-    sys.exit(1)
+# AI के जवाब को 3 हिस्सों में काटना (SEO और Content)
+meta_desc = "Digital Kamai Hub - भारत का No.1 AI ऑटोमेशन ब्लॉग"
+meta_keywords = "AI, Make Money, Technology, 2026"
+blog_content = full_response
 
-blog_content = blog_content.replace("```html", "").replace("```", "").strip()
+try:
+    parts = full_response.split("CONTENT:")
+    seo_part = parts[0]
+    blog_content = parts[1].replace("```html", "").replace("```", "").strip()
+    
+    if "META_DESC:" in seo_part:
+        meta_desc = seo_part.split("META_DESC:")[1].split("KEYWORDS:")[0].strip()
+    if "KEYWORDS:" in seo_part:
+        meta_keywords = seo_part.split("KEYWORDS:")[1].strip()
+except:
+    pass
 
-# 3. पार्टनर का मास्टरस्ट्रोक: 100% पक्की इंग्लिश इमेजेज 📸
-english_prompts = [
-    "futuristic_AI_technology_laptop_neon",
-    "stock_market_growth_chart_digital",
-    "freelancer_working_on_laptop_modern",
-    "making_money_online_digital_coins",
-    "artificial_intelligence_brain_glowing"
-]
-safe_keyword = random.choice(english_prompts)
-dynamic_img_url = f"https://image.pollinations.ai/prompt/{safe_keyword}?width=800&height=400&nologo=true"
-
-# 4. डेटाबेस सेव करना
-post_id = int(time.time())
+# ---------------------------------------------------------
+# STEP 4: DATABASE & PROFESSIONAL HTML DESIGN
+# ---------------------------------------------------------
 post_filename = f"post_{post_id}.html"
-
 new_post = {"title": current_topic, "file": post_filename, "date": today_date}
 posts_db.insert(0, new_post)
 
 with open("posts.json", "w", encoding="utf-8") as f:
     json.dump(posts_db, f, ensure_ascii=False, indent=4)
-
-# ==========================================
-# 5. PROFESSIONAL UI/UX DESIGN
-# ==========================================
 
 header_menu = """
     <nav style="background: white; padding: 15px; text-align: center; position: sticky; top: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 100;">
@@ -131,18 +159,21 @@ footer_html = """
     </footer>
 """
 
+# HTML में SEO Tags जोड़े गए हैं (<meta name="description" ...>)
 article_html = f"""<!DOCTYPE html>
 <html lang="hi">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{current_topic} | Digital Kamai Hub</title>
+    <meta name="description" content="{meta_desc}">
+    <meta name="keywords" content="{meta_keywords}">
     <style>
         body {{ font-family: 'Segoe UI', Tahoma, sans-serif; background: #f8f9fa; margin: 0; color: #333; }}
         header {{ background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); color: white; padding: 40px 20px; text-align: center; }}
         .container {{ max-width: 800px; margin: 40px auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 15px rgba(0,0,0,0.05); line-height: 1.8; font-size: 18px; }}
         h1 {{ color: #f1c40f; margin: 0; }}
         h2 {{ color: #203a43; border-left: 4px solid #f1c40f; padding-left: 15px; margin-top: 30px; }}
-        img {{ width: 100%; border-radius: 8px; margin: 20px 0; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }}
+        img {{ width: 100%; border-radius: 8px; margin: 20px 0; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.1); background-color: #0f2027; min-height: 250px; }}
     </style>
 </head>
 <body>
@@ -154,7 +185,7 @@ article_html = f"""<!DOCTYPE html>
     <div class="container">
         <h1 style="color: #111; font-size: 32px; border-bottom: 1px solid #eee; padding-bottom: 15px;">{current_topic}</h1>
         <p style="color: #777; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">📅 Published: {today_date}</p>
-        <img src="{dynamic_img_url}" alt="Blog Image">
+        <img src="{dynamic_img_url}" alt="AI Generated Image from Pollinations">
         {blog_content}
     </div>
     {footer_html}
@@ -202,4 +233,3 @@ homepage_html = f"""<!DOCTYPE html>
 
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(homepage_html)
-    
