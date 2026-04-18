@@ -102,17 +102,16 @@ safe_main_keyword = urllib.parse.quote(main_img_words + " high quality editorial
 main_img_url = f"https://image.pollinations.ai/prompt/{safe_main_keyword}?width=1200&height=600&nologo=true"
 post_filename = f"post_{post_id}.html"
 
-        # --- PREMIUM AI AUDIO ENGINE ---
-        audio_filename = f"audio_{post_id}.mp3"
-        clean_text = re.sub(r'<[^>]+>', ' ', blog_content)
-        with open("temp.txt", "w", encoding="utf-8") as temp_f:
-            temp_f.write(clean_text)
-        os.system("pip install edge-tts")
-        os.system(f"edge-tts -f temp.txt --voice hi-IN-SwaraNeural --write-media {audio_filename}")
-        # -------------------------------
+# --- PREMIUM AI AUDIO ENGINE ---
+audio_filename = f"audio_{post_id}.mp3"
+clean_text = re.sub(r'<[^>]+>', ' ', blog_content)
+with open("temp.txt", "w", encoding="utf-8") as temp_f:
+    temp_f.write(clean_text)
+os.system("pip install edge-tts")
+os.system(f"edge-tts -f temp.txt --voice hi-IN-SwaraNeural --write-media {audio_filename}")
+# -------------------------------
 
 # ---------------------------------------------------------
-
 # DATABASE & CSS (100% ORIGINAL USER DESIGN)
 # ---------------------------------------------------------
 posts_db.insert(0, {"title": current_topic, "file": post_filename, "date": today_date, "img": main_img_url})
@@ -137,8 +136,6 @@ premium_css = """
     #article-body h2 { color: #000; margin: 35px 0 15px 0; border-left: 4px solid var(--main-red); padding-left: 15px; }
     .yt-btn { display: block; background: #ff0000; color: white; text-align: center; padding: 18px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 18px; margin: 40px 0; transition: 0.3s; box-shadow: 0 5px 15px rgba(255,0,0,0.3); }
     .yt-btn:hover { background: #cc0000; transform: scale(1.02); }
-    .tts-btn { position: fixed; bottom: 30px; right: 30px; background: var(--main-red); color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 10px 25px rgba(218, 37, 28, 0.4); z-index: 1000; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
-    .tts-btn:hover { transform: translateY(-5px); background: #000; }
     footer { background: var(--dark-bg); color: #888; padding: 60px 20px 30px; margin-top: 60px; text-align: center; }
     .footer-links a { color: #ccc; text-decoration: none; margin: 0 15px; font-size: 15px; }
 </style>
@@ -190,8 +187,7 @@ article_page = f"""<!DOCTYPE html>
         <div id="article-body">{blog_content}</div>
         
         <a href="https://www.youtube.com/results?search_query={urllib.parse.quote(current_topic)}" target="_blank" class="yt-btn">📺 यूट्यूब पर इस विषय का वीडियो देखें</a>
-    </div>
-    
+        
         <div style="margin: 25px 0; padding: 15px; background: #fff3f3; border-left: 4px solid #da251c; border-radius: 5px;">
             <p style="margin-top: 0; font-weight: bold; color: #333; font-size: 16px;">🎧 इस आर्टिकल को सुनें:</p>
             <audio controls style="width: 100%; border-radius: 30px; outline: none;">
@@ -199,7 +195,9 @@ article_page = f"""<!DOCTYPE html>
                 आपका ब्राउज़र ऑडियो प्लेयर को सपोर्ट नहीं करता है।
             </audio>
         </div>
-        {footer_html}
+    </div>
+    
+    {footer_html}
         
 </body>
 </html>"""
@@ -228,4 +226,4 @@ pages = {
 for p_file, (p_title, p_content) in pages.items():
     with open(f"{p_file}.html", "w", encoding="utf-8") as f:
         f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>{p_title}</title>{premium_css}</head><body>{header_html}<div class='container'><h1>{p_title}</h1><p style='font-size:18px;'>{p_content}</p></div>{footer_html}</body></html>")
-        
+                    
