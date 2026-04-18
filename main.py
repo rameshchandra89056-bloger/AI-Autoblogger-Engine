@@ -160,6 +160,7 @@ article_page = f"""<!DOCTYPE html>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{current_topic}</title>
     {premium_css}
+    <meta name="google-site-verification" content="hJqKPsCjWtLzJI1g0Il9cddaZ3004zGndAg3T91iQsE" />
 </head>
 <body>
     {header_html}
