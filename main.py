@@ -161,6 +161,14 @@ article_page = f"""<!DOCTYPE html>
     <title>{current_topic}</title>
     {premium_css}
     <meta name="google-site-verification" content="hJqKPsCjWtLzJI1g0Il9cddaZ3004zGndAg3T91iQsE" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NSLHLYVTDM"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){{dataLayer.push(arguments);}}
+  gtag('js', new Date());
+  gtag('config', 'G-NSLHLYVTDM');
+</script>
+
 </head>
 <body>
     {header_html}
@@ -261,8 +269,8 @@ home_cards = "".join([f"""
 """ for p in posts_db])
 
 with open("index.html", "w", encoding="utf-8") as f:
-    f.write(f"<!DOCTYPE html><html lang='hi'><head><meta name='google-site-verification' content='hJqKPsCjWtLzJI1g0Il9cddaZ3004zGndAg3T91iQsE' /><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Digital Kamai Hub</title>{premium_css}</head><body>{header_html}<div style='max-width:1100px; margin:40px auto; padding:0 20px;'><h2 style='font-size:32px; border-bottom:3px solid #da251c; padding-bottom:10px; display:inline-block; margin-bottom:20px;'>🔥 ताज़ा ख़बरें</h2><div class='grid' style='display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:25px;'>{home_cards}</div></div>{footer_html}</body></html>")
-
+        f.write(f"<!DOCTYPE html><html lang='hi'><head><meta name='google-site-verification' content='hjQKPcCjWtLzjl1g3I19cddaZ3ODDzEndKg3T91sQsI' /><script async src='https://www.googletagmanager.com/gtag/js?id=G-NSLHLYVTDM'></script><script>window.dataLayer = window.dataLayer || []; function gtag(){{dataLayer.push(arguments);}} gtag('js', new Date()); gtag('config', 'G-NSLHLYVTDM');</script><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Digital Kamai Hub</title>{premium_css}</head><body>{header_html}<div style='max-width:1100px; margin:40px auto; padding:0 20px;'><h2 style='font-size:32px; border-bottom:3px solid #da251c; padding-bottom:10px; display:inline-block; margin-bottom:20px;'>🔥 ताज़ा खबरें</h2><div class='grid' style='display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:25px;'>{home_cards}</div></div>{footer_html}</body></html>")
+        
 pages = {
     "about": ("About Us", "Digital Kamai Hub भारत का नंबर 1 AI और टेक्नोलॉजी ब्लॉग है।"),
     "privacy": ("Privacy Policy", "आपकी प्राइवेसी हमारे लिए महत्वपूर्ण है।"),
