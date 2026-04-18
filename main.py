@@ -102,7 +102,17 @@ safe_main_keyword = urllib.parse.quote(main_img_words + " high quality editorial
 main_img_url = f"https://image.pollinations.ai/prompt/{safe_main_keyword}?width=1200&height=600&nologo=true"
 post_filename = f"post_{post_id}.html"
 
+        # --- PREMIUM AI AUDIO ENGINE ---
+        audio_filename = f"audio_{post_id}.mp3"
+        clean_text = re.sub(r'<[^>]+>', ' ', blog_content)
+        with open("temp.txt", "w", encoding="utf-8") as temp_f:
+            temp_f.write(clean_text)
+        os.system("pip install edge-tts")
+        os.system(f"edge-tts -f temp.txt --voice hi-IN-SwaraNeural --write-media {audio_filename}")
+        # -------------------------------
+
 # ---------------------------------------------------------
+
 # DATABASE & CSS (100% ORIGINAL USER DESIGN)
 # ---------------------------------------------------------
 posts_db.insert(0, {"title": current_topic, "file": post_filename, "date": today_date, "img": main_img_url})
@@ -182,76 +192,15 @@ article_page = f"""<!DOCTYPE html>
         <a href="https://www.youtube.com/results?search_query={urllib.parse.quote(current_topic)}" target="_blank" class="yt-btn">📺 यूट्यूब पर इस विषय का वीडियो देखें</a>
     </div>
     
-    <button class="tts-btn" onclick="toggleTTS()" id="ttsBtn">🔊 लेख सुनें</button>
-    {footer_html}
-
-    <script>
-        let synth = window.speechSynthesis;
-        let isReading = false;
-        let elementsToRead = [];
-        let currentIndex = 0;
+        <div style="margin: 25px 0; padding: 15px; background: #fff3f3; border-left: 4px solid #da251c; border-radius: 5px;">
+            <p style="margin-top: 0; font-weight: bold; color: #333; font-size: 16px;">🎧 इस आर्टिकल को सुनें:</p>
+            <audio controls style="width: 100%; border-radius: 30px; outline: none;">
+                <source src="{audio_filename}" type="audio/mpeg">
+                आपका ब्राउज़र ऑडियो प्लेयर को सपोर्ट नहीं करता है।
+            </audio>
+        </div>
+        {footer_html}
         
-        function readNextElement() {{
-            if (!isReading || currentIndex >= elementsToRead.length) {{
-                isReading = false;
-                document.getElementById('ttsBtn').innerHTML = '🔊 लेख सुनें';
-                return;
-            }}
-            
-            let text = elementsToRead[currentIndex].innerText.trim();
-            if(!text) {{
-                currentIndex++;
-                readNextElement();
-                return;
-            }}
-            
-            let utter = new SpeechSynthesisUtterance(text);
-            utter.lang = 'hi-IN';
-            utter.rate = 0.9; 
-            
-            let voices = synth.getVoices();
-            let hiVoice = voices.find(v => v.name.includes('Google') && v.lang.includes('hi')) || voices.find(v => v.lang.includes('hi'));
-            if(hiVoice) utter.voice = hiVoice;
-
-            utter.onend = function() {{
-                currentIndex++;
-                readNextElement();
-            }};
-            
-            utter.onerror = function() {{
-                currentIndex++;
-                readNextElement();
-            }};
-
-            synth.speak(utter);
-        }}
-
-        function toggleTTS() {{
-            if (!synth) return;
-
-            if (isReading) {{
-                synth.cancel(); 
-                isReading = false;
-                document.getElementById('ttsBtn').innerHTML = '🔊 लेख सुनें';
-            }} else {{
-                synth.cancel(); 
-                let container = document.getElementById('article-body');
-                elementsToRead = Array.from(container.querySelectorAll('p, h2, h3, li'));
-                
-                if (elementsToRead.length === 0) {{
-                    let dummy = document.createElement('p');
-                    dummy.innerText = container.innerText;
-                    elementsToRead = [dummy];
-                }}
-
-                currentIndex = 0;
-                isReading = true;
-                document.getElementById('ttsBtn').innerHTML = '⏹️ आवाज़ बंद करें';
-                
-                setTimeout(() => {{ readNextElement(); }}, 300);
-            }}
-        }}
-    </script>
 </body>
 </html>"""
 
