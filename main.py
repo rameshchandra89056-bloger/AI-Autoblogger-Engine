@@ -8,14 +8,12 @@ import re
 import html
 
 # ==========================================
-# THE AI MILLIONAIRE - PREMIUM MASTER ENGINE
+# THE AI MILLIONAIRE - PREMIUM MASTER ENGINE (HYBRID)
 # ==========================================
 
-# 🔑 API Keys (Fetching securely from GitHub Secrets)
+# 🔑 API Keys
 raw_keys = os.environ.get("GEMINI_API_KEY", "")
 API_KEYS = [k.strip() for k in raw_keys.split(",") if k.strip()]
-
-# (अगर किसी कारण से Secret काम न करे, तो यह बैकअप है - इसे कोई चुरा नहीं सकता क्योंकि GitHub इसे रनटाइम पर छिपा देता है)
 if not API_KEYS:
     API_KEYS = [
         "AIzaSyBsr9sYpFc9evX4yDFBCM1WAkYhzz6F2fU",
@@ -36,14 +34,6 @@ if os.path.exists("posts.json"):
         except: pass
 
 available_model = "models/gemini-1.5-flash"
-try:
-    req = urllib.request.Request(f"https://generativelanguage.googleapis.com/v1beta/models?key={API_KEYS[0]}")
-    with urllib.request.urlopen(req, timeout=30) as response:
-        res = json.loads(response.read().decode('utf-8'))
-        for m in res.get('models', []):
-            if 'generateContent' in m.get('supportedGenerationMethods', []) and 'flash' in m.get('name', '').lower():
-                available_model = m['name']; break
-except: pass
 
 def ask_ai(prompt, retries=15):
     for i in range(retries):
@@ -59,17 +49,15 @@ def ask_ai(prompt, retries=15):
         except: time.sleep(5)
     return ""
 
-# 🚀 SMART PRE-WARM FUNCTION (पलक झपकते फोटो लोड करने की तकनीक)
 def pre_warm_image(url):
     try:
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        urllib.request.urlopen(req, timeout=20)
-        time.sleep(3) # स्मार्ट गैप ताकि सर्वर हमें बॉट समझकर ब्लॉक न करे
+        urllib.request.urlopen(req, timeout=10)
     except:
         pass
 
 # ---------------------------------------------------------
-# THE AGENTS (HIGH-PAYING FINANCE & TRADING NICHE)
+# THE AGENTS
 # ---------------------------------------------------------
 topic_prompt = f"तुम एक ट्रेंड एनालिस्ट हो। {current_year} में 'फाइनेंस', 'ट्रेडिंग', 'स्टॉक मार्केट', या 'AI से ऑनलाइन कमाई' पर एक बहुत ही हाई-पेइंग और वायरल हिंदी ब्लॉग टाइटल दो। पुराने टाइटल्स: {[p['title'] for p in posts_db[:5]]} से अलग हो। सिर्फ 'टाइटल' लिखना।"
 current_topic = ask_ai(topic_prompt).replace('"', '').replace("'", "").replace("*", "").replace("टाइटल:", "").replace("Title:", "").replace("टाइटल :", "").strip()
@@ -87,24 +75,39 @@ blog_content = ask_ai(html_prompt, retries=20).replace("```html", "").replace("`
 if not blog_content: sys.exit(1)
 
 # ---------------------------------------------------------
-# 🎨 100% SAFE & INSTANT IMAGE ENGINE (PREMIUM 3D LOOK)
+# 🎨 HYBRID IMAGE ENGINE (NO MORE BLANK BOXES)
 # ---------------------------------------------------------
-safe_img_base = "high end finance trading business technology wealth"
+# शॉर्ट और सुरक्षित कीवर्ड्स ताकि AI सर्वर क्रैश न हो
+safe_img_base = "future finance trading wealth technology"
 
-modifiers = ["cinematic 8k", "digital art illustration", "hyper realistic photography"]
+# PLAN B: दुनिया की सबसे बेहतरीन HD इमेजेज का बैकअप लिस्ट (अगर AI फेल हुआ तो ये दिखेंगी)
+fallback_images = [
+    "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=800&auto=format&fit=crop", # Trading Chart
+    "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=800&auto=format&fit=crop", # AI Tech
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop"  # Global Business
+]
+
+modifiers = ["cinematic", "cyberpunk", "hyperrealistic"]
+
 for idx, mod in enumerate(modifiers):
     if "[PHOTO]" in blog_content:
-        inner_prompt = f"{safe_img_base} {mod}".replace(" ", "%20")
+        inner_prompt = urllib.parse.quote(f"{safe_img_base} {mod}")
         inner_img_url = f"https://image.pollinations.ai/prompt/{inner_prompt}?width=800&height=400&nologo=true&seed={post_id + idx + 1}"
         
-        pre_warm_image(inner_img_url) # रोबोट छुपकर तस्वीरें तैयार कर रहा है
+        pre_warm_image(inner_img_url)
         
-        img_html = f"<div style='text-align: center;'><img src='{inner_img_url}' alt='AI generated illustration' class='article-img'></div>"
+        # 🚀 THE JUGAAD: 'onerror' कमांड! अगर AI फोटो लोड नहीं हुई, तो तुरंत Fallback HD फोटो लगा दो!
+        fallback_url = fallback_images[idx % len(fallback_images)]
+        img_html = f"<div style='text-align: center;'><img src='{inner_img_url}' onerror=\"this.onerror=null; this.src='{fallback_url}';\" alt='Premium Finance Illustration' class='article-img'></div>"
+        
         blog_content = blog_content.replace("[PHOTO]", img_html, 1)
 
-main_prompt = f"{safe_img_base} hyper realistic masterpiece".replace(" ", "%20")
+main_prompt = urllib.parse.quote(f"{safe_img_base} masterpiece")
 main_img_url = f"https://image.pollinations.ai/prompt/{main_prompt}?width=1200&height=600&nologo=true&seed={post_id}"
-pre_warm_image(main_img_url) 
+pre_warm_image(main_img_url)
+
+# मेन फोटो के लिए भी बैकअप जुगाड़
+main_fallback = "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop"
 
 # ---------------------------------------------------------
 # 🎧 PREMIUM SUPER-CLEAN AUDIO ENGINE
@@ -120,11 +123,13 @@ os.system("pip install edge-tts")
 os.system(f"edge-tts -f temp.txt --voice hi-IN-SwaraNeural --write-media {audio_filename}")
 
 post_filename = f"post_{post_id}.html"
+
+# सेव करते समय मेन फोटो में भी Fallback जुगाड़ (onerror) जोड़ना
 posts_db.insert(0, {"title": current_topic, "file": post_filename, "date": today_date, "img": main_img_url})
 with open("posts.json", "w", encoding="utf-8") as f: json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
 # ---------------------------------------------------------
-# HTML & CSS DESIGN (THE 3D PREMIUM LOOK IS FULLY RESTORED)
+# HTML & CSS DESIGN (THE 3D PREMIUM LOOK)
 # ---------------------------------------------------------
 premium_css = """
 <style>
@@ -139,7 +144,6 @@ premium_css = """
     .container { max-width: 850px; margin: 40px auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
     h1 { font-size: 38px; line-height: 1.3; margin-bottom: 15px; color: #000; }
     .meta { font-size: 14px; color: #888; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 25px; }
-    /* Premium 3D Image Styling */
     .hero-img { width: 100%; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 2px solid #f9f9f9; object-fit: cover; background-color: #fafafa; }
     .article-img { width: 100%; border-radius: 12px; margin: 35px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 2px solid #f9f9f9; object-fit: cover; background-color: #fafafa; }
     #article-body { font-size: 20px; color: var(--text-gray); }
@@ -180,7 +184,7 @@ article_page = f"""<!DOCTYPE html>
     <div class="container">
         <h1>{current_topic}</h1>
         <div class="meta">📅 प्रकाशित: {today_date} | ✍️ लेखक: मोहित (The AI Millionaire)</div>
-        <img src="{main_img_url}" class="hero-img" alt="Hero Image">
+        <img src="{main_img_url}" onerror="this.onerror=null; this.src='{main_fallback}';" class="hero-img" alt="Hero Image">
         
         <div id="article-body">{blog_content}</div>
         
@@ -223,9 +227,10 @@ article_page = f"""<!DOCTYPE html>
 
 with open(post_filename, "w", encoding="utf-8") as f: f.write(article_page)
 
+# होमपेज कार्ड्स में भी onerror जुगाड़
 home_cards = "".join([f"""
     <div class="card" style="background:#fff; padding:15px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.08); transition: 0.3s;">
-        <img src="{p['img']}" alt="Thumbnail" style="width:100%; border-radius:8px; object-fit: cover; min-height: 200px; background-color: #fafafa;">
+        <img src="{p['img']}" onerror="this.onerror=null; this.src='{main_fallback}';" alt="Thumbnail" style="width:100%; border-radius:8px; object-fit: cover; min-height: 200px; background-color: #fafafa;">
         <div class="card-content" style="padding-top:15px;">
             <h3 style="margin-bottom:10px; font-size: 18px; line-height: 1.4;"><a href="{p['file']}" style="color:#000; text-decoration:none;">{p['title']}</a></h3>
             <p style="color:#888; font-size:13px; margin-bottom:15px;">🗓 {p['date']}</p>
@@ -246,3 +251,4 @@ pages = {
 for p_file, (p_title, p_content) in pages.items():
     with open(f"{p_file}.html", "w", encoding="utf-8") as f:
         f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>{p_title}</title>{premium_css}</head><body>{header_html}<div class='container'><h1>{p_title}</h1><p style='font-size:18px;'>{p_content}</p></div>{footer_html}</body></html>")
+                
