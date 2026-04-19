@@ -188,13 +188,26 @@ article_page = f"""<!DOCTYPE html>
         
         <a href="https://www.youtube.com/results?search_query={urllib.parse.quote(current_topic)}" target="_blank" class="yt-btn">📺 यूट्यूब पर इस विषय का वीडियो देखें</a>
         
-        <div style="margin: 25px 0; padding: 15px; background: #fff3f3; border-left: 4px solid #da251c; border-radius: 5px;">
-            <p style="margin-top: 0; font-weight: bold; color: #333; font-size: 16px;">🎧 इस आर्टिकल को सुनें:</p>
-            <audio controls style="width: 100%; border-radius: 30px; outline: none;">
-                <source src="{audio_filename}" type="audio/mpeg">
-                आपका ब्राउज़र ऑडियो प्लेयर को सपोर्ट नहीं करता है।
-            </audio>
-        </div>
+                <audio id="premium-audio" src="{audio_filename}"></audio>
+        <button id="floating-tts-btn" onclick="toggleAudio()" style="position: fixed; bottom: 30px; right: 30px; background: #da251c; color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 10px 25px rgba(218, 37, 28, 0.4); z-index: 1000; transition: 0.3s; display: flex; align-items: center; gap: 10px;">
+            🎧 आर्टिकल सुनें
+        </button>
+        <script>
+            function toggleAudio() {{
+                var audio = document.getElementById("premium-audio");
+                var btn = document.getElementById("floating-tts-btn");
+                if (audio.paused) {{
+                    audio.play();
+                    btn.innerHTML = "⏸️ आवाज़ रोकें";
+                    btn.style.background = "#111";
+                }} else {{
+                    audio.pause();
+                    btn.innerHTML = "🎧 फिर से सुनें";
+                    btn.style.background = "#da251c";
+                }}
+            }}
+        </script>
+        
     </div>
     
     {footer_html}
