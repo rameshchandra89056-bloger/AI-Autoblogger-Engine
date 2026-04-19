@@ -8,10 +8,10 @@ import re
 import html
 
 # ==========================================
-# THE AI MILLIONAIRE - ULTIMATE MONEY ENGINE
+# THE AI MILLIONAIRE - ULTIMATE MONEY ENGINE (FINAL)
 # ==========================================
 
-# 🔑 API Keys & Security
+# 🔑 API Keys & Security (GitHub Secrets)
 raw_keys = os.environ.get("GEMINI_API_KEY", "")
 API_KEYS = [k.strip() for k in raw_keys.split(",") if k.strip()]
 if not API_KEYS:
@@ -72,26 +72,50 @@ def pre_warm_image(url):
 # ---------------------------------------------------------
 # 🧠 2. THE CONTENT ENGINE (Niche: Finance/AI)
 # ---------------------------------------------------------
+print("🤖 AI रोबोट नया वायरल टॉपिक सोच रहा है...")
 topic_prompt = f"तुम एक ट्रेंड एनालिस्ट हो। {current_year} में 'फाइनेंस', 'ट्रेडिंग', 'स्टॉक मार्केट', या 'AI से ऑनलाइन कमाई' पर एक बहुत ही हाई-पेइंग और वायरल हिंदी ब्लॉग टाइटल दो। पुराने टाइटल्स: {[p['title'] for p in posts_db[:5]]} से अलग हो। सिर्फ 'टाइटल' लिखना।"
 current_topic = ask_ai(topic_prompt).replace('"', '').replace("'", "").replace("*", "").replace("टाइटल:", "").replace("Title:", "").replace("टाइटल :", "").strip()
 
 if not current_topic: sys.exit(1)
 
-# 🚀 RULE UPGRADE: Case Study, Step-by-Step, CTA & Disclaimer!
+# 🚀 RULE UPGRADE: No YouTube, Only High-Conversion Affiliate Tags
 html_prompt = f"""तुम एक प्रो ब्लॉगर हो। विषय: '{current_topic}'। 
 कम से कम 1000 शब्दों का एक बहुत ही विस्तार से लिखा गया शानदार हिंदी ब्लॉग पोस्ट लिखो।
 नियम:
 1. पोस्ट के बीच-बीच में 3 अलग-अलग जगह बिलकुल ऐसे ही लिख दो: [PHOTO]
-2. पोस्ट में एक 'Real Life Case Study' (उदाहरण) और एक 'Step-by-Step Guide' जरूर शामिल करें।
-3. अंत में एक दमदार 'निष्कर्ष', एक साफ 'Call to Action (CTA)' और यह 'चेतावनी (Disclaimer)' जरूर लिखें: "चेतावनी: यह जानकारी केवल शिक्षा के उद्देश्य से है, कोई भी वित्तीय निर्णय लेने से पहले अपनी रिसर्च करें।"
-4. मुख्य टाइटल (Heading) दोबारा मत लिखना, सीधा इंट्रोडक्शन से शुरू करना।
-5. सिर्फ HTML कोड (h2, p, strong, ul) दें।"""
+2. पोस्ट के बीच में ठीक 2 अलग-अलग जगह (जहाँ पैसा कमाने या टूल का जिक्र हो) बिलकुल ऐसे ही लिख दो: [AFFILIATE]
+3. पोस्ट में एक 'Real Life Case Study' (उदाहरण) और एक 'Step-by-Step Guide' जरूर शामिल करें।
+4. अंत में एक दमदार 'निष्कर्ष', और यह 'चेतावनी (Disclaimer)' जरूर लिखें: "चेतावनी: यह जानकारी केवल शिक्षा के उद्देश्य से है, कोई भी वित्तीय निर्णय लेने से पहले अपनी रिसर्च करें।"
+5. मुख्य टाइटल (Heading) दोबारा मत लिखना, सीधा इंट्रोडक्शन से शुरू करना।
+6. सिर्फ HTML कोड (h2, p, strong, ul) दें।"""
 blog_content = ask_ai(html_prompt, retries=20).replace("```html", "").replace("```", "").strip()
 
 if not blog_content: sys.exit(1)
 
 # ---------------------------------------------------------
-# 🖼️ 3. HYBRID IMAGE ENGINE (Never Failing Images)
+# 💰 3. DYNAMIC AFFILIATE ENGINE (Real Money Maker)
+# ---------------------------------------------------------
+# यह रोबोट आर्टिकल के बीच में आपका लाल वाला प्रीमियम बॉक्स फिट कर देगा
+affiliate_offers = [
+    {"title": "🚀 आज ही अपनी 100X कमाई शुरू करें!", "desc": "AI और स्मार्ट ट्रेडिंग की दुनिया में कदम रखने के लिए टॉप एक्सपर्ट्स द्वारा प्रमाणित प्लेटफॉर्म का इस्तेमाल करें। हज़ारों लोग पहले ही अपना सफर शुरू कर चुके हैं!", "btn": "👉 यहाँ फ्री अकाउंट बनाएँ 👈", "link": "#"},
+    {"title": "🤖 2026 में अपनी कमाई को 10X करें!", "desc": "The AI Millionaire की एक्सक्लूसिव कम्युनिटी से जुड़ें और रोज़ाना नए मनी-मेकिंग सीक्रेट्स पाएं।", "btn": "👉 कम्युनिटी जॉइन करें 👈", "link": "#"}
+]
+
+for offer in affiliate_offers:
+    if "[AFFILIATE]" in blog_content:
+        mega_cta_html = f"""
+        <div style="background: linear-gradient(135deg, #111, #da251c); color: white; padding: 35px 25px; border-radius: 12px; margin: 40px 0; text-align: center; box-shadow: 0 10px 30px rgba(218, 37, 28, 0.3);">
+            <h3 style="color: #fff; margin-top: 0; font-size: 24px; letter-spacing: 0.5px;">{offer['title']}</h3>
+            <p style="font-size: 16px; opacity: 0.9; margin-bottom: 25px; line-height: 1.6;">{offer['desc']}</p>
+            <a href="{offer['link']}" target="_blank" style="display: inline-block; background: #fff; color: #da251c; font-weight: bold; padding: 15px 35px; border-radius: 50px; text-decoration: none; font-size: 18px; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">{offer['btn']}</a>
+            <p style="font-size: 11px; opacity: 0.6; margin-top: 15px; margin-bottom: 0;">*शर्तें लागू। निवेश बाज़ार जोखिमों के अधीन है।</p>
+        </div>
+        """
+        blog_content = blog_content.replace("[AFFILIATE]", mega_cta_html, 1)
+blog_content = blog_content.replace("[AFFILIATE]", "") # Remove any extra tags
+
+# ---------------------------------------------------------
+# 🖼️ 4. HYBRID IMAGE ENGINE (Never Failing Images)
 # ---------------------------------------------------------
 safe_img_base = "future finance trading wealth technology"
 fallback_images = [
@@ -116,8 +140,9 @@ pre_warm_image(main_img_url)
 main_fallback = "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop"
 
 # ---------------------------------------------------------
-# 🎙️ 4. SUPER-CLEAN AUDIO ENGINE
+# 🎙️ 5. SUPER-CLEAN AUDIO ENGINE
 # ---------------------------------------------------------
+print("🎧 ऑडियो प्लेयर तैयार किया जा रहा है...")
 audio_filename = f"audio_{post_id}.mp3"
 clean_text = re.sub(r'<[^>]+>', ' ', blog_content)
 clean_text = html.unescape(clean_text)
@@ -131,7 +156,7 @@ os.system(f"edge-tts -f temp.txt --voice hi-IN-SwaraNeural --write-media {audio_
 post_filename = f"post_{post_id}.html"
 
 # ---------------------------------------------------------
-# 🔗 5. INTERNAL LINKING (ये भी पढ़ें)
+# 🔗 6. INTERNAL LINKING (ये भी पढ़ें)
 # ---------------------------------------------------------
 related_html = ""
 if len(posts_db) > 0:
@@ -145,20 +170,7 @@ posts_db.insert(0, {"title": current_topic, "file": post_filename, "date": today
 with open("posts.json", "w", encoding="utf-8") as f: json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
 # ---------------------------------------------------------
-# 💰 6. AFFILIATE / MONETIZATION BOX (THE MONEY MAKER)
-# ---------------------------------------------------------
-# यह वो बॉक्स है जो करोड़ों की कंपनियों की तरह यूज़र से क्लिक करवाएगा!
-affiliate_box_html = """
-<div style="background: linear-gradient(135deg, #111, #da251c); color: white; padding: 35px 25px; border-radius: 12px; margin: 40px 0; text-align: center; box-shadow: 0 10px 30px rgba(218, 37, 28, 0.3);">
-    <h3 style="color: #fff; margin-top: 0; font-size: 24px; letter-spacing: 0.5px;">🚀 आज ही अपनी 100X कमाई शुरू करें!</h3>
-    <p style="font-size: 16px; opacity: 0.9; margin-bottom: 25px; line-height: 1.6;">AI और स्मार्ट ट्रेडिंग की दुनिया में कदम रखने के लिए टॉप एक्सपर्ट्स द्वारा प्रमाणित प्लेटफॉर्म का इस्तेमाल करें। हज़ारों लोग पहले ही अपना सफर शुरू कर चुके हैं!</p>
-    <a href="#" target="_blank" style="display: inline-block; background: #fff; color: #da251c; font-weight: bold; padding: 15px 35px; border-radius: 50px; text-decoration: none; font-size: 18px; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">👉 यहाँ फ्री अकाउंट बनाएँ 👈</a>
-    <p style="font-size: 11px; opacity: 0.6; margin-top: 15px; margin-bottom: 0;">*शर्तें लागू। निवेश बाज़ार जोखिमों के अधीन है।</p>
-</div>
-"""
-
-# ---------------------------------------------------------
-# 🎨 HTML & CSS DESIGN (PREMIUM UI)
+# 🎨 7. HTML & CSS DESIGN (PREMIUM UI)
 # ---------------------------------------------------------
 premium_css = """
 <style>
@@ -178,8 +190,6 @@ premium_css = """
     #article-body { font-size: 20px; color: var(--text-gray); }
     #article-body h2 { color: #000; margin: 35px 0 15px 0; border-left: 5px solid var(--main-red); padding-left: 15px; background: #fafafa; padding: 10px 15px; border-radius: 0 8px 8px 0; }
     .tts-box { background: #fff3f3; padding: 15px; border-left: 4px solid var(--main-red); margin-bottom: 25px; font-weight: bold; color: #da251c; border-radius: 0 8px 8px 0; display: flex; align-items: center; gap: 10px;}
-    .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #000; border-radius: 12px; margin: 40px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-    .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
     footer { background: var(--dark-bg); color: #888; padding: 60px 20px 30px; margin-top: 60px; text-align: center; }
     .footer-links a { color: #ccc; text-decoration: none; margin: 0 15px; font-size: 15px; }
 </style>
@@ -222,18 +232,11 @@ article_page = f"""<!DOCTYPE html>
 
         <div id="article-body">{blog_content}</div>
         
-        <h2 style="color: #000; margin: 40px 0 20px 0; border-left: 5px solid var(--main-red); padding-left: 15px;">📺 इस विषय पर और गहराई से समझें:</h2>
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed?listType=search&list={urllib.parse.quote(current_topic)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
-        
-        {affiliate_box_html}
-        
         <div style="margin: 40px 0; padding: 25px; background: #fff; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 20px; border-top: 4px solid var(--main-red);">
             <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mohit&backgroundColor=f0f2f5" alt="Mohit - The AI Millionaire" style="min-width: 80px; height: 80px; border-radius: 50%; padding: 5px; border: 2px solid var(--main-red);">
             <div>
                 <h3 style="margin: 0; font-size: 22px; color: #111;">मोहित <span style="font-size: 16px; color: #888; font-weight: normal;">| The AI Millionaire</span></h3>
-                <p style="margin: 8px 0 0; font-size: 15px; color: #555; line-height: 1.6;">नमस्ते! मैं मोहित हूँ। मेरा मिशन आपको AI की ताकत से वित्तीय आज़ादी दिलाना और 2026 में स्मार्ट तरीके से ऑनलाइन कमाई के सबसे एडवांस सीक्रेट्स सिखाना है।</p>
+                <p style="margin: 8px 0 0; font-size: 15px; color: #555; line-height: 1.6;">नमस्ते! मैं मोहित हूँ। मेरा मिशन आपको AI की ताकत से वित्तीय आज़ादी दिलाना और 2026 में स्मार्ट तरीके से ऑनलाइन कमाई के सबसे एडवांस सीक्रेट्स सिखाना है। इस डिजिटल सफर में मेरे साथ जुड़ें!</p>
             </div>
         </div>
         
