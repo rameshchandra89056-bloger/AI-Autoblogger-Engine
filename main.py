@@ -8,7 +8,7 @@ import re
 import html
 
 # ==========================================
-# THE AI MILLIONAIRE - PREMIUM MASTER ENGINE (WITH X-RAY LOGS)
+# THE AI MILLIONAIRE - PREMIUM MASTER ENGINE (BUG FIXED)
 # ==========================================
 
 raw_keys = os.environ.get("GEMINI_API_KEY", "")
@@ -32,9 +32,23 @@ if os.path.exists("posts.json"):
             posts_db = [p for p in raw_db if "img" in p]
         except: pass
 
-available_model = "models/gemini-1.5-flash"
+# 🚀 SMART RADAR: ऑटोमैटिक सही मॉडल ढूँढने का सिस्टम (404 Error Fix)
+available_model = "models/gemini-1.5-flash-latest" # सुरक्षित बैकअप
+try:
+    print("📡 Google के सर्वर से सबसे ताज़ा AI मॉडल ढूँढा जा रहा है...")
+    req = urllib.request.Request(f"https://generativelanguage.googleapis.com/v1beta/models?key={API_KEYS[0]}")
+    with urllib.request.urlopen(req, timeout=30) as response:
+        res = json.loads(response.read().decode('utf-8'))
+        for m in res.get('models', []):
+            if 'generateContent' in m.get('supportedGenerationMethods', []) and 'flash' in m.get('name', '').lower():
+                available_model = m['name']
+                break
+    print(f"✅ सफलता! मॉडल मिल गया: {available_model}")
+except Exception as e:
+    print(f"⚠️ रडार फेल हुआ, डिफ़ॉल्ट मॉडल इस्तेमाल कर रहे हैं। एरर: {e}")
+    pass
 
-# 🚀 X-RAY VISION ADDED HERE
+# X-RAY VISION
 def ask_ai(prompt, retries=15):
     for i in range(retries):
         current_key = API_KEYS[i % len(API_KEYS)]
@@ -47,7 +61,6 @@ def ask_ai(prompt, retries=15):
                 text = res['candidates'][0]['content']['parts'][0]['text'].strip()
                 if len(text) > 10: return text
         except Exception as e:
-            # यह लाइन GitHub Actions में असली एरर छापेगी!
             print(f"⚠️ API Error (Attempt {i+1}/{retries}) with key ending in ...{current_key[-4:]}: {e}")
             time.sleep(5)
     return ""
@@ -91,6 +104,7 @@ print("✅ आर्टिकल सफलतापूर्वक लिखा 
 # ---------------------------------------------------------
 # 🎨 HYBRID IMAGE ENGINE
 # ---------------------------------------------------------
+print("🖼️ स्मार्ट इमेजेस जेनरेट की जा रही हैं...")
 safe_img_base = "future finance trading wealth technology"
 fallback_images = [
     "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=800&auto=format&fit=crop",
