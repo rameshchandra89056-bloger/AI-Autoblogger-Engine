@@ -8,9 +8,10 @@ import re
 import html
 
 # ==========================================
-# THE AI MILLIONAIRE - PREMIUM MASTER ENGINE (BUG FIXED)
+# THE AI MILLIONAIRE - ULTIMATE MONEY ENGINE
 # ==========================================
 
+# 🔑 API Keys & Security
 raw_keys = os.environ.get("GEMINI_API_KEY", "")
 API_KEYS = [k.strip() for k in raw_keys.split(",") if k.strip()]
 if not API_KEYS:
@@ -32,8 +33,8 @@ if os.path.exists("posts.json"):
             posts_db = [p for p in raw_db if "img" in p]
         except: pass
 
-# 🚀 SMART RADAR: ऑटोमैटिक सही मॉडल ढूँढने का सिस्टम (404 Error Fix)
-available_model = "models/gemini-1.5-flash-latest" # सुरक्षित बैकअप
+# 📡 1. AUTO-MODEL RADAR (404 Error Fix)
+available_model = "models/gemini-1.5-flash-latest"
 try:
     print("📡 Google के सर्वर से सबसे ताज़ा AI मॉडल ढूँढा जा रहा है...")
     req = urllib.request.Request(f"https://generativelanguage.googleapis.com/v1beta/models?key={API_KEYS[0]}")
@@ -43,12 +44,9 @@ try:
             if 'generateContent' in m.get('supportedGenerationMethods', []) and 'flash' in m.get('name', '').lower():
                 available_model = m['name']
                 break
-    print(f"✅ सफलता! मॉडल मिल गया: {available_model}")
-except Exception as e:
-    print(f"⚠️ रडार फेल हुआ, डिफ़ॉल्ट मॉडल इस्तेमाल कर रहे हैं। एरर: {e}")
-    pass
+except Exception as e: pass
 
-# X-RAY VISION
+# 🛡️ X-RAY VISION LOGGING
 def ask_ai(prompt, retries=15):
     for i in range(retries):
         current_key = API_KEYS[i % len(API_KEYS)]
@@ -61,7 +59,7 @@ def ask_ai(prompt, retries=15):
                 text = res['candidates'][0]['content']['parts'][0]['text'].strip()
                 if len(text) > 10: return text
         except Exception as e:
-            print(f"⚠️ API Error (Attempt {i+1}/{retries}) with key ending in ...{current_key[-4:]}: {e}")
+            print(f"⚠️ API Error (Attempt {i+1}/{retries}): {e}")
             time.sleep(5)
     return ""
 
@@ -69,42 +67,32 @@ def pre_warm_image(url):
     try:
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         urllib.request.urlopen(req, timeout=10)
-    except:
-        pass
+    except: pass
 
 # ---------------------------------------------------------
-# THE AGENTS
+# 🧠 2. THE CONTENT ENGINE (Niche: Finance/AI)
 # ---------------------------------------------------------
-print("🤖 AI रोबोट नया वायरल टॉपिक सोच रहा है...")
 topic_prompt = f"तुम एक ट्रेंड एनालिस्ट हो। {current_year} में 'फाइनेंस', 'ट्रेडिंग', 'स्टॉक मार्केट', या 'AI से ऑनलाइन कमाई' पर एक बहुत ही हाई-पेइंग और वायरल हिंदी ब्लॉग टाइटल दो। पुराने टाइटल्स: {[p['title'] for p in posts_db[:5]]} से अलग हो। सिर्फ 'टाइटल' लिखना।"
 current_topic = ask_ai(topic_prompt).replace('"', '').replace("'", "").replace("*", "").replace("टाइटल:", "").replace("Title:", "").replace("टाइटल :", "").strip()
 
-if not current_topic: 
-    print("❌ ERROR: AI ने कोई टॉपिक नहीं दिया! (शायद API लिमिट खत्म हो गई है)")
-    sys.exit(1)
+if not current_topic: sys.exit(1)
 
-print(f"✅ टॉपिक मिल गया: {current_topic}")
-print("✍️ AI अब 1000 शब्दों का आर्टिकल लिख रहा है...")
-
+# 🚀 RULE UPGRADE: Case Study, Step-by-Step, CTA & Disclaimer!
 html_prompt = f"""तुम एक प्रो ब्लॉगर हो। विषय: '{current_topic}'। 
 कम से कम 1000 शब्दों का एक बहुत ही विस्तार से लिखा गया शानदार हिंदी ब्लॉग पोस्ट लिखो।
 नियम:
 1. पोस्ट के बीच-बीच में 3 अलग-अलग जगह बिलकुल ऐसे ही लिख दो: [PHOTO]
-2. अंत में एक दमदार 'निष्कर्ष' (Conclusion) और पाठकों के लिए एक 'Call to Action (CTA)' जरूर लिखें कि उन्हें आगे क्या करना चाहिए।
-3. मुख्य टाइटल (Heading) दोबारा मत लिखना, सीधा इंट्रोडक्शन से शुरू करना।
-4. सिर्फ HTML कोड (h2, p, strong, ul) दें।"""
+2. पोस्ट में एक 'Real Life Case Study' (उदाहरण) और एक 'Step-by-Step Guide' जरूर शामिल करें।
+3. अंत में एक दमदार 'निष्कर्ष', एक साफ 'Call to Action (CTA)' और यह 'चेतावनी (Disclaimer)' जरूर लिखें: "चेतावनी: यह जानकारी केवल शिक्षा के उद्देश्य से है, कोई भी वित्तीय निर्णय लेने से पहले अपनी रिसर्च करें।"
+4. मुख्य टाइटल (Heading) दोबारा मत लिखना, सीधा इंट्रोडक्शन से शुरू करना।
+5. सिर्फ HTML कोड (h2, p, strong, ul) दें।"""
 blog_content = ask_ai(html_prompt, retries=20).replace("```html", "").replace("```", "").strip()
 
-if not blog_content: 
-    print("❌ ERROR: AI ने आर्टिकल नहीं लिखा!")
-    sys.exit(1)
-
-print("✅ आर्टिकल सफलतापूर्वक लिखा गया!")
+if not blog_content: sys.exit(1)
 
 # ---------------------------------------------------------
-# 🎨 HYBRID IMAGE ENGINE
+# 🖼️ 3. HYBRID IMAGE ENGINE (Never Failing Images)
 # ---------------------------------------------------------
-print("🖼️ स्मार्ट इमेजेस जेनरेट की जा रही हैं...")
 safe_img_base = "future finance trading wealth technology"
 fallback_images = [
     "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=800&auto=format&fit=crop",
@@ -128,9 +116,8 @@ pre_warm_image(main_img_url)
 main_fallback = "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop"
 
 # ---------------------------------------------------------
-# 🎧 PREMIUM AUDIO ENGINE
+# 🎙️ 4. SUPER-CLEAN AUDIO ENGINE
 # ---------------------------------------------------------
-print("🎧 ऑडियो प्लेयर तैयार किया जा रहा है...")
 audio_filename = f"audio_{post_id}.mp3"
 clean_text = re.sub(r'<[^>]+>', ' ', blog_content)
 clean_text = html.unescape(clean_text)
@@ -142,11 +129,36 @@ os.system("pip install edge-tts > /dev/null 2>&1")
 os.system(f"edge-tts -f temp.txt --voice hi-IN-SwaraNeural --write-media {audio_filename}")
 
 post_filename = f"post_{post_id}.html"
+
+# ---------------------------------------------------------
+# 🔗 5. INTERNAL LINKING (ये भी पढ़ें)
+# ---------------------------------------------------------
+related_html = ""
+if len(posts_db) > 0:
+    related_html = "<div style='margin-top: 40px; padding: 25px; background: #fff; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border-left: 5px solid var(--main-red);'>"
+    related_html += "<h3 style='margin-top:0; margin-bottom: 15px; color: #111;'>💡 ये भी पढ़ें (Related Articles):</h3><ul style='list-style: none; padding: 0;'>"
+    for p in posts_db[:3]: 
+        related_html += f"<li style='margin-bottom: 12px; font-size: 16px;'>🔗 <a href='{p['file']}' style='color: var(--main-red); text-decoration: none; font-weight: bold;'>{p['title']}</a></li>"
+    related_html += "</ul></div>"
+
 posts_db.insert(0, {"title": current_topic, "file": post_filename, "date": today_date, "img": main_img_url})
 with open("posts.json", "w", encoding="utf-8") as f: json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
 # ---------------------------------------------------------
-# HTML & CSS DESIGN (THE 3D PREMIUM LOOK)
+# 💰 6. AFFILIATE / MONETIZATION BOX (THE MONEY MAKER)
+# ---------------------------------------------------------
+# यह वो बॉक्स है जो करोड़ों की कंपनियों की तरह यूज़र से क्लिक करवाएगा!
+affiliate_box_html = """
+<div style="background: linear-gradient(135deg, #111, #da251c); color: white; padding: 35px 25px; border-radius: 12px; margin: 40px 0; text-align: center; box-shadow: 0 10px 30px rgba(218, 37, 28, 0.3);">
+    <h3 style="color: #fff; margin-top: 0; font-size: 24px; letter-spacing: 0.5px;">🚀 आज ही अपनी 100X कमाई शुरू करें!</h3>
+    <p style="font-size: 16px; opacity: 0.9; margin-bottom: 25px; line-height: 1.6;">AI और स्मार्ट ट्रेडिंग की दुनिया में कदम रखने के लिए टॉप एक्सपर्ट्स द्वारा प्रमाणित प्लेटफॉर्म का इस्तेमाल करें। हज़ारों लोग पहले ही अपना सफर शुरू कर चुके हैं!</p>
+    <a href="#" target="_blank" style="display: inline-block; background: #fff; color: #da251c; font-weight: bold; padding: 15px 35px; border-radius: 50px; text-decoration: none; font-size: 18px; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">👉 यहाँ फ्री अकाउंट बनाएँ 👈</a>
+    <p style="font-size: 11px; opacity: 0.6; margin-top: 15px; margin-bottom: 0;">*शर्तें लागू। निवेश बाज़ार जोखिमों के अधीन है।</p>
+</div>
+"""
+
+# ---------------------------------------------------------
+# 🎨 HTML & CSS DESIGN (PREMIUM UI)
 # ---------------------------------------------------------
 premium_css = """
 <style>
@@ -165,8 +177,9 @@ premium_css = """
     .article-img { width: 100%; border-radius: 12px; margin: 35px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 2px solid #f9f9f9; object-fit: cover; background-color: #fafafa; }
     #article-body { font-size: 20px; color: var(--text-gray); }
     #article-body h2 { color: #000; margin: 35px 0 15px 0; border-left: 5px solid var(--main-red); padding-left: 15px; background: #fafafa; padding: 10px 15px; border-radius: 0 8px 8px 0; }
-    .yt-btn { display: block; background: #ff0000; color: white; text-align: center; padding: 18px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 18px; margin: 40px 0; transition: 0.3s; box-shadow: 0 5px 15px rgba(255,0,0,0.3); }
-    .yt-btn:hover { background: #cc0000; transform: scale(1.02); }
+    .tts-box { background: #fff3f3; padding: 15px; border-left: 4px solid var(--main-red); margin-bottom: 25px; font-weight: bold; color: #da251c; border-radius: 0 8px 8px 0; display: flex; align-items: center; gap: 10px;}
+    .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #000; border-radius: 12px; margin: 40px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+    .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
     footer { background: var(--dark-bg); color: #888; padding: 60px 20px 30px; margin-top: 60px; text-align: center; }
     .footer-links a { color: #ccc; text-decoration: none; margin: 0 15px; font-size: 15px; }
 </style>
@@ -203,17 +216,28 @@ article_page = f"""<!DOCTYPE html>
         <div class="meta">📅 प्रकाशित: {today_date} | ✍️ लेखक: मोहित (The AI Millionaire)</div>
         <img src="{main_img_url}" onerror="this.onerror=null; this.src='{main_fallback}';" class="hero-img" alt="Hero Image">
         
+        <div class="tts-box">
+            <span>🎧</span> <span>समय कम है? नीचे दिए गए लाल बटन को दबाकर पूरा आर्टिकल ऑडियो में सुनें!</span>
+        </div>
+
         <div id="article-body">{blog_content}</div>
+        
+        <h2 style="color: #000; margin: 40px 0 20px 0; border-left: 5px solid var(--main-red); padding-left: 15px;">📺 इस विषय पर और गहराई से समझें:</h2>
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed?listType=search&list={urllib.parse.quote(current_topic)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        
+        {affiliate_box_html}
         
         <div style="margin: 40px 0; padding: 25px; background: #fff; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 20px; border-top: 4px solid var(--main-red);">
             <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mohit&backgroundColor=f0f2f5" alt="Mohit - The AI Millionaire" style="min-width: 80px; height: 80px; border-radius: 50%; padding: 5px; border: 2px solid var(--main-red);">
             <div>
                 <h3 style="margin: 0; font-size: 22px; color: #111;">मोहित <span style="font-size: 16px; color: #888; font-weight: normal;">| The AI Millionaire</span></h3>
-                <p style="margin: 8px 0 0; font-size: 15px; color: #555; line-height: 1.6;">नमस्ते! मैं मोहित हूँ। मेरा मिशन आपको AI की ताकत से वित्तीय आज़ादी दिलाना और 2026 में स्मार्ट तरीके से ऑनलाइन कमाई के सबसे एडवांस सीक्रेट्स सिखाना है। इस डिजिटल सफर में मेरे साथ जुड़ें!</p>
+                <p style="margin: 8px 0 0; font-size: 15px; color: #555; line-height: 1.6;">नमस्ते! मैं मोहित हूँ। मेरा मिशन आपको AI की ताकत से वित्तीय आज़ादी दिलाना और 2026 में स्मार्ट तरीके से ऑनलाइन कमाई के सबसे एडवांस सीक्रेट्स सिखाना है।</p>
             </div>
         </div>
         
-        <a href="https://www.youtube.com/results?search_query={urllib.parse.quote(current_topic)}" target="_blank" class="yt-btn">📺 यूट्यूब पर इस विषय का वीडियो देखें</a>
+        {related_html}
         
         <audio id="premium-audio" src="{audio_filename}"></audio>
         <button id="floating-tts-btn" onclick="toggleAudio()" style="position: fixed; bottom: 30px; right: 30px; background: #da251c; color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 10px 25px rgba(218, 37, 28, 0.4); z-index: 1000; transition: 0.3s; display: flex; align-items: center; gap: 10px;">
@@ -268,4 +292,4 @@ for p_file, (p_title, p_content) in pages.items():
     with open(f"{p_file}.html", "w", encoding="utf-8") as f:
         f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>{p_title}</title>{premium_css}</head><body>{header_html}<div class='container'><h1>{p_title}</h1><p style='font-size:18px;'>{p_content}</p></div>{footer_html}</body></html>")
 
-print("✅ वेबसाइट 100% सफलतापूर्वक बन गई है!")
+print("✅ वेबसाइट 100% सफलता और मेगा-अपग्रेड्स के साथ बन गई है!")
