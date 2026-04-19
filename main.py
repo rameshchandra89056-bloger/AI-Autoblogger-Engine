@@ -103,6 +103,12 @@ for mod in modifiers:
 dynamic_prompt = f"{current_topic} {main_img_words} hyper-realistic cinematic"
 safe_main_keyword = urllib.parse.quote(dynamic_prompt)
 main_img_url = f"https://image.pollinations.ai/prompt/{safe_main_keyword}?width=1200&height=600&nologo=true&seed={post_id}"
+
+# 🚀 PRE-WARM IMAGE (ताकि वेबसाइट खुलने पर फोटो तुरंत दिखे)
+try: urllib.request.urlopen(main_img_url, timeout=15)
+except: pass
+# -----------------------------------
+
 # -----------------------------------
 
 post_filename = f"post_{post_id}.html"
