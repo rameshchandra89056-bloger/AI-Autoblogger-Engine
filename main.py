@@ -5,10 +5,10 @@ import os
 import sys
 import time
 import re
-import html # नया सुपर-क्लीनर टूल
+import html
 
 # ==========================================
-# THE AI MILLIONAIRE - FINAL MASTER ENGINE
+# THE AI MILLIONAIRE - PREMIUM MASTER ENGINE
 # ==========================================
 
 # 🔑 API Keys
@@ -76,27 +76,34 @@ try:
         if clean_words: main_img_words = clean_words
 except: pass
 
-# 🚀 BUG FIX: डबल टाइटल रोकने के लिए सख्त नियम
-html_prompt = f"तुम एक प्रो ब्लॉगर हो। विषय: '{current_topic}'। कम से कम 1000 शब्दों का विस्तार से हिंदी ब्लॉग लिखें। बीच में 3 जगह [PHOTO] लिखें। नियम: 1. मुख्य टाइटल (Heading) दोबारा मत लिखना, सीधा इंट्रोडक्शन से शुरू करना। 2. सिर्फ HTML कोड (h2, p, ul) दें।"
+# 🚀 BUG FIX & PREMIUM CONTENT RULE
+html_prompt = f"""तुम एक प्रो ब्लॉगर हो। विषय: '{current_topic}'। 
+कम से कम 1000 शब्दों का एक बहुत ही विस्तार से लिखा गया शानदार हिंदी ब्लॉग पोस्ट लिखो।
+नियम:
+1. पोस्ट के बीच-बीच में 3 अलग-अलग जगह बिलकुल ऐसे ही लिख दो: [PHOTO]
+2. अंत में एक दमदार 'निष्कर्ष' (Conclusion) और पाठकों के लिए एक 'Call to Action (CTA)' जरूर लिखें कि उन्हें आगे क्या करना चाहिए।
+3. मुख्य टाइटल (Heading) दोबारा मत लिखना, सीधा इंट्रोडक्शन से शुरू करना।
+4. सिर्फ HTML कोड (h2, p, strong, ul) दें।"""
 blog_content = ask_ai(html_prompt, retries=20).replace("```html", "").replace("```", "").strip()
 if not blog_content: sys.exit(1)
 
 # ---------------------------------------------------------
-# 🎨 INSTANT PHOTO ENGINE (PRE-WARM LOGIC)
+# 🎨 INSTANT PHOTO ENGINE (PREMIUM DESIGN RESTORED)
 # ---------------------------------------------------------
-modifiers = ["cinematic 8k", "digital art", "hyper realistic"]
+modifiers = ["cinematic lighting 8k", "digital art illustration", "hyper realistic photography"]
 for idx, mod in enumerate(modifiers):
     if "[PHOTO]" in blog_content:
         inner_prompt = urllib.parse.quote(f"{main_img_words} {mod}")
         inner_img_url = f"https://image.pollinations.ai/prompt/{inner_prompt}?width=800&height=400&nologo=true&seed={post_id + idx + 1}"
-        try: urllib.request.urlopen(inner_img_url, timeout=10)
+        try: urllib.request.urlopen(inner_img_url, timeout=15)
         except: pass
-        img_html = f"<img src='{inner_img_url}' loading='lazy' class='article-img'>"
+        # 🚀 CSS Class "article-img" is back for that premium shadow box look!
+        img_html = f"<img src='{inner_img_url}' loading='lazy' alt='AI Generated Article Image' class='article-img'>"
         blog_content = blog_content.replace("[PHOTO]", img_html, 1)
 
 main_prompt = urllib.parse.quote(f"{main_img_words} hyper-realistic cinematic masterpiece")
 main_img_url = f"https://image.pollinations.ai/prompt/{main_prompt}?width=1200&height=600&nologo=true&seed={post_id}"
-try: urllib.request.urlopen(main_img_url, timeout=10)
+try: urllib.request.urlopen(main_img_url, timeout=15)
 except: pass
 
 time.sleep(5)
@@ -105,12 +112,8 @@ time.sleep(5)
 # 🎧 BUG FIX: PREMIUM SUPER-CLEAN AUDIO ENGINE
 # ---------------------------------------------------------
 audio_filename = f"audio_{post_id}.mp3"
-
-# 1. पहले HTML टैग्स हटाएँ
 clean_text = re.sub(r'<[^>]+>', ' ', blog_content)
-# 2. फिर छिपे हुए HTML सिंबल्स (जैसे &nbsp;) को शुद्ध हिंदी में बदलें
 clean_text = html.unescape(clean_text)
-# 3. एक्स्ट्रा स्पेस और मार्कडाउन (*, #) हटाएँ ताकि रोबोट अटके नहीं
 clean_text = re.sub(r'\s+', ' ', clean_text).replace("*", "").replace("#", "").strip()
 
 with open("temp.txt", "w", encoding="utf-8") as temp_f:
@@ -123,7 +126,7 @@ posts_db.insert(0, {"title": current_topic, "file": post_filename, "date": today
 with open("posts.json", "w", encoding="utf-8") as f: json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
 # ---------------------------------------------------------
-# HTML & CSS DESIGN
+# HTML & CSS DESIGN (THE PREMIUM LOOK IS BACK!)
 # ---------------------------------------------------------
 premium_css = """
 <style>
@@ -141,7 +144,7 @@ premium_css = """
     .hero-img { width: 100%; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); background-color: #eee; min-height: 300px; object-fit: cover; }
     .article-img { width: 100%; border-radius: 8px; margin: 35px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #ddd; background-color: #eee; min-height: 250px; object-fit: cover; }
     #article-body { font-size: 20px; color: var(--text-gray); }
-    #article-body h2 { color: #000; margin: 35px 0 15px 0; border-left: 4px solid var(--main-red); padding-left: 15px; }
+    #article-body h2 { color: #000; margin: 35px 0 15px 0; border-left: 5px solid var(--main-red); padding-left: 15px; background: #fafafa; padding: 10px 15px; border-radius: 0 8px 8px 0; }
     .yt-btn { display: block; background: #ff0000; color: white; text-align: center; padding: 18px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 18px; margin: 40px 0; transition: 0.3s; box-shadow: 0 5px 15px rgba(255,0,0,0.3); }
     .yt-btn:hover { background: #cc0000; transform: scale(1.02); }
     footer { background: var(--dark-bg); color: #888; padding: 60px 20px 30px; margin-top: 60px; text-align: center; }
@@ -244,4 +247,4 @@ pages = {
 for p_file, (p_title, p_content) in pages.items():
     with open(f"{p_file}.html", "w", encoding="utf-8") as f:
         f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>{p_title}</title>{premium_css}</head><body>{header_html}<div class='container'><h1>{p_title}</h1><p style='font-size:18px;'>{p_content}</p></div>{footer_html}</body></html>")
-          
+                
