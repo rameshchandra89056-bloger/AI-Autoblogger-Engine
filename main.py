@@ -5,6 +5,7 @@ import os
 import sys
 import time
 import re
+import html # नया सुपर-क्लीनर टूल
 
 # ==========================================
 # THE AI MILLIONAIRE - FINAL MASTER ENGINE
@@ -75,7 +76,8 @@ try:
         if clean_words: main_img_words = clean_words
 except: pass
 
-html_prompt = f"तुम एक प्रो ब्लॉगर हो। विषय: '{current_topic}'। कम से कम 1000 शब्दों का विस्तार से हिंदी ब्लॉग लिखें। बीच में 3 जगह [PHOTO] लिखें। सिर्फ HTML कोड दें।"
+# 🚀 BUG FIX: डबल टाइटल रोकने के लिए सख्त नियम
+html_prompt = f"तुम एक प्रो ब्लॉगर हो। विषय: '{current_topic}'। कम से कम 1000 शब्दों का विस्तार से हिंदी ब्लॉग लिखें। बीच में 3 जगह [PHOTO] लिखें। नियम: 1. मुख्य टाइटल (Heading) दोबारा मत लिखना, सीधा इंट्रोडक्शन से शुरू करना। 2. सिर्फ HTML कोड (h2, p, ul) दें।"
 blog_content = ask_ai(html_prompt, retries=20).replace("```html", "").replace("```", "").strip()
 if not blog_content: sys.exit(1)
 
@@ -87,7 +89,6 @@ for idx, mod in enumerate(modifiers):
     if "[PHOTO]" in blog_content:
         inner_prompt = urllib.parse.quote(f"{main_img_words} {mod}")
         inner_img_url = f"https://image.pollinations.ai/prompt/{inner_prompt}?width=800&height=400&nologo=true&seed={post_id + idx + 1}"
-        # 🚀 PRE-WARM INNER IMAGES
         try: urllib.request.urlopen(inner_img_url, timeout=10)
         except: pass
         img_html = f"<img src='{inner_img_url}' loading='lazy' class='article-img'>"
@@ -95,18 +96,23 @@ for idx, mod in enumerate(modifiers):
 
 main_prompt = urllib.parse.quote(f"{main_img_words} hyper-realistic cinematic masterpiece")
 main_img_url = f"https://image.pollinations.ai/prompt/{main_prompt}?width=1200&height=600&nologo=true&seed={post_id}"
-# 🚀 PRE-WARM MAIN IMAGE
 try: urllib.request.urlopen(main_img_url, timeout=10)
 except: pass
 
-# छोटी सी देरी ताकि सर्वर फोटो पूरी बना ले और आपको तुरंत दिखे
 time.sleep(5)
 
 # ---------------------------------------------------------
-# --- PREMIUM AI AUDIO ENGINE ---
+# 🎧 BUG FIX: PREMIUM SUPER-CLEAN AUDIO ENGINE
 # ---------------------------------------------------------
 audio_filename = f"audio_{post_id}.mp3"
+
+# 1. पहले HTML टैग्स हटाएँ
 clean_text = re.sub(r'<[^>]+>', ' ', blog_content)
+# 2. फिर छिपे हुए HTML सिंबल्स (जैसे &nbsp;) को शुद्ध हिंदी में बदलें
+clean_text = html.unescape(clean_text)
+# 3. एक्स्ट्रा स्पेस और मार्कडाउन (*, #) हटाएँ ताकि रोबोट अटके नहीं
+clean_text = re.sub(r'\s+', ' ', clean_text).replace("*", "").replace("#", "").strip()
+
 with open("temp.txt", "w", encoding="utf-8") as temp_f:
     temp_f.write(clean_text)
 os.system("pip install edge-tts")
@@ -116,6 +122,9 @@ post_filename = f"post_{post_id}.html"
 posts_db.insert(0, {"title": current_topic, "file": post_filename, "date": today_date, "img": main_img_url})
 with open("posts.json", "w", encoding="utf-8") as f: json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
+# ---------------------------------------------------------
+# HTML & CSS DESIGN
+# ---------------------------------------------------------
 premium_css = """
 <style>
     :root { --main-red: #da251c; --dark-bg: #111; --text-gray: #444; }
@@ -157,9 +166,6 @@ footer_html = f"""
     </footer>
 """
 
-# ---------------------------------------------------------
-# GENERATE POST HTML (WITH AUTHOR BOX)
-# ---------------------------------------------------------
 article_page = f"""<!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -183,6 +189,7 @@ article_page = f"""<!DOCTYPE html>
                 <p style="margin: 8px 0 0; font-size: 15px; color: #555; line-height: 1.6;">नमस्ते! मैं मोहित हूँ। मेरा मिशन आपको AI की ताकत से वित्तीय आज़ादी दिलाना और 2026 में स्मार्ट तरीके से ऑनलाइन कमाई के सबसे एडवांस सीक्रेट्स सिखाना है। इस डिजिटल सफर में मेरे साथ जुड़ें!</p>
             </div>
         </div>
+        
         <a href="https://www.youtube.com/results?search_query={urllib.parse.quote(current_topic)}" target="_blank" class="yt-btn">📺 यूट्यूब पर इस विषय का वीडियो देखें</a>
         
         <audio id="premium-audio" src="{audio_filename}"></audio>
@@ -214,9 +221,6 @@ article_page = f"""<!DOCTYPE html>
 
 with open(post_filename, "w", encoding="utf-8") as f: f.write(article_page)
 
-# ---------------------------------------------------------
-# GENERATE INDEX AND PAGES
-# ---------------------------------------------------------
 home_cards = "".join([f"""
     <div class="card" style="background:#fff; padding:15px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.1);">
         <img src="{p['img']}" alt="Thumbnail" style="width:100%; border-radius:5px;" loading="lazy">
@@ -240,4 +244,4 @@ pages = {
 for p_file, (p_title, p_content) in pages.items():
     with open(f"{p_file}.html", "w", encoding="utf-8") as f:
         f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>{p_title}</title>{premium_css}</head><body>{header_html}<div class='container'><h1>{p_title}</h1><p style='font-size:18px;'>{p_content}</p></div>{footer_html}</body></html>")
-            
+          
