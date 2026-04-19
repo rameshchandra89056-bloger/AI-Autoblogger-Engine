@@ -89,24 +89,31 @@ blog_content = ask_ai(html_prompt, retries=20).replace("```html", "").replace("`
 if not blog_content or len(blog_content) < 300: sys.exit(1)
 
 # ---------------------------------------------------------
-# 🎨 THE DYNAMIC IMAGE GENERATOR (PRO-LEVEL)
+# 🎨 THE DYNAMIC IMAGE GENERATOR (INSTANT LOAD ENGINE)
 # ---------------------------------------------------------
 # अंदर की 3 फोटो के लिए अलग-अलग स्टाइल और यूनीक सीड
-modifiers = ["Cinematic Lighting 8k", "Digital Art illustration", "Hyper realistic photography"]
+modifiers = ["cinematic lighting 8k", "digital art illustration", "hyper realistic photography"]
 
 for idx, mod in enumerate(modifiers):
     if "[PHOTO]" in blog_content:
-        # टॉपिक के हिसाब से फोटो बनेगी और कभी मैच नहीं होगी
-        dynamic_keyword = urllib.parse.quote(f"{current_topic} {main_img_words} {mod}")
-        img_html = f"<img src='https://image.pollinations.ai/prompt/{dynamic_keyword}?width=800&height=400&nologo=true&seed={post_id + idx + 1}' loading='lazy' alt='AI Generated Image' class='article-img'>"
+        # सिर्फ सुरक्षित अंग्रेजी कीवर्ड्स ताकि सर्वर क्रैश न हो और फोटो परफेक्ट बने
+        dynamic_inner_prompt = f"{main_img_words} {mod} high quality"
+        safe_inner_keyword = urllib.parse.quote(dynamic_inner_prompt)
+        inner_img_url = f"https://image.pollinations.ai/prompt/{safe_inner_keyword}?width=800&height=400&nologo=true&seed={post_id + idx + 1}"
+        
+        # 🚀 PRE-WARM INNER IMAGES (रोबोट छुपकर पहले ही फोटो लोड कर लेगा)
+        try: urllib.request.urlopen(inner_img_url, timeout=15)
+        except: pass
+        
+        img_html = f"<img src='{inner_img_url}' loading='lazy' alt='AI Generated Article Image' class='article-img'>"
         blog_content = blog_content.replace("[PHOTO]", img_html, 1)
 
 # --- DYNAMIC UNIQUE MAIN IMAGE ENGINE ---
-dynamic_prompt = f"{current_topic} {main_img_words} hyper-realistic cinematic masterpiece"
-safe_main_keyword = urllib.parse.quote(dynamic_prompt)
+dynamic_main_prompt = f"{main_img_words} hyper-realistic cinematic masterpiece"
+safe_main_keyword = urllib.parse.quote(dynamic_main_prompt)
 main_img_url = f"https://image.pollinations.ai/prompt/{safe_main_keyword}?width=1200&height=600&nologo=true&seed={post_id}"
 
-# 🚀 PRE-WARM IMAGE (ताकि वेबसाइट खुलने पर मुख्य फोटो तुरंत दिखे)
+# 🚀 PRE-WARM MAIN IMAGE (मुख्य फोटो पलक झपकते ही खुलेगी)
 try: urllib.request.urlopen(main_img_url, timeout=15)
 except: pass
 # -----------------------------------
@@ -250,4 +257,3 @@ pages = {
 for p_file, (p_title, p_content) in pages.items():
     with open(f"{p_file}.html", "w", encoding="utf-8") as f:
         f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>{p_title}</title>{premium_css}</head><body>{header_html}<div class='container'><h1>{p_title}</h1><p style='font-size:18px;'>{p_content}</p></div>{footer_html}</body></html>")
-            
