@@ -8,10 +8,9 @@ import re
 import html
 
 # ==========================================
-# THE AI MILLIONAIRE - PREMIUM MASTER ENGINE (HYBRID)
+# THE AI MILLIONAIRE - PREMIUM MASTER ENGINE (WITH X-RAY LOGS)
 # ==========================================
 
-# 🔑 API Keys
 raw_keys = os.environ.get("GEMINI_API_KEY", "")
 API_KEYS = [k.strip() for k in raw_keys.split(",") if k.strip()]
 if not API_KEYS:
@@ -35,6 +34,7 @@ if os.path.exists("posts.json"):
 
 available_model = "models/gemini-1.5-flash"
 
+# 🚀 X-RAY VISION ADDED HERE
 def ask_ai(prompt, retries=15):
     for i in range(retries):
         current_key = API_KEYS[i % len(API_KEYS)]
@@ -46,7 +46,10 @@ def ask_ai(prompt, retries=15):
                 res = json.loads(response.read().decode('utf-8'))
                 text = res['candidates'][0]['content']['parts'][0]['text'].strip()
                 if len(text) > 10: return text
-        except: time.sleep(5)
+        except Exception as e:
+            # यह लाइन GitHub Actions में असली एरर छापेगी!
+            print(f"⚠️ API Error (Attempt {i+1}/{retries}) with key ending in ...{current_key[-4:]}: {e}")
+            time.sleep(5)
     return ""
 
 def pre_warm_image(url):
@@ -59,10 +62,16 @@ def pre_warm_image(url):
 # ---------------------------------------------------------
 # THE AGENTS
 # ---------------------------------------------------------
+print("🤖 AI रोबोट नया वायरल टॉपिक सोच रहा है...")
 topic_prompt = f"तुम एक ट्रेंड एनालिस्ट हो। {current_year} में 'फाइनेंस', 'ट्रेडिंग', 'स्टॉक मार्केट', या 'AI से ऑनलाइन कमाई' पर एक बहुत ही हाई-पेइंग और वायरल हिंदी ब्लॉग टाइटल दो। पुराने टाइटल्स: {[p['title'] for p in posts_db[:5]]} से अलग हो। सिर्फ 'टाइटल' लिखना।"
 current_topic = ask_ai(topic_prompt).replace('"', '').replace("'", "").replace("*", "").replace("टाइटल:", "").replace("Title:", "").replace("टाइटल :", "").strip()
 
-if not current_topic: sys.exit(1)
+if not current_topic: 
+    print("❌ ERROR: AI ने कोई टॉपिक नहीं दिया! (शायद API लिमिट खत्म हो गई है)")
+    sys.exit(1)
+
+print(f"✅ टॉपिक मिल गया: {current_topic}")
+print("✍️ AI अब 1000 शब्दों का आर्टिकल लिख रहा है...")
 
 html_prompt = f"""तुम एक प्रो ब्लॉगर हो। विषय: '{current_topic}'। 
 कम से कम 1000 शब्दों का एक बहुत ही विस्तार से लिखा गया शानदार हिंदी ब्लॉग पोस्ट लिखो।
@@ -72,46 +81,42 @@ html_prompt = f"""तुम एक प्रो ब्लॉगर हो। व
 3. मुख्य टाइटल (Heading) दोबारा मत लिखना, सीधा इंट्रोडक्शन से शुरू करना।
 4. सिर्फ HTML कोड (h2, p, strong, ul) दें।"""
 blog_content = ask_ai(html_prompt, retries=20).replace("```html", "").replace("```", "").strip()
-if not blog_content: sys.exit(1)
+
+if not blog_content: 
+    print("❌ ERROR: AI ने आर्टिकल नहीं लिखा!")
+    sys.exit(1)
+
+print("✅ आर्टिकल सफलतापूर्वक लिखा गया!")
 
 # ---------------------------------------------------------
-# 🎨 HYBRID IMAGE ENGINE (NO MORE BLANK BOXES)
+# 🎨 HYBRID IMAGE ENGINE
 # ---------------------------------------------------------
-# शॉर्ट और सुरक्षित कीवर्ड्स ताकि AI सर्वर क्रैश न हो
 safe_img_base = "future finance trading wealth technology"
-
-# PLAN B: दुनिया की सबसे बेहतरीन HD इमेजेज का बैकअप लिस्ट (अगर AI फेल हुआ तो ये दिखेंगी)
 fallback_images = [
-    "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=800&auto=format&fit=crop", # Trading Chart
-    "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=800&auto=format&fit=crop", # AI Tech
-    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop"  # Global Business
+    "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop"
 ]
-
 modifiers = ["cinematic", "cyberpunk", "hyperrealistic"]
 
 for idx, mod in enumerate(modifiers):
     if "[PHOTO]" in blog_content:
         inner_prompt = urllib.parse.quote(f"{safe_img_base} {mod}")
         inner_img_url = f"https://image.pollinations.ai/prompt/{inner_prompt}?width=800&height=400&nologo=true&seed={post_id + idx + 1}"
-        
         pre_warm_image(inner_img_url)
-        
-        # 🚀 THE JUGAAD: 'onerror' कमांड! अगर AI फोटो लोड नहीं हुई, तो तुरंत Fallback HD फोटो लगा दो!
         fallback_url = fallback_images[idx % len(fallback_images)]
         img_html = f"<div style='text-align: center;'><img src='{inner_img_url}' onerror=\"this.onerror=null; this.src='{fallback_url}';\" alt='Premium Finance Illustration' class='article-img'></div>"
-        
         blog_content = blog_content.replace("[PHOTO]", img_html, 1)
 
 main_prompt = urllib.parse.quote(f"{safe_img_base} masterpiece")
 main_img_url = f"https://image.pollinations.ai/prompt/{main_prompt}?width=1200&height=600&nologo=true&seed={post_id}"
 pre_warm_image(main_img_url)
-
-# मेन फोटो के लिए भी बैकअप जुगाड़
 main_fallback = "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop"
 
 # ---------------------------------------------------------
-# 🎧 PREMIUM SUPER-CLEAN AUDIO ENGINE
+# 🎧 PREMIUM AUDIO ENGINE
 # ---------------------------------------------------------
+print("🎧 ऑडियो प्लेयर तैयार किया जा रहा है...")
 audio_filename = f"audio_{post_id}.mp3"
 clean_text = re.sub(r'<[^>]+>', ' ', blog_content)
 clean_text = html.unescape(clean_text)
@@ -119,12 +124,10 @@ clean_text = re.sub(r'\s+', ' ', clean_text).replace("*", "").replace("#", "").s
 
 with open("temp.txt", "w", encoding="utf-8") as temp_f:
     temp_f.write(clean_text)
-os.system("pip install edge-tts")
+os.system("pip install edge-tts > /dev/null 2>&1")
 os.system(f"edge-tts -f temp.txt --voice hi-IN-SwaraNeural --write-media {audio_filename}")
 
 post_filename = f"post_{post_id}.html"
-
-# सेव करते समय मेन फोटो में भी Fallback जुगाड़ (onerror) जोड़ना
 posts_db.insert(0, {"title": current_topic, "file": post_filename, "date": today_date, "img": main_img_url})
 with open("posts.json", "w", encoding="utf-8") as f: json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
@@ -227,7 +230,6 @@ article_page = f"""<!DOCTYPE html>
 
 with open(post_filename, "w", encoding="utf-8") as f: f.write(article_page)
 
-# होमपेज कार्ड्स में भी onerror जुगाड़
 home_cards = "".join([f"""
     <div class="card" style="background:#fff; padding:15px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.08); transition: 0.3s;">
         <img src="{p['img']}" onerror="this.onerror=null; this.src='{main_fallback}';" alt="Thumbnail" style="width:100%; border-radius:8px; object-fit: cover; min-height: 200px; background-color: #fafafa;">
@@ -251,4 +253,5 @@ pages = {
 for p_file, (p_title, p_content) in pages.items():
     with open(f"{p_file}.html", "w", encoding="utf-8") as f:
         f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>{p_title}</title>{premium_css}</head><body>{header_html}<div class='container'><h1>{p_title}</h1><p style='font-size:18px;'>{p_content}</p></div>{footer_html}</body></html>")
-                
+
+print("✅ वेबसाइट 100% सफलतापूर्वक बन गई है!")
