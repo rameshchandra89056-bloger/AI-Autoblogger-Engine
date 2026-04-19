@@ -60,7 +60,8 @@ def ask_ai(prompt, retries=15):
 # THE AGENTS
 # ---------------------------------------------------------
 topic_prompt = f"तुम एक ट्रेंड एनालिस्ट हो। {current_year} में मेक मनी ऑनलाइन या AI पर एक धांसू और वायरल हिंदी ब्लॉग टाइटल दो। पुराने टाइटल्स: {[p['title'] for p in posts_db[:5]]} से अलग हो। सिर्फ 'टाइटल' लिखना।"
-current_topic = ask_ai(topic_prompt).replace('"', '').replace("'", "").replace("*", "")
+current_topic = ask_ai(topic_prompt).replace('"', '').replace("'", "").replace("*", "").replace("टाइटल:", "").replace("Title:", "").replace("टाइटल :", "").strip()
+
 if not current_topic: sys.exit(1)
 
 seo_prompt = f"विषय: '{current_topic}'। सिर्फ इस फॉर्मेट में जवाब दो: MAIN_IMG_ENGLISH_KEYWORD | SEO_DESCRIPTION | SEO_KEYWORDS. (ध्यान दें: MAIN_IMG_ENGLISH_KEYWORD में 'Robot' या 'Cyborg' मत लिखना, कुछ अलग जैसे 'laptop workspace', 'financial growth', 'modern business' लिखना)"
@@ -98,8 +99,12 @@ for mod in modifiers:
         img_html = f"<img src='https://image.pollinations.ai/prompt/{dynamic_keyword}?width=800&height=400&nologo=true' class='article-img'>"
         blog_content = blog_content.replace("[PHOTO]", img_html, 1)
 
-safe_main_keyword = urllib.parse.quote(main_img_words + " high quality editorial")
-main_img_url = f"https://image.pollinations.ai/prompt/{safe_main_keyword}?width=1200&height=600&nologo=true"
+# --- DYNAMIC UNIQUE IMAGE ENGINE ---
+dynamic_prompt = f"{current_topic} {main_img_words} hyper-realistic cinematic"
+safe_main_keyword = urllib.parse.quote(dynamic_prompt)
+main_img_url = f"https://image.pollinations.ai/prompt/{safe_main_keyword}?width=1200&height=600&nologo=true&seed={post_id}"
+# -----------------------------------
+
 post_filename = f"post_{post_id}.html"
 
 # --- PREMIUM AI AUDIO ENGINE ---
