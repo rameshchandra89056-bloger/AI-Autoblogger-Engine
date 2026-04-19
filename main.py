@@ -7,7 +7,7 @@ import time
 import re
 
 # ==========================================
-# THE ORIGINAL MASTERPIECE (RESTORED)
+# THE ORIGINAL MASTERPIECE (RESTORED & UPGRADED)
 # ==========================================
 
 # 🔑 तुम्हारी तीनों चाबियाँ (ताकि रोबोट कभी फेल न हो)
@@ -89,26 +89,26 @@ blog_content = ask_ai(html_prompt, retries=20).replace("```html", "").replace("`
 if not blog_content or len(blog_content) < 300: sys.exit(1)
 
 # ---------------------------------------------------------
-# 🎨 THE DYNAMIC IMAGE GENERATOR
+# 🎨 THE DYNAMIC IMAGE GENERATOR (PRO-LEVEL)
 # ---------------------------------------------------------
-modifiers = ["creative_workspace_laptop", "financial_success_chart", "modern_minimalist_office"]
+# अंदर की 3 फोटो के लिए अलग-अलग स्टाइल और यूनीक सीड
+modifiers = ["Cinematic Lighting 8k", "Digital Art illustration", "Hyper realistic photography"]
 
-for mod in modifiers:
+for idx, mod in enumerate(modifiers):
     if "[PHOTO]" in blog_content:
-        dynamic_keyword = urllib.parse.quote(f"{main_img_words} {mod}")
-        img_html = f"<img src='https://image.pollinations.ai/prompt/{dynamic_keyword}?width=800&height=400&nologo=true' class='article-img'>"
+        # टॉपिक के हिसाब से फोटो बनेगी और कभी मैच नहीं होगी
+        dynamic_keyword = urllib.parse.quote(f"{current_topic} {main_img_words} {mod}")
+        img_html = f"<img src='https://image.pollinations.ai/prompt/{dynamic_keyword}?width=800&height=400&nologo=true&seed={post_id + idx + 1}' loading='lazy' alt='AI Generated Image' class='article-img'>"
         blog_content = blog_content.replace("[PHOTO]", img_html, 1)
 
-# --- DYNAMIC UNIQUE IMAGE ENGINE ---
-dynamic_prompt = f"{current_topic} {main_img_words} hyper-realistic cinematic"
+# --- DYNAMIC UNIQUE MAIN IMAGE ENGINE ---
+dynamic_prompt = f"{current_topic} {main_img_words} hyper-realistic cinematic masterpiece"
 safe_main_keyword = urllib.parse.quote(dynamic_prompt)
 main_img_url = f"https://image.pollinations.ai/prompt/{safe_main_keyword}?width=1200&height=600&nologo=true&seed={post_id}"
 
-# 🚀 PRE-WARM IMAGE (ताकि वेबसाइट खुलने पर फोटो तुरंत दिखे)
+# 🚀 PRE-WARM IMAGE (ताकि वेबसाइट खुलने पर मुख्य फोटो तुरंत दिखे)
 try: urllib.request.urlopen(main_img_url, timeout=15)
 except: pass
-# -----------------------------------
-
 # -----------------------------------
 
 post_filename = f"post_{post_id}.html"
@@ -199,7 +199,7 @@ article_page = f"""<!DOCTYPE html>
         
         <a href="https://www.youtube.com/results?search_query={urllib.parse.quote(current_topic)}" target="_blank" class="yt-btn">📺 यूट्यूब पर इस विषय का वीडियो देखें</a>
         
-                <audio id="premium-audio" src="{audio_filename}"></audio>
+        <audio id="premium-audio" src="{audio_filename}"></audio>
         <button id="floating-tts-btn" onclick="toggleAudio()" style="position: fixed; bottom: 30px; right: 30px; background: #da251c; color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 10px 25px rgba(218, 37, 28, 0.4); z-index: 1000; transition: 0.3s; display: flex; align-items: center; gap: 10px;">
             🎧 आर्टिकल सुनें
         </button>
@@ -230,7 +230,7 @@ with open(post_filename, "w", encoding="utf-8") as f: f.write(article_page)
 
 home_cards = "".join([f"""
     <div class="card" style="background:#fff; padding:15px; border-radius:8px; box-shadow:0 2px 10px rgba(0,0,0,0.1);">
-        <img src="{p['img']}" alt="Thumbnail" style="width:100%; border-radius:5px;">
+        <img src="{p['img']}" alt="Thumbnail" style="width:100%; border-radius:5px;" loading="lazy">
         <div class="card-content" style="padding-top:10px;">
             <h3 style="margin-bottom:10px;"><a href="{p['file']}" style="color:#000; text-decoration:none;">{p['title']}</a></h3>
             <p style="color:#888; font-size:14px; margin-bottom:15px;">🗓 {p['date']}</p>
@@ -250,4 +250,4 @@ pages = {
 for p_file, (p_title, p_content) in pages.items():
     with open(f"{p_file}.html", "w", encoding="utf-8") as f:
         f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>{p_title}</title>{premium_css}</head><body>{header_html}<div class='container'><h1>{p_title}</h1><p style='font-size:18px;'>{p_content}</p></div>{footer_html}</body></html>")
-                    
+            
