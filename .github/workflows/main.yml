@@ -1,12 +1,12 @@
 name: AI Auto-Blogger Engine 🤖
 
-# यह अलार्म घड़ी है (Triggers)
+# Yeh hai hamara automatic alarm (Triggers)
 on:
-  workflow_dispatch: # यह तुम्हारा पुराना वाला बटन है (ताकि तुम चाहो तो हाथ से भी चला सको)
+  workflow_dispatch: # Hath se chalane wala button
   schedule:
-    # 02:30 UTC = सुबह 8:00 बजे (भारतीय समय)
+    # Subah 8:00 baje (IST)
     - cron: '30 2 * * *'
-    # 12:30 UTC = शाम 6:00 बजे (भारतीय समय)
+    # Shaam 6:00 baje (IST)
     - cron: '30 12 * * *'
 
 jobs:
@@ -14,25 +14,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📂 रिपॉजिटरी का कोड ला रहे हैं...
+      - name: 📂 Repository ka code la rahe hain...
         uses: actions/checkout@v3
 
-      - name: 🐍 Python चालू कर रहे हैं...
+      - name: 🐍 Python chaloo kar rahe hain...
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      - name: 🚀 AI रोबोट को जगा रहे हैं (main.py)
-            env:
-      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      
+      - name: 🚀 AI Robot ko jaga rahe hain (main.py)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python main.py
 
-      - name: 💾 नया ब्लॉग वेबसाइट पर सेव (Commit) कर रहे हैं...
+      - name: 💾 Naya blog website par save (Commit) kar rahe hain...
         run: |
           git config --global user.name "AI Robot"
           git config --global user.email "bot@digitalkamai.com"
           git add .
-          git commit -m "🤖 Auto-published new blog via Engine v17.0" || echo "No changes to commit"
+          git commit -m "🤖 Auto-published new blog via Engine v18.0" || echo "No changes to commit"
           git push
-        
+          
