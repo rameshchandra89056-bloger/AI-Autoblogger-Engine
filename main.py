@@ -309,4 +309,22 @@ try:
     # ==========================================
     # 📊 द लाइव रिपोर्टिंग (SUCCESS)
     # ==========================================
+  ============
+    ist_time = datetime.utcnow() + timedelta(hours=5, minutes=30)
+    time_str = ist_time.strftime("%I:%M %p (IST)")
+    total_posts = len(posts_db)
+    blog_url = "https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/index.html"
+    
+    success_msg = f"✅ SUCCESS: नया ब्लॉग पोस्ट पब्लिश हो गया!\n⏰ समय: {time_str}\n📝 कुल ब्लॉग पोस्ट: {total_posts}\n🌐 लाइव लिंक: {blog_url}"
+    send_telegram_msg(success_msg)
+    print("✅ Website 100% safalta aur naye model fix ke sath ban gayi hai!")
+
+# ==========================================
+# 🚨 द हैकर शील्ड (ERROR CATCHER)
+# ==========================================
+except Exception as e:
+    error_msg = f"❌ BLOG ERROR: गुरुजी, ब्लॉग बनाते समय गड़बड़ हुई!\n⚠️ कारण: {e}"
+    send_telegram_msg(error_msg)
+    print(error_msg)
+    sys.exit(1)
  
