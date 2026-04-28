@@ -10,13 +10,12 @@ import requests
 from datetime import datetime, timedelta
 
 # ==========================================
-# THE AI MILLIONAIRE - ULTIMATE MONEY ENGINE (DOUBLE TELEGRAM + DIAGNOSTICS + DESKTOP UI)
+# THE AI MILLIONAIRE - ULTIMATE MONEY ENGINE (FAST-FAIL DIAGNOSTICS + DESKTOP UI)
 # ==========================================
 
 # 🛰️ TELEGRAM ALERT FUNCTION (SMART ROUTING & X-RAY LOGGING)
 def send_telegram_msg(message, target_chat_id=None):
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
-    # Agar target_chat_id diya hai to uspar bhejo, warna default personal ID par bhejo
     chat_id = target_chat_id if target_chat_id else os.environ.get("TELEGRAM_CHAT_ID")
     
     if not token or not chat_id:
@@ -25,10 +24,9 @@ def send_telegram_msg(message, target_chat_id=None):
 
     try:
         url = f"https://api.telegram.org/bot{token}/sendMessage"
-        params = {"chat_id": chat_id, "text": urllib.parse.unquote(message)} # unquote karke bhej rahe hain taaki saaf dikhe
-        response = requests.get(url, params=params, timeout=15)
+        params = {"chat_id": chat_id, "text": urllib.parse.unquote(message)}
+        response = requests.get(url, params=params, timeout=10)
         
-        # 🛡️ Yeh line batayegi ki Telegram ne kya jawab diya (Logs ke liye)
         if response.status_code == 200:
             if target_chat_id:
                 print(f"✅ Telegram Success: Public Channel ({chat_id}) me post chali gayi!")
@@ -36,7 +34,6 @@ def send_telegram_msg(message, target_chat_id=None):
                 print(f"✅ Telegram Success: Personal Bot ({chat_id}) me alert chala gaya!")
         else:
             print(f"❌ Telegram Error: Status {response.status_code}, Response: {response.text}")
-            # Agar public channel par fail hua, to personal bot par alert bhejo
             if target_chat_id:
                 admin_alert = f"⚠️ CHEATAWNI: Public Channel me post fail ho gayi!\nCode: {response.status_code}\nKaran: Shayad Bot Admin nahi hai ya ID galat hai."
                 requests.get(url, params={"chat_id": os.environ.get("TELEGRAM_CHAT_ID"), "text": admin_alert}, timeout=10)
@@ -44,7 +41,7 @@ def send_telegram_msg(message, target_chat_id=None):
     except Exception as e:
         print(f"⚠️ Connection Error: Telegram tak nahi pohoch paye: {e}")
 
-# 🔑 API Keys & Security (GitHub Secrets)
+# 🔑 API Keys & Security
 raw_keys = os.environ.get("GEMINI_API_KEY", "")
 API_KEYS = [k.strip() for k in raw_keys.split(",") if k.strip()]
 if not API_KEYS:
@@ -71,7 +68,7 @@ available_model = "models/gemini-1.5-flash"
 try:
     print("📡 Google ke server se AI model check ho raha hai...")
     req = urllib.request.Request(f"https://generativelanguage.googleapis.com/v1beta/models?key={API_KEYS[0]}")
-    with urllib.request.urlopen(req, timeout=30) as response:
+    with urllib.request.urlopen(req, timeout=15) as response:
         res = json.loads(response.read().decode('utf-8'))
         for m in res.get('models', []):
             if 'generateContent' in m.get('supportedGenerationMethods', []) and 'flash' in m.get('name', '').lower():
@@ -79,29 +76,28 @@ try:
                 break
 except Exception as e: pass
 
-# 🛡️ X-RAY VISION LOGGING & SMART EXPONENTIAL BACKOFF
-def ask_ai(prompt, retries=15):
+# 🛡️ SMART FAST-FAIL ENGINE (Sirf 4 retries, No infinite loop)
+def ask_ai(prompt, retries=4):
     for i in range(retries):
         current_key = API_KEYS[i % len(API_KEYS)]
         api_url = f"https://generativelanguage.googleapis.com/v1beta/{available_model}:generateContent?key={current_key}"
         try:
             data = json.dumps({"contents": [{"parts": [{"text": prompt}]}]}).encode('utf-8')
             req = urllib.request.Request(api_url, data=data, headers={'Content-Type': 'application/json'})
-            with urllib.request.urlopen(req, timeout=90) as response:
+            with urllib.request.urlopen(req, timeout=30) as response:
                 res = json.loads(response.read().decode('utf-8'))
                 text = res['candidates'][0]['content']['parts'][0]['text'].strip()
                 if len(text) > 10: return text
         except urllib.error.HTTPError as e:
-            print(f"⚠️ API Error (Attempt {i+1}/{retries}): {e}")
+            print(f"⚠️ API Error (Attempt {i+1}/{retries}): {e.code}")
             if e.code == 429 or e.code == 503:
-                wait_time = (i + 1) * 10
-                print(f"⏳ Google Server Busy (429/503). Robot {wait_time} seconds ke liye aaram kar raha hai...")
-                time.sleep(wait_time)
+                print("⏳ Google Server Busy. 10s wait...")
+                time.sleep(10) # 10s fix wait, no infinite increment
             else:
                 time.sleep(5)
         except Exception as e:
             print(f"⚠️ Network Error (Attempt {i+1}/{retries}): {e}")
-            time.sleep(10)
+            time.sleep(5)
     return ""
 
 def pre_warm_image(url):
@@ -114,9 +110,7 @@ def pre_warm_image(url):
 # 🚨 MAIN EXECUTION BLOCK 
 # ==========================================
 try:
-    # ---------------------------------------------------------
-    # 🧠 2. THE CONTENT ENGINE 
-    # ---------------------------------------------------------
+    # 🧠 THE CONTENT ENGINE 
     print("🤖 AI robot naya viral topic soch raha hai...")
     topic_prompt = f"Tum ek trend analyst ho. {current_year} mein 'Finance', 'Trading', 'Stock Market', ya 'AI se online kamai' par ek bahut hi high-paying aur viral Hindi blog title do. Purane titles: {[p['title'] for p in posts_db[:5]]} se alag ho. Sirf mukhya Title likhna. 'Title:', 'Title {current_year}:' ya aise koi bhi faltu shabd aage mat lagana."
     
@@ -124,7 +118,7 @@ try:
     current_topic = raw_topic.replace('"', '').replace("'", "").replace("*", "").replace("टाइटल:", "").replace("Title:", "").replace(f"Title {current_year}:", "").replace("Title", "").strip()
 
     if not current_topic: 
-        send_telegram_msg(urllib.parse.quote("❌ BLOG ERROR: AI नया टॉपिक सोच नहीं पाया! Google Server bahut zyada down hai."))
+        send_telegram_msg(urllib.parse.quote("❌ BLOG ERROR: Google API is Down (Fast Fail). Robot ruk gaya hai."))
         sys.exit(1)
 
     html_prompt = f"""Tum ek pro blogger ho. Vishay: '{current_topic}'। 
@@ -137,15 +131,13 @@ try:
     5. Mukhya title (Heading) dobara mat likhna, seedha introduction se shuru karna.
     6. Sirf HTML code (h2, p, strong, ul) dein."""
     
-    blog_content = ask_ai(html_prompt, retries=20).replace("```html", "").replace("```", "").strip()
+    blog_content = ask_ai(html_prompt, retries=5).replace("```html", "").replace("```", "").strip()
 
     if not blog_content: 
-        send_telegram_msg(urllib.parse.quote("❌ BLOG ERROR: AI ब्लॉग का कंटेंट लिख नहीं पाया! Server error."))
+        send_telegram_msg(urllib.parse.quote("❌ BLOG ERROR: Content Generate nahi hua. Google API Down."))
         sys.exit(1)
 
-    # ---------------------------------------------------------
-    # 💰 3. DYNAMIC AFFILIATE ENGINE 
-    # ---------------------------------------------------------
+    # 💰 DYNAMIC AFFILIATE ENGINE 
     affiliate_offers = [
         {"title": "🚀 Aaj hi apni 100X kamai shuru karein!", "desc": "AI aur smart trading ki duniya mein kadam rakhne ke liye top experts dwara pramanit platform ka istemal karein. Hazaron log pehle hi apna safar shuru kar chuke hain!", "btn": "👉 Yahan Free Account Banayein 👈", "link": "#"},
         {"title": "🤖 2026 mein apni kamai ko 10X karein!", "desc": "The AI Millionaire ki exclusive community se judein aur rozana naye money-making secrets payein.", "btn": "👉 Community Join Karein 👈", "link": "#"}
@@ -164,9 +156,7 @@ try:
             blog_content = blog_content.replace("[AFFILIATE]", mega_cta_html, 1)
     blog_content = blog_content.replace("[AFFILIATE]", "") 
 
-    # ---------------------------------------------------------
-    # 🖼️ 4. HYBRID IMAGE ENGINE
-    # ---------------------------------------------------------
+    # 🖼️ HYBRID IMAGE ENGINE
     safe_img_base = "future finance trading wealth technology"
     fallback_images = [
         "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=800&auto=format&fit=crop",
@@ -189,9 +179,7 @@ try:
     pre_warm_image(main_img_url)
     main_fallback = "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop"
 
-    # ---------------------------------------------------------
-    # 🎙️ 5. AUDIO ENGINE
-    # ---------------------------------------------------------
+    # 🎙️ AUDIO ENGINE
     print("🎧 Audio player taiyaar kiya ja raha hai...")
     audio_filename = f"audio_{post_id}.mp3"
     clean_text = re.sub(r'<[^>]+>', ' ', blog_content)
@@ -205,9 +193,7 @@ try:
 
     post_filename = f"post_{post_id}.html"
 
-    # ---------------------------------------------------------
-    # 🔗 6. INTERNAL LINKING & JSON SAVING
-    # ---------------------------------------------------------
+    # 🔗 INTERNAL LINKING & JSON SAVING
     related_html = ""
     if len(posts_db) > 0:
         related_html = "<div style='margin-top: 40px; padding: 25px; background: #fff; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border-left: 5px solid var(--main-red);'>"
@@ -219,9 +205,7 @@ try:
     posts_db.insert(0, {"title": current_topic, "file": post_filename, "date": today_date, "img": main_img_url})
     with open("posts.json", "w", encoding="utf-8") as f: json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
-    # ---------------------------------------------------------
-    # 🎨 7. HTML, CSS DESIGN & SEO ENGINE
-    # ---------------------------------------------------------
+    # 🎨 HTML, CSS DESIGN & SEO ENGINE
     premium_css = """
     <style>
         :root { --main-red: #da251c; --dark-bg: #111; --text-gray: #444; }
@@ -336,7 +320,7 @@ try:
             
             <audio id="premium-audio" src="{audio_filename}"></audio>
             <button id="floating-tts-btn" onclick="toggleAudio()" style="position: fixed; bottom: 30px; right: 30px; background: #da251c; color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 10px 25px rgba(218, 37, 28, 0.4); z-index: 1000; transition: 0.3s; display: flex; align-items: center; gap: 10px;">
-        🎧 Article Sunein
+                🎧 Article Sunein
             </button>
             <script>
                 function toggleAudio() {{
