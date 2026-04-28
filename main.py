@@ -10,7 +10,7 @@ import requests
 from datetime import datetime, timedelta
 
 # ==========================================
-# THE AI MILLIONAIRE - ULTIMATE MONEY ENGINE (TELEGRAM + 404 FIXED)
+# THE AI MILLIONAIRE - ULTIMATE MONEY ENGINE (TELEGRAM + 404 FIXED + ADVANCED SEO)
 # ==========================================
 
 # 🛰️ TELEGRAM ALERT FUNCTION
@@ -190,7 +190,7 @@ try:
     with open("posts.json", "w", encoding="utf-8") as f: json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
     # ---------------------------------------------------------
-    # 🎨 7. HTML & CSS DESIGN (PREMIUM UI)
+    # 🎨 7. HTML, CSS DESIGN & SEO ENGINE (PREMIUM UI)
     # ---------------------------------------------------------
     premium_css = """
     <style>
@@ -213,6 +213,31 @@ try:
         footer { background: var(--dark-bg); color: #888; padding: 60px 20px 30px; margin-top: 60px; text-align: center; }
         .footer-links a { color: #ccc; text-decoration: none; margin: 0 15px; font-size: 15px; }
     </style>
+    """
+
+    schema_markup = f"""
+    <script type="application/ld+json">
+    {{
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "{current_topic}",
+      "image": "{main_img_url}",
+      "author": {{
+        "@type": "Person",
+        "name": "Mohit (The AI Millionaire)"
+      }},
+      "publisher": {{
+        "@type": "Organization",
+        "name": "Digital Kamai Hub",
+        "logo": {{
+          "@type": "ImageObject",
+          "url": "https://api.dicebear.com/7.x/avataaars/svg?seed=Mohit&backgroundColor=f0f2f5"
+        }}
+      }},
+      "datePublished": "{today_date}",
+      "description": "AI aur Finance se judi sabse advance jankari."
+    }}
+    </script>
     """
 
     header_html = f"""
@@ -238,6 +263,7 @@ try:
         <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{current_topic}</title>
         {premium_css}
+        {schema_markup}
     </head>
     <body>
         {header_html}
@@ -299,6 +325,7 @@ try:
     pages = {
         "about": ("About Us", "Digital Kamai Hub Bharat ka No.1 AI aur Technology blog hai. Mohit (The AI Millionaire) dwara sthapit, hamara uddeshya aapko digital duniya mein safal banana hai."),
         "privacy": ("Privacy Policy", "Aapki privacy hamare liye mahatvapurna hai. Hum aapki jankari ko surakshit rakhte hain."),
+        "privacy": ("Privacy Policy", "Aapki privacy hamare liye mahatvapurna hai. Hum aapki jankari ko surakshit rakhte hain."),
         "disclaimer": ("Disclaimer", "Is website par di gayi sabhi jankari keval shiksha ke liye hai. Kisi bhi vittiya nirnay se pehle apni research karein.")
     }
 
@@ -326,4 +353,3 @@ except Exception as e:
     send_telegram_msg(error_msg)
     print(error_msg)
     sys.exit(1)
-    
