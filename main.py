@@ -10,18 +10,39 @@ import requests
 from datetime import datetime, timedelta
 
 # ==========================================
-# THE AI MILLIONAIRE - ULTIMATE MONEY ENGINE (DOUBLE TELEGRAM ENGINE + DESKTOP UI)
+# THE AI MILLIONAIRE - ULTIMATE MONEY ENGINE (DOUBLE TELEGRAM + DIAGNOSTICS + DESKTOP UI)
 # ==========================================
 
-# 🛰️ TELEGRAM ALERT FUNCTION (SMART ROUTING)
+# 🛰️ TELEGRAM ALERT FUNCTION (SMART ROUTING & X-RAY LOGGING)
 def send_telegram_msg(message, target_chat_id=None):
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
     # Agar target_chat_id diya hai to uspar bhejo, warna default personal ID par bhejo
     chat_id = target_chat_id if target_chat_id else os.environ.get("TELEGRAM_CHAT_ID")
-    if token and chat_id:
-        try:
-            requests.get(f"https://api.telegram.org/bot{token}/sendMessage?chat_id={chat_id}&text={message}", timeout=10)
-        except: pass
+    
+    if not token or not chat_id:
+        print(f"⚠️ DIAGNOSTIC: Token ya Chat ID missing hai! Target: {chat_id}")
+        return
+
+    try:
+        url = f"https://api.telegram.org/bot{token}/sendMessage"
+        params = {"chat_id": chat_id, "text": urllib.parse.unquote(message)} # unquote karke bhej rahe hain taaki saaf dikhe
+        response = requests.get(url, params=params, timeout=15)
+        
+        # 🛡️ Yeh line batayegi ki Telegram ne kya jawab diya (Logs ke liye)
+        if response.status_code == 200:
+            if target_chat_id:
+                print(f"✅ Telegram Success: Public Channel ({chat_id}) me post chali gayi!")
+            else:
+                print(f"✅ Telegram Success: Personal Bot ({chat_id}) me alert chala gaya!")
+        else:
+            print(f"❌ Telegram Error: Status {response.status_code}, Response: {response.text}")
+            # Agar public channel par fail hua, to personal bot par alert bhejo
+            if target_chat_id:
+                admin_alert = f"⚠️ CHEATAWNI: Public Channel me post fail ho gayi!\nCode: {response.status_code}\nKaran: Shayad Bot Admin nahi hai ya ID galat hai."
+                requests.get(url, params={"chat_id": os.environ.get("TELEGRAM_CHAT_ID"), "text": admin_alert}, timeout=10)
+                
+    except Exception as e:
+        print(f"⚠️ Connection Error: Telegram tak nahi pohoch paye: {e}")
 
 # 🔑 API Keys & Security (GitHub Secrets)
 raw_keys = os.environ.get("GEMINI_API_KEY", "")
@@ -315,7 +336,7 @@ try:
             
             <audio id="premium-audio" src="{audio_filename}"></audio>
             <button id="floating-tts-btn" onclick="toggleAudio()" style="position: fixed; bottom: 30px; right: 30px; background: #da251c; color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 10px 25px rgba(218, 37, 28, 0.4); z-index: 1000; transition: 0.3s; display: flex; align-items: center; gap: 10px;">
-                🎧 Article Sunein
+        🎧 Article Sunein
             </button>
             <script>
                 function toggleAudio() {{
@@ -358,7 +379,7 @@ try:
             f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>{p_title}</title>{premium_css}</head><body>{header_html}<div class='container'><h1>{p_title}</h1><p style='font-size:18px;'>{p_content}</p></div>{footer_html}</body></html>")
 
     # ==========================================
-    # 📊 द लाइव रिपोर्टिंग (DOUBLE ENGINE)
+    # 📊 द लाइव रिपोर्टिंग (DOUBLE ENGINE WITH DIAGNOSTICS)
     # ==========================================
     ist_time = datetime.utcnow() + timedelta(hours=5, minutes=30)
     time_str = ist_time.strftime("%I:%M %p (IST)")
@@ -379,8 +400,10 @@ try:
     public_channel_id = os.environ.get("TELEGRAM_PUBLIC_CHANNEL")
     if public_channel_id:
         send_telegram_msg(urllib.parse.quote(promo_msg), target_chat_id=public_channel_id) # यह नए चैनल पर जाएगा
+    else:
+        print("⚠️ DEBUG: TELEGRAM_PUBLIC_CHANNEL secret nahi mila!")
         
-    print("✅ Website 100% safalta aur Double Engine Telegram post ke sath ban gayi hai!")
+    print("✅ Website 100% safalta aur Double Engine (with Diagnostics) ke sath ban gayi hai!")
 
 # ==========================================
 # 🚨 द हैकर शील्ड (ERROR CATCHER)
