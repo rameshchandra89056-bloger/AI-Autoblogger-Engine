@@ -10,13 +10,14 @@ import requests
 from datetime import datetime, timedelta
 
 # ==========================================
-# THE AI MILLIONAIRE - ULTIMATE MONEY ENGINE (SMART BACKOFF + DESKTOP UI + TELEGRAM)
+# THE AI MILLIONAIRE - ULTIMATE MONEY ENGINE (DOUBLE TELEGRAM ENGINE + DESKTOP UI)
 # ==========================================
 
-# 🛰️ TELEGRAM ALERT FUNCTION
-def send_telegram_msg(message):
+# 🛰️ TELEGRAM ALERT FUNCTION (SMART ROUTING)
+def send_telegram_msg(message, target_chat_id=None):
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
-    chat_id = os.environ.get("TELEGRAM_CHAT_ID")
+    # Agar target_chat_id diya hai to uspar bhejo, warna default personal ID par bhejo
+    chat_id = target_chat_id if target_chat_id else os.environ.get("TELEGRAM_CHAT_ID")
     if token and chat_id:
         try:
             requests.get(f"https://api.telegram.org/bot{token}/sendMessage?chat_id={chat_id}&text={message}", timeout=10)
@@ -93,7 +94,7 @@ def pre_warm_image(url):
 # ==========================================
 try:
     # ---------------------------------------------------------
-    # 🧠 2. THE CONTENT ENGINE (Title Bug Fixed)
+    # 🧠 2. THE CONTENT ENGINE 
     # ---------------------------------------------------------
     print("🤖 AI robot naya viral topic soch raha hai...")
     topic_prompt = f"Tum ek trend analyst ho. {current_year} mein 'Finance', 'Trading', 'Stock Market', ya 'AI se online kamai' par ek bahut hi high-paying aur viral Hindi blog title do. Purane titles: {[p['title'] for p in posts_db[:5]]} se alag ho. Sirf mukhya Title likhna. 'Title:', 'Title {current_year}:' ya aise koi bhi faltu shabd aage mat lagana."
@@ -198,7 +199,7 @@ try:
     with open("posts.json", "w", encoding="utf-8") as f: json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
     # ---------------------------------------------------------
-    # 🎨 7. HTML, CSS DESIGN & SEO ENGINE (DESKTOP UI ON MOBILE FIX)
+    # 🎨 7. HTML, CSS DESIGN & SEO ENGINE
     # ---------------------------------------------------------
     premium_css = """
     <style>
@@ -357,28 +358,35 @@ try:
             f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>{p_title}</title>{premium_css}</head><body>{header_html}<div class='container'><h1>{p_title}</h1><p style='font-size:18px;'>{p_content}</p></div>{footer_html}</body></html>")
 
     # ==========================================
-    # 📊 द लाइव रिपोर्टिंग (PROFESSIONAL TELEGRAM POST)
+    # 📊 द लाइव रिपोर्टिंग (DOUBLE ENGINE)
     # ==========================================
     ist_time = datetime.utcnow() + timedelta(hours=5, minutes=30)
     time_str = ist_time.strftime("%I:%M %p (IST)")
     total_posts = len(posts_db)
     blog_url = f"https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/{post_filename}"
     
+    # 1. आपके पर्सनल बॉट के लिए टेक्निकल मैसेज (कंट्रोल रूम)
+    personal_msg = f"✅ SUCCESS: नया ब्लॉग पोस्ट पब्लिश हो गया!\n⏰ समय: {time_str}\n📝 कुल ब्लॉग पोस्ट: {total_posts}\n🌐 लाइव लिंक: {blog_url}"
+    send_telegram_msg(urllib.parse.quote(personal_msg)) # यह पुरानी ID पर जाएगा
+    
+    # 2. पब्लिक चैनल के लिए मार्केटिंग मैसेज (दुकान)
     promo_msg = f"🚀 नई धमाकेदार पोस्ट लाइव हो गई है!\n\n"
     promo_msg += f"🔥 टॉपिक: {current_topic}\n\n"
     promo_msg += f"💡 जानिए AI और फाइनेंस के वो सीक्रेट्स जो आपको 2026 में 10X कमाई करवा सकते हैं।\n\n"
     promo_msg += f"👉 तुरंत पढ़ें (फ्री): {blog_url}\n\n"
     promo_msg += f"💎 The AI Millionaire"
     
-    safe_msg = urllib.parse.quote(promo_msg)
-    send_telegram_msg(safe_msg)
-    print("✅ Website 100% safalta aur Professional Telegram post ke sath ban gayi hai!")
+    public_channel_id = os.environ.get("TELEGRAM_PUBLIC_CHANNEL")
+    if public_channel_id:
+        send_telegram_msg(urllib.parse.quote(promo_msg), target_chat_id=public_channel_id) # यह नए चैनल पर जाएगा
+        
+    print("✅ Website 100% safalta aur Double Engine Telegram post ke sath ban gayi hai!")
 
 # ==========================================
 # 🚨 द हैकर शील्ड (ERROR CATCHER)
 # ==========================================
 except Exception as e:
     error_msg = f"❌ BLOG ERROR: गुरुजी, ब्लॉग बनाते समय गड़बड़ हुई!\n⚠️ कारण: {e}"
-    send_telegram_msg(urllib.parse.quote(error_msg))
+    send_telegram_msg(urllib.parse.quote(error_msg)) # एरर सिर्फ आपको पर्सनल बॉट पर दिखेगा
     print(error_msg)
     sys.exit(1)
