@@ -10,7 +10,7 @@ import requests
 from datetime import datetime, timedelta
 
 # ==========================================
-# THE AI MILLIONAIRE - ULTIMATE MONEY ENGINE (SMART BACKOFF + SEO + TELEGRAM)
+# THE AI MILLIONAIRE - ULTIMATE MONEY ENGINE (SMART BACKOFF + DESKTOP UI + TELEGRAM)
 # ==========================================
 
 # 🛰️ TELEGRAM ALERT FUNCTION
@@ -72,7 +72,6 @@ def ask_ai(prompt, retries=15):
         except urllib.error.HTTPError as e:
             print(f"⚠️ API Error (Attempt {i+1}/{retries}): {e}")
             if e.code == 429 or e.code == 503:
-                # 🚀 SMART WORK: Exponential Backoff (10s, 20s, 30s...)
                 wait_time = (i + 1) * 10
                 print(f"⏳ Google Server Busy (429/503). Robot {wait_time} seconds ke liye aaram kar raha hai...")
                 time.sleep(wait_time)
@@ -89,21 +88,21 @@ def pre_warm_image(url):
         urllib.request.urlopen(req, timeout=10)
     except: pass
 
-send_telegram_msg("🚀 गुरुजी, ब्लॉग इंजन स्टार्ट हो गया है! नया कंटेंट लिखा जा रहा है...")
-
 # ==========================================
 # 🚨 MAIN EXECUTION BLOCK 
 # ==========================================
 try:
     # ---------------------------------------------------------
-    # 🧠 2. THE CONTENT ENGINE 
+    # 🧠 2. THE CONTENT ENGINE (Title Bug Fixed)
     # ---------------------------------------------------------
     print("🤖 AI robot naya viral topic soch raha hai...")
-    topic_prompt = f"Tum ek trend analyst ho. {current_year} mein 'Finance', 'Trading', 'Stock Market', ya 'AI se online kamai' par ek bahut hi high-paying aur viral Hindi blog title do. Purane titles: {[p['title'] for p in posts_db[:5]]} se alag ho. Sirf 'Title' likhna."
-    current_topic = ask_ai(topic_prompt).replace('"', '').replace("'", "").replace("*", "").replace("टाइटल:", "").replace("Title:", "").replace("टाइटल :", "").strip()
+    topic_prompt = f"Tum ek trend analyst ho. {current_year} mein 'Finance', 'Trading', 'Stock Market', ya 'AI se online kamai' par ek bahut hi high-paying aur viral Hindi blog title do. Purane titles: {[p['title'] for p in posts_db[:5]]} se alag ho. Sirf mukhya Title likhna. 'Title:', 'Title {current_year}:' ya aise koi bhi faltu shabd aage mat lagana."
+    
+    raw_topic = ask_ai(topic_prompt)
+    current_topic = raw_topic.replace('"', '').replace("'", "").replace("*", "").replace("टाइटल:", "").replace("Title:", "").replace(f"Title {current_year}:", "").replace("Title", "").strip()
 
     if not current_topic: 
-        send_telegram_msg("❌ BLOG ERROR: AI नया टॉपिक सोच नहीं पाया! Google Server bahut zyada down hai.")
+        send_telegram_msg(urllib.parse.quote("❌ BLOG ERROR: AI नया टॉपिक सोच नहीं पाया! Google Server bahut zyada down hai."))
         sys.exit(1)
 
     html_prompt = f"""Tum ek pro blogger ho. Vishay: '{current_topic}'। 
@@ -119,7 +118,7 @@ try:
     blog_content = ask_ai(html_prompt, retries=20).replace("```html", "").replace("```", "").strip()
 
     if not blog_content: 
-        send_telegram_msg("❌ BLOG ERROR: AI ब्लॉग का कंटेंट लिख नहीं पाया! Server error.")
+        send_telegram_msg(urllib.parse.quote("❌ BLOG ERROR: AI ब्लॉग का कंटेंट लिख नहीं पाया! Server error."))
         sys.exit(1)
 
     # ---------------------------------------------------------
@@ -199,7 +198,7 @@ try:
     with open("posts.json", "w", encoding="utf-8") as f: json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
     # ---------------------------------------------------------
-    # 🎨 7. HTML, CSS DESIGN & SEO ENGINE
+    # 🎨 7. HTML, CSS DESIGN & SEO ENGINE (DESKTOP UI ON MOBILE FIX)
     # ---------------------------------------------------------
     premium_css = """
     <style>
@@ -219,8 +218,24 @@ try:
         #article-body { font-size: 20px; color: var(--text-gray); }
         #article-body h2 { color: #000; margin: 35px 0 15px 0; border-left: 5px solid var(--main-red); padding-left: 15px; background: #fafafa; padding: 10px 15px; border-radius: 0 8px 8px 0; }
         .tts-box { background: #fff3f3; padding: 15px; border-left: 4px solid var(--main-red); margin-bottom: 25px; font-weight: bold; color: #da251c; border-radius: 0 8px 8px 0; display: flex; align-items: center; gap: 10px;}
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
         footer { background: var(--dark-bg); color: #888; padding: 60px 20px 30px; margin-top: 60px; text-align: center; }
         .footer-links a { color: #ccc; text-decoration: none; margin: 0 15px; font-size: 15px; }
+        
+        /* 📱 Mobile Responsive Smart Fix - DESKTOP FEEL ON MOBILE */
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: repeat(2, 1fr) !important; gap: 15px !important; }
+            .container { padding: 15px !important; margin: 15px auto !important; }
+            h1 { font-size: 22px !important; line-height: 1.4 !important; }
+            #article-body { font-size: 16px !important; }
+            .logo { font-size: 20px !important; }
+            .nav-links a { margin-left: 10px !important; font-size: 14px !important; }
+            .card { padding: 10px !important; }
+            .card-content h3 { font-size: 13px !important; line-height: 1.3 !important; margin-bottom: 8px !important; }
+            .card-content p { font-size: 11px !important; margin-bottom: 10px !important; }
+            .card-content a { font-size: 12px !important; }
+            .hero-img, .article-img { margin: 15px 0 !important; border-radius: 8px !important; }
+        }
     </style>
     """
 
@@ -319,7 +334,7 @@ try:
 
     home_cards = "".join([f"""
         <div class="card" style="background:#fff; padding:15px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.08); transition: 0.3s;">
-            <img src="{p['img']}" onerror="this.onerror=null; this.src='{main_fallback}';" alt="Thumbnail" style="width:100%; border-radius:8px; object-fit: cover; min-height: 200px; background-color: #fafafa;">
+            <img src="{p['img']}" onerror="this.onerror=null; this.src='{main_fallback}';" alt="Thumbnail" style="width:100%; border-radius:8px; object-fit: cover; min-height: 120px; background-color: #fafafa;">
             <div class="card-content" style="padding-top:15px;">
                 <h3 style="margin-bottom:10px; font-size: 18px; line-height: 1.4;"><a href="{p['file']}" style="color:#000; text-decoration:none;">{p['title']}</a></h3>
                 <p style="color:#888; font-size:13px; margin-bottom:15px;">🗓 {p['date']}</p>
@@ -329,7 +344,7 @@ try:
     """ for p in posts_db])
 
     with open("index.html", "w", encoding="utf-8") as f:
-            f.write(f"<!DOCTYPE html><html lang='hi'><head><meta name='google-site-verification' content='hjQKPcCjWtLzjl1g3I19cddaZ3ODDzEndKg3T91sQsI' /><script async src='https://www.googletagmanager.com/gtag/js?id=G-NSLHLYVTDM'></script><script>window.dataLayer = window.dataLayer || []; function gtag(){{dataLayer.push(arguments);}} gtag('js', new Date()); gtag('config', 'G-NSLHLYVTDM');</script><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Digital Kamai Hub</title>{premium_css}</head><body>{header_html}<div style='max-width:1100px; margin:40px auto; padding:0 20px;'><h2 style='font-size:32px; border-bottom:3px solid #da251c; padding-bottom:10px; display:inline-block; margin-bottom:30px;'>🔥 Taaza Khabrein</h2><div class='grid' style='display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:30px;'>{home_cards}</div></div>{footer_html}</body></html>")
+            f.write(f"<!DOCTYPE html><html lang='hi'><head><meta name='google-site-verification' content='hjQKPcCjWtLzjl1g3I19cddaZ3ODDzEndKg3T91sQsI' /><script async src='https://www.googletagmanager.com/gtag/js?id=G-NSLHLYVTDM'></script><script>window.dataLayer = window.dataLayer || []; function gtag(){{dataLayer.push(arguments);}} gtag('js', new Date()); gtag('config', 'G-NSLHLYVTDM');</script><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Digital Kamai Hub</title>{premium_css}</head><body>{header_html}<div style='max-width:1100px; margin:40px auto; padding:0 20px;'><h2 style='font-size:32px; border-bottom:3px solid #da251c; padding-bottom:10px; display:inline-block; margin-bottom:30px;'>🔥 Taaza Khabrein</h2><div class='grid'>{home_cards}</div></div>{footer_html}</body></html>")
             
     pages = {
         "about": ("About Us", "Digital Kamai Hub Bharat ka No.1 AI aur Technology blog hai. Mohit (The AI Millionaire) dwara sthapit, hamara uddeshya aapko digital duniya mein safal banana hai."),
@@ -342,22 +357,28 @@ try:
             f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>{p_title}</title>{premium_css}</head><body>{header_html}<div class='container'><h1>{p_title}</h1><p style='font-size:18px;'>{p_content}</p></div>{footer_html}</body></html>")
 
     # ==========================================
-    # 📊 द लाइव रिपोर्टिंग (SUCCESS)
+    # 📊 द लाइव रिपोर्टिंग (PROFESSIONAL TELEGRAM POST)
     # ==========================================
     ist_time = datetime.utcnow() + timedelta(hours=5, minutes=30)
     time_str = ist_time.strftime("%I:%M %p (IST)")
     total_posts = len(posts_db)
-    blog_url = "https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/index.html"
+    blog_url = f"https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/{post_filename}"
     
-    success_msg = f"✅ SUCCESS: नया ब्लॉग पोस्ट पब्लिश हो गया!\n⏰ समय: {time_str}\n📝 कुल ब्लॉग पोस्ट: {total_posts}\n🌐 लाइव लिंक: {blog_url}"
-    send_telegram_msg(success_msg)
-    print("✅ Website 100% safalta aur naye model fix ke sath ban gayi hai!")
+    promo_msg = f"🚀 नई धमाकेदार पोस्ट लाइव हो गई है!\n\n"
+    promo_msg += f"🔥 टॉपिक: {current_topic}\n\n"
+    promo_msg += f"💡 जानिए AI और फाइनेंस के वो सीक्रेट्स जो आपको 2026 में 10X कमाई करवा सकते हैं।\n\n"
+    promo_msg += f"👉 तुरंत पढ़ें (फ्री): {blog_url}\n\n"
+    promo_msg += f"💎 The AI Millionaire"
+    
+    safe_msg = urllib.parse.quote(promo_msg)
+    send_telegram_msg(safe_msg)
+    print("✅ Website 100% safalta aur Professional Telegram post ke sath ban gayi hai!")
 
 # ==========================================
 # 🚨 द हैकर शील्ड (ERROR CATCHER)
 # ==========================================
 except Exception as e:
     error_msg = f"❌ BLOG ERROR: गुरुजी, ब्लॉग बनाते समय गड़बड़ हुई!\n⚠️ कारण: {e}"
-    send_telegram_msg(error_msg)
+    send_telegram_msg(urllib.parse.quote(error_msg))
     print(error_msg)
     sys.exit(1)
