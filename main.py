@@ -10,7 +10,7 @@ import requests
 from datetime import datetime, timedelta
 
 # ==========================================
-# THE AI MILLIONAIRE - ULTIMATE MONEY ENGINE (TELEGRAM + 404 FIXED + ADVANCED SEO)
+# THE AI MILLIONAIRE - ULTIMATE MONEY ENGINE (SMART BACKOFF + SEO + TELEGRAM)
 # ==========================================
 
 # 🛰️ TELEGRAM ALERT FUNCTION
@@ -44,7 +44,7 @@ if os.path.exists("posts.json"):
             posts_db = [p for p in raw_db if "img" in p]
         except: pass
 
-# 📡 1. AUTO-MODEL RADAR (404 Error 100% Fixed)
+# 📡 1. AUTO-MODEL RADAR 
 available_model = "models/gemini-1.5-flash"
 try:
     print("📡 Google ke server se AI model check ho raha hai...")
@@ -57,7 +57,7 @@ try:
                 break
 except Exception as e: pass
 
-# 🛡️ X-RAY VISION LOGGING
+# 🛡️ X-RAY VISION LOGGING & SMART EXPONENTIAL BACKOFF
 def ask_ai(prompt, retries=15):
     for i in range(retries):
         current_key = API_KEYS[i % len(API_KEYS)]
@@ -69,9 +69,18 @@ def ask_ai(prompt, retries=15):
                 res = json.loads(response.read().decode('utf-8'))
                 text = res['candidates'][0]['content']['parts'][0]['text'].strip()
                 if len(text) > 10: return text
-        except Exception as e:
+        except urllib.error.HTTPError as e:
             print(f"⚠️ API Error (Attempt {i+1}/{retries}): {e}")
-            time.sleep(5)
+            if e.code == 429 or e.code == 503:
+                # 🚀 SMART WORK: Exponential Backoff (10s, 20s, 30s...)
+                wait_time = (i + 1) * 10
+                print(f"⏳ Google Server Busy (429/503). Robot {wait_time} seconds ke liye aaram kar raha hai...")
+                time.sleep(wait_time)
+            else:
+                time.sleep(5)
+        except Exception as e:
+            print(f"⚠️ Network Error (Attempt {i+1}/{retries}): {e}")
+            time.sleep(10)
     return ""
 
 def pre_warm_image(url):
@@ -83,18 +92,18 @@ def pre_warm_image(url):
 send_telegram_msg("🚀 गुरुजी, ब्लॉग इंजन स्टार्ट हो गया है! नया कंटेंट लिखा जा रहा है...")
 
 # ==========================================
-# 🚨 MAIN EXECUTION BLOCK (WITH SMART RADAR)
+# 🚨 MAIN EXECUTION BLOCK 
 # ==========================================
 try:
     # ---------------------------------------------------------
-    # 🧠 2. THE CONTENT ENGINE (Niche: Finance/AI)
+    # 🧠 2. THE CONTENT ENGINE 
     # ---------------------------------------------------------
     print("🤖 AI robot naya viral topic soch raha hai...")
     topic_prompt = f"Tum ek trend analyst ho. {current_year} mein 'Finance', 'Trading', 'Stock Market', ya 'AI se online kamai' par ek bahut hi high-paying aur viral Hindi blog title do. Purane titles: {[p['title'] for p in posts_db[:5]]} se alag ho. Sirf 'Title' likhna."
     current_topic = ask_ai(topic_prompt).replace('"', '').replace("'", "").replace("*", "").replace("टाइटल:", "").replace("Title:", "").replace("टाइटल :", "").strip()
 
     if not current_topic: 
-        send_telegram_msg("❌ BLOG ERROR: AI नया टॉपिक सोच नहीं पाया!")
+        send_telegram_msg("❌ BLOG ERROR: AI नया टॉपिक सोच नहीं पाया! Google Server bahut zyada down hai.")
         sys.exit(1)
 
     html_prompt = f"""Tum ek pro blogger ho. Vishay: '{current_topic}'। 
@@ -110,11 +119,11 @@ try:
     blog_content = ask_ai(html_prompt, retries=20).replace("```html", "").replace("```", "").strip()
 
     if not blog_content: 
-        send_telegram_msg("❌ BLOG ERROR: AI ब्लॉग का कंटेंट लिख नहीं पाया!")
+        send_telegram_msg("❌ BLOG ERROR: AI ब्लॉग का कंटेंट लिख नहीं पाया! Server error.")
         sys.exit(1)
 
     # ---------------------------------------------------------
-    # 💰 3. DYNAMIC AFFILIATE ENGINE (Real Money Maker)
+    # 💰 3. DYNAMIC AFFILIATE ENGINE 
     # ---------------------------------------------------------
     affiliate_offers = [
         {"title": "🚀 Aaj hi apni 100X kamai shuru karein!", "desc": "AI aur smart trading ki duniya mein kadam rakhne ke liye top experts dwara pramanit platform ka istemal karein. Hazaron log pehle hi apna safar shuru kar chuke hain!", "btn": "👉 Yahan Free Account Banayein 👈", "link": "#"},
@@ -190,7 +199,7 @@ try:
     with open("posts.json", "w", encoding="utf-8") as f: json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
     # ---------------------------------------------------------
-    # 🎨 7. HTML, CSS DESIGN & SEO ENGINE (PREMIUM UI)
+    # 🎨 7. HTML, CSS DESIGN & SEO ENGINE
     # ---------------------------------------------------------
     premium_css = """
     <style>
@@ -324,7 +333,6 @@ try:
             
     pages = {
         "about": ("About Us", "Digital Kamai Hub Bharat ka No.1 AI aur Technology blog hai. Mohit (The AI Millionaire) dwara sthapit, hamara uddeshya aapko digital duniya mein safal banana hai."),
-        "privacy": ("Privacy Policy", "Aapki privacy hamare liye mahatvapurna hai. Hum aapki jankari ko surakshit rakhte hain."),
         "privacy": ("Privacy Policy", "Aapki privacy hamare liye mahatvapurna hai. Hum aapki jankari ko surakshit rakhte hain."),
         "disclaimer": ("Disclaimer", "Is website par di gayi sabhi jankari keval shiksha ke liye hai. Kisi bhi vittiya nirnay se pehle apni research karein.")
     }
