@@ -4,10 +4,8 @@ name: AI Auto-Blogger Engine 🤖
 on:
   workflow_dispatch: # Hath se chalane wala button
   schedule:
-    # Subah 8:00 baje (IST)
-    - cron: '30 2 * * *'
-    # Shaam 6:00 baje (IST)
-    - cron: '30 12 * * *'
+    - cron: '30 21 * * *'
+    
 
 permissions:
   contents: write
