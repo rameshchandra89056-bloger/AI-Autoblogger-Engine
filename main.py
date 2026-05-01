@@ -121,15 +121,21 @@ try:
         send_telegram_msg(urllib.parse.quote("❌ BLOG ERROR: Google API is Down (Fast Fail). Robot ruk gaya hai."))
         sys.exit(1)
 
-    html_prompt = f"""Tum ek pro blogger ho. Vishay: '{current_topic}'। 
+    html_prompt = f"""Tum ek expert lekin bahut friendly teacher ho. Tumhe niche diye gaye topic par ek blog post likhni hai. Vishay: '{current_topic}'। 
     Kam se kam 1000 shabdon ka ek bahut hi vistar se likha gaya shandar Hindi blog post likho.
     Niyam:
-    1. Post ke beech-beech mein 3 alag-alag jagah bilkul aise hi likh do: [PHOTO]
+    1. Post ke beech-beech mein 4 alag-alag jagah bilkul aise hi likh do: [PHOTO]
     2. Post ke beech mein theek 2 alag-alag jagah (jahan paisa kamane ya tool ka jikra ho) bilkul aise hi likh do: [AFFILIATE]
     3. Post mein ek 'Real Life Case Study' (udaharan) aur ek 'Step-by-Step Guide' jarur shamil karein.
     4. Ant mein ek damdar 'Nishkarsh', aur yeh 'Chetawani (Disclaimer)' jarur likhein: "Chetawani: Yeh jankari keval shiksha ke uddeshya se hai, koi bhi vittiya nirnay lene se pehle apni research karein."
     5. Mukhya title (Heading) dobara mat likhna, seedha introduction se shuru karna.
-    6. Sirf HTML code (h2, p, strong, ul) dein."""
+    6. Sirf HTML code (h2, p, strong, ul) dein.
+    7. Bhasha bilkul aam insani honi chahiye, jaise gaon ya dosto ke beech baat hoti hai (Simple Hindi/Hinglish).
+    8. Koi bhi robotic ya kitabi shabd (jaise 'In conclusion', 'Dhyan dene yogya', 'Nishkarsh') bilkul use nahi karna hai.
+    9. User ko ZERO knowledge se lekar 100% knowledge tak le jana hai.
+   10. Har badi baat ko samjhane ke liye aam jindagi (Real-life) ke asaan udaharan (Examples) dene hain.
+   11. Post ko padhkar user ko lagna chahiye ki koi bada bhai use asaan bhasha mein samjha raha hai.
+"""
     
     blog_content = ask_ai(html_prompt, retries=5).replace("```html", "").replace("```", "").strip()
 
