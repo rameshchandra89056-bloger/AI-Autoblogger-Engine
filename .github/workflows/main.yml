@@ -31,6 +31,7 @@ jobs:
       - name: 🚀 AI Robot ko jaga rahe hain (main.py)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          HUGGINGFACE_API_KEY: ${{ secrets.HUGGINGFACE_API_KEY }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TELEGRAM_PUBLIC_CHANNEL: ${{ secrets.TELEGRAM_PUBLIC_CHANNEL }}
