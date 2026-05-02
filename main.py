@@ -77,27 +77,63 @@ try:
 except Exception as e: pass
 
 # 🛡️ SMART FAST-FAIL ENGINE (Sirf 4 retries, No infinite loop)
+# 🔥 SMART FAST-FAIL ENGINE (With Hugging Face Plan B)
 def ask_ai(prompt, retries=4):
+    # ==========================================
+    # PLAN A: Google Gemini Engine (Pehli koshish)
+    # ==========================================
     for i in range(retries):
         current_key = API_KEYS[i % len(API_KEYS)]
         api_url = f"https://generativelanguage.googleapis.com/v1beta/{available_model}:generateContent?key={current_key}"
         try:
-            data = json.dumps({"contents": [{"parts": [{"text": prompt}]}]}).encode('utf-8')
-            req = urllib.request.Request(api_url, data=data, headers={'Content-Type': 'application/json'})
+            data = json.dumps({"contents": [{"parts": [{"text": prompt}]}]}).encode("utf-8")
+            req = urllib.request.Request(api_url, data=data, headers={"Content-Type": "application/json"})
             with urllib.request.urlopen(req, timeout=30) as response:
-                res = json.loads(response.read().decode('utf-8'))
+                res = json.loads(response.read().decode("utf-8"))
                 text = res['candidates'][0]['content']['parts'][0]['text'].strip()
                 if len(text) > 10: return text
         except urllib.error.HTTPError as e:
             print(f"⚠️ API Error (Attempt {i+1}/{retries}): {e.code}")
             if e.code == 429 or e.code == 503:
                 print("⏳ Google Server Busy. 10s wait...")
-                time.sleep(10) # 10s fix wait, no infinite increment
+                time.sleep(10)
             else:
                 time.sleep(5)
         except Exception as e:
             print(f"⚠️ Network Error (Attempt {i+1}/{retries}): {e}")
             time.sleep(5)
+
+    # ==========================================
+    # PLAN B: Hugging Face (Llama 3) Engine (Agar Google fail ho jaye)
+    # ==========================================
+    print("🔥 Plan B Active: Google Down hai, Hugging Face (Llama 3) Engine Start kar rahe hain...")
+    hf_key = os.environ.get("HUGGINGFACE_API_KEY", "").strip()
+    
+    if not hf_key:
+        print("❌ Hugging Face ki chabi (Key) nahi mili!")
+        return ""
+
+    hf_url = "https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct"
+    headers = {
+        "Authorization": f"Bearer {hf_key}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "inputs": f"{prompt}\n\nLikhna shuru karein:\n",
+        "parameters": {"max_new_tokens": 1500, "return_full_text": False}
+    }
+    
+    try:
+        hf_res = requests.post(hf_url, headers=headers, json=payload, timeout=60)
+        if hf_res.status_code == 200:
+            hf_text = hf_res.json()[0].get('generated_text', '').strip()
+            print("✅ Plan B Success: Hugging Face ne article likh diya!")
+            return hf_text
+        else:
+            print(f"❌ Hugging Face Error: {hf_res.status_code} - {hf_res.text}")
+    except Exception as e:
+        print(f"❌ Hugging Face Network Error: {e}")
+
     return ""
 
 def pre_warm_image(url):
