@@ -345,7 +345,12 @@ try:
     """
 
     header_html = f"""
-        <div class="top-bar">🔥 TRENDING: {current_year} Best Tech, AI Income, Future Jobs</div>
+        <div class="ticker-wrap">
+    <div class="ticker-content">
+        <span>TRENDING:</span> &nbsp; 2026 Best Tech, AI Income, Future Jobs, Digital Kamai Hub Ke Naye Haks, Share Market Ka सच!
+    </div>
+</div>
+            
         <header>
             <div class="nav-container">
                 <a href="index.html" class="logo">Digital Kamai Hub</a>
