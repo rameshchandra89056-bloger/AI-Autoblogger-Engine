@@ -39,7 +39,7 @@
 
     <div style="background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); max-width: 500px; margin: 0 auto; border-top: 5px solid #C00000; text-align: left;">
         
-        <form action="https://formsubmit.co/ramesh.chandra89056@gmail.com" method="POST">
+        <form id="my-contact-form" action="https://formsubmit.co/ajax/ramesh.chandra89056@gmail.com" method="POST">
             
             <input type="text" name="_honey" style="display:none">
             
@@ -69,9 +69,54 @@
                 Bhejein (Send Message)
     </button>
 </form>
+       <div id="success-message" style="display:none; margin-top: 20px; padding: 20px; background-color: #e7f4e4; border: 2px solid #28a745; border-radius: 8px; text-align: center;">
+    <h3 style="color: #28a745; margin-top: 0;">✅ Safaltapoorvak Bheja Gaya!</h3>
+    <p style="color: #333; font-size: 16px;">
+        Dhanyawad! Aapka sandesh humein mil gaya hai. <br>
+        <b>Hum 24 se 48 ghante ke andar aapki email par jawab denge.</b> <br>
+        Tab tak hamare naye articles padhte rahiye!
+    </p>
+       </div>
+        
 </div>
 
 </div>
+   <script>
+  const contactForm = document.getElementById('my-contact-form');
+  const successMessage = document.getElementById('success-message');
+
+  contactForm.addEventListener('submit', function(e) {
+    e.preventDefault(); // Page ko refresh hone se rokega
+    
+    const formData = new FormData(contactForm);
+    const submitButton = contactForm.querySelector('button');
+    submitButton.disabled = true;
+    submitButton.innerText = "Bheja ja raha hai...";
+
+    fetch(contactForm.action, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+    .then(response => {
+      if (response.ok) {
+        contactForm.style.display = 'none'; // Form ko chupa dega
+        successMessage.style.display = 'block'; // Success message dikhayega
+      } else {
+        alert("Maaf kijiye, koi galti hui. Kripya dobara koshish karein.");
+        submitButton.disabled = false;
+        submitButton.innerText = "Bhejein (Send Message)";
+      }
+    })
+    .catch(error => {
+      alert("Network ki dikkat hai. Kripya check karein.");
+      submitButton.disabled = false;
+      submitButton.innerText = "Bhejein (Send Message)";
+    });
+  });
+   </script>
     
 
 <footer>
