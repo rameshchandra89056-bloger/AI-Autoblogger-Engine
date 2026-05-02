@@ -113,13 +113,20 @@ def ask_ai(prompt, retries=4):
         print("❌ Hugging Face ki chabi (Key) nahi mili!")
         return ""
 
-    hf_url = "https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct"
-            headers = {
+                    hf_url = "https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct"
+        
+        headers = {
             "Authorization": f"Bearer {hf_key}",
             "Content-Type": "application/json"
         }
         
         payload = {
+            "inputs": f"System: You are an expert AI and Finance blogger.\nUser: {prompt}",
+            "parameters": {"max_new_tokens": 1500, "return_full_text": False}
+        }
+        
+        
+           payload = {
             "inputs": f"System: You are an expert AI and Finance blogger.\nUser: {prompt}",
             "parameters": {"max_new_tokens": 1500, "return_full_text": False}
         }
