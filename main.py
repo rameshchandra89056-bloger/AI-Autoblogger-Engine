@@ -115,14 +115,21 @@ def ask_ai(prompt, retries=4):
 
     hf_url = "https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct"
     headers = {
-        "Authorization": f"Bearer {hf_key}",
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "inputs": f"{prompt}\n\nLikhna shuru karein:\n",
-        "parameters": {"max_new_tokens": 1500, "return_full_text": False}
-    }
-    
+                # Smart Work: API Call with Crash Protection
+        response = requests.post(API_URL, headers=headers, json=payload, timeout=60)
+        
+        if response.status_code == 200:
+            try:
+                # Agar JSON bilkul sahi hai, tabhi aage badho
+                result = response.json()
+                return result[0]['generated_text']
+            except (IndexError, KeyError, ValueError):
+                print("⚠️ Hugging Face ne galat (Non-JSON) data bheja!")
+                return None
+        else:
+            print(f"❌ Hugging Face Error: Status {response.status_code}")
+            return None
+            
     try:
         hf_res = requests.post(hf_url, headers=headers, json=payload, timeout=60)
         if hf_res.status_code == 200:
