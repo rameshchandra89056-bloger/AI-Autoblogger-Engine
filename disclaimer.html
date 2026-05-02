@@ -35,8 +35,45 @@
             .hero-img, .article-img { margin: 15px 0 !important; border-radius: 8px !important; }
         }
     </style>
+    /* Ticker Container */
+.ticker-wrap {
+  width: 100%;
+  overflow: hidden; /* Bahar ka hissa chupa do */
+  background-color: #f1f1f1; /* Halka background color */
+  border-bottom: 2px solid #C00000; /* Lal rang ki niche wali line */
+  box-sizing: border-box;
+}
+
+/* Ticker Content */
+.ticker-content {
+  display: flex;
+  white-space: nowrap; /* Text ko line break na hone de */
+  animation: tickerAnimation 15s linear infinite; /* Jadooyi animation */
+  color: #333; /* Text color */
+  font-family: sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 10px 0;
+}
+
+/* Red "TRENDING:" style */
+.ticker-content span {
+    color: #C00000; /* Lal rang */
+}
+
+/* The Animation Logic */
+@keyframes tickerAnimation {
+  0% { transform: translateX(100%); } /* Bahar se shuru */
+  100% { transform: translateX(-100%); } /* Doosri taraf bahar khatam */
+}
+
     </head><body>
-        <div class="top-bar">🔥 TRENDING: 2026 Best Tech, AI Income, Future Jobs</div>
+        <div class="ticker-wrap">
+    <div class="ticker-content">
+        <span>TRENDING:</span> &nbsp; 2026 Best Tech, AI Income, Future Jobs, Digital Kamai Hub Ke Naye Haks, Share Market Ka सच!
+    </div>
+</div>
+            
         <header>
             <div class="nav-container">
                 <a href="index.html" class="logo">Digital Kamai Hub</a>
