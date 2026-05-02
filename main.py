@@ -399,7 +399,7 @@ try:
         <div class="container">
             <h1>{current_topic}</h1>
             <div class="meta">📅 Prakashit: {today_date} | ✍️ Lekhak: Mohit (The AI Millionaire)</div>
-            <img src="{main_img_url}" onerror="this.onerror=null; this.src='{main_fallback}';" class="hero-img" alt="Hero Image">
+            <img src="{main_img_url}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1600&auto=format&fit=crop';" class="hero-img" alt="AI Finance Image">
             
             <div class="tts-box">
                 <span>🎧</span> <span>Samay kam hai? Niche diye gaye laal button ko dabakar poora article audio mein sunein!</span>
