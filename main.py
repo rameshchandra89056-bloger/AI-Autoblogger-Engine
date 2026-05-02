@@ -114,8 +114,17 @@ def ask_ai(prompt, retries=4):
         return ""
 
     hf_url = "https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct"
-    headers = {
-                # Smart Work: API Call with Crash Protection
+            headers = {
+            "Authorization": f"Bearer {hf_key}",
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "inputs": f"System: You are an expert AI and Finance blogger.\nUser: {prompt}",
+            "parameters": {"max_new_tokens": 1500, "return_full_text": False}
+        }
+        
+        # Smart Work: API Call with Crash Protection
         response = requests.post(API_URL, headers=headers, json=payload, timeout=60)
         
         if response.status_code == 200:
@@ -129,6 +138,7 @@ def ask_ai(prompt, retries=4):
         else:
             print(f"❌ Hugging Face Error: Status {response.status_code}")
             return None
+
             
     try:
         hf_res = requests.post(hf_url, headers=headers, json=payload, timeout=60)
