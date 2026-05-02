@@ -439,7 +439,8 @@ try:
 
     home_cards = "".join([f"""
         <div class="card" style="background:#fff; padding:15px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.08); transition: 0.3s;">
-            <img src="{p['img']}" onerror="this.onerror=null; this.src='{main_fallback}';" alt="Thumbnail" style="width:100%; border-radius:8px; object-fit: cover; min-height: 120px; background-color: #fafafa;">
+            <img src="{p['img']}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1600&auto=format&fit=crop';" alt="Thumbnail" style="width:100%; height:180px; object-fit:cover; border-radius:8px;">
+    
             <div class="card-content" style="padding-top:15px;">
                 <h3 style="margin-bottom:10px; font-size: 18px; line-height: 1.4;"><a href="{p['file']}" style="color:#000; text-decoration:none;">{p['title']}</a></h3>
                 <p style="color:#888; font-size:13px; margin-bottom:15px;">🗓 {p['date']}</p>
