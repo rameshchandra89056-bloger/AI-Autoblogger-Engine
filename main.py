@@ -458,34 +458,7 @@ try:
     for p_file, (p_title, p_content) in pages.items():
         with open(f"{p_file}.html", "w", encoding="utf-8") as f:
             f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>{p_title}</title>{premium_css}</head><body>{header_html}<div class='container'><h1>{p_title}</h1><p style='font-size:18px;'>{p_content}</p></div>{footer_html}</body></html>")
-             # ---------------------------------------------------------
-        # SMART WORK: AUTO-WEBHOOK TRIGGER (Doosre system ko alert karna)
-        # ---------------------------------------------------------
-        try:
-            print("🚀 Webhook ko signal bhej rahe hain...")
-            
-            # Yahan apna asli Webhook URL daalein
-            webhook_url = "AAPKA_WEBHOOK_URL_YAHAN_DAALEIN" 
-            
-            # Jo data aap doosre system ko bhejna chahte hain
-            webhook_payload = {
-                "event": "new_post_published",
-                "post_title": current_topic,
-                "post_url": f"https://rameshchandra89056-bloger.github.io/{post_filename}",
-                "status": "Success"
-            }
-            
-            # 10 second ka timeout diya hai taki machine atke nahi
-            wh_response = requests.post(webhook_url, json=webhook_payload, timeout=10)
-            
-            if wh_response.status_code in [200, 201]:
-                print("✅ Webhook Success: Signal chala gaya!")
-            else:
-                print(f"⚠️ Webhook Warning: Status {wh_response.status_code}")
-                
-        except Exception as e:
-            # Agar webhook fail bhi ho jaye, toh machine crash nahi hogi
-            print(f"❌ Webhook Error (Machine nahi rukegi): {e}")
+
         # ---------------------------------------------------------
         
     # ==========================================
