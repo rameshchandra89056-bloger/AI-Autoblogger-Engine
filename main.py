@@ -102,51 +102,29 @@ def ask_ai(prompt, retries=4):
         except Exception as e:
             print(f"⚠️ Network Error (Attempt {i+1}/{retries}): {e}")
             time.sleep(5)
-
     # ==========================================
-    # PLAN B: Hugging Face (Llama 3) Engine (Agar Google fail ho jaye)
+    # PLAN B: Hugging Face (Llama 3) Engine
     # ==========================================
     print("🔥 Plan B Active: Google Down hai, Hugging Face (Llama 3) Engine Start kar rahe hain...")
     hf_key = os.environ.get("HUGGINGFACE_API_KEY", "").strip()
-    
+
     if not hf_key:
         print("❌ Hugging Face ki chabi (Key) nahi mili!")
         return ""
 
-                    hf_url = "https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct"
-        
-        headers = {
-            "Authorization": f"Bearer {hf_key}",
-            "Content-Type": "application/json"
-        }
-        
-        payload = {
-            "inputs": f"System: You are an expert AI and Finance blogger.\nUser: {prompt}",
-            "parameters": {"max_new_tokens": 1500, "return_full_text": False}
-        }
-        
-        
-           payload = {
-            "inputs": f"System: You are an expert AI and Finance blogger.\nUser: {prompt}",
-            "parameters": {"max_new_tokens": 1500, "return_full_text": False}
-        }
-        
-        # Smart Work: API Call with Crash Protection
-        response = requests.post(API_URL, headers=headers, json=payload, timeout=60)
-        
-        if response.status_code == 200:
-            try:
-                # Agar JSON bilkul sahi hai, tabhi aage badho
-                result = response.json()
-                return result[0]['generated_text']
-            except (IndexError, KeyError, ValueError):
-                print("⚠️ Hugging Face ne galat (Non-JSON) data bheja!")
-                return None
-        else:
-            print(f"❌ Hugging Face Error: Status {response.status_code}")
-            return None
-
-            
+    hf_url = "https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct"
+    
+    headers = {
+        "Authorization": f"Bearer {hf_key}",
+        "Content-Type": "application/json"
+    }
+    
+    payload = {
+        "inputs": f"System: You are an expert AI and Finance blogger.\nUser: {prompt}",
+        "parameters": {"max_new_tokens": 1500, "return_full_text": False}
+    }
+    
+    # Smart Work: API Call with Crash Protection
     try:
         hf_res = requests.post(hf_url, headers=headers, json=payload, timeout=60)
         if hf_res.status_code == 200:
@@ -155,10 +133,11 @@ def ask_ai(prompt, retries=4):
             return hf_text
         else:
             print(f"❌ Hugging Face Error: {hf_res.status_code} - {hf_res.text}")
+            return ""
     except Exception as e:
         print(f"❌ Hugging Face Network Error: {e}")
-
-    return ""
+        return ""
+            
 
 def pre_warm_image(url):
     try:
