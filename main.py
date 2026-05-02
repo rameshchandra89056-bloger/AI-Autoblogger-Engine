@@ -287,7 +287,7 @@ try:
             .card-content a { font-size: 12px !important; }
             .hero-img, .article-img { margin: 15px 0 !important; border-radius: 8px !important; }
         }
-    </style>
+    
     /* Ticker Container */
 .ticker-wrap {
   width: 100%;
@@ -308,7 +308,7 @@ try:
   font-weight: bold;
   padding: 10px 0;
 }
-
+</style>
 /* Red "TRENDING:" style */
 .ticker-content span {
     color: #C00000; /* Lal rang */
