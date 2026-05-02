@@ -439,3 +439,37 @@ except Exception as e:
     send_telegram_msg(urllib.parse.quote(error_msg)) # एरर सिर्फ आपको पर्सनल बॉट पर दिखेगा
     print(error_msg)
     sys.exit(1)
+
+
+    # =======================================================
+# 🚀 SMART WORK: AUTO-SITEMAP GENERATOR (ZERO-TOUCH ENGINE)
+# =======================================================
+def generate_auto_sitemap():
+    try:
+        base_url = "https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine"
+        html_files = [f for f in os.listdir() if f.endswith('.html')]
+        
+        sitemap_content = '<?xml version="1.0" encoding="UTF-8"?>\n'
+        sitemap_content += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        
+        from datetime import datetime
+        today_date = datetime.now().strftime("%Y-%m-%d")
+        
+        for file in html_files:
+            sitemap_content += '  <url>\n'
+            sitemap_content += f'    <loc>{base_url}/{file}</loc>\n'
+            sitemap_content += f'    <lastmod>{today_date}</lastmod>\n'
+            sitemap_content += '    <changefreq>daily</changefreq>\n'
+            sitemap_content += '  </url>\n'
+            
+        sitemap_content += '</urlset>'
+        
+        with open('sitemap.xml', 'w', encoding='utf-8') as f:
+            f.write(sitemap_content)
+        print("✅ SMART WORK SUCCESS: sitemap.xml Auto-Generated & Updated!")
+    except Exception as e:
+        print(f"⚠️ Sitemap Engine Error: {e}")
+
+# मशीन रन होते ही इसे फायर करना है
+generate_auto_sitemap()
+
