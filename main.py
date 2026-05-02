@@ -338,6 +338,19 @@ try:
         {schema_markup}
     </head>
     <body>
+    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 5px; background-color: transparent; z-index: 9999;">
+    <div id="smart-progress" style="height: 5px; background-color: #C00000; width: 0%; border-top-right-radius: 3px; border-bottom-right-radius: 3px; transition: width 0.1s;"></div>
+</div>
+
+<script>
+    window.addEventListener('scroll', function() {
+        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var scrolled = (winScroll / height) * 100;
+        document.getElementById("smart-progress").style.width = scrolled + "%";
+    });
+</script>
+
         {header_html}
         <div class="container">
             <h1>{current_topic}</h1>
