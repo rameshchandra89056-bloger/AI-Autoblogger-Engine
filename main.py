@@ -595,7 +595,7 @@ try:
         <h2 style="color: var(--main-red); text-align: center; font-size: 28px; margin-bottom: 10px;">Get in Touch</h2>
         <p style="text-align: center; color: #666; font-size: 15px; margin-bottom: 35px;">Aapke sawal, feedback ya business inquiry ke liye humein message karein. Humari team 24 ghante mein aapse sampark karegi.</p>
         
-        <form action="YOUR_FORMSPREE_LINK_HERE" method="POST" style="display: flex; flex-direction: column; gap: 20px;">
+        <form action="https://formsubmit.co/ajax/ramesh.chandra89056@gmail.com" method="POST" style="display: flex; flex-direction: column; gap: 20px;">
             
             <div>
                 <label style="font-size: 13px; font-weight: bold; color: #444; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">Aapka Naam</label>
