@@ -533,20 +533,30 @@ try:
 
     with open(post_filename, "w", encoding="utf-8") as f: f.write(article_page)
 
-    home_cards = "".join([f"""
-        <div class="card" style="background:#fff; padding:15px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.08); transition: 0.3s;">
-            <img src="{p['img']}" onerror="this.onerror=null; this.src='https://placehold.co/800x400/c00000/ffffff?text=AI+Finance';" alt="Thumbnail" style="width:100%; height:180px; object-fit:cover; border-radius:8px;">
-            <div class="card-content" style="padding-top:15px;">
-                <h3 style="margin-bottom:10px; font-size: 18px; line-height: 1.4;"><a href="{p['file']}" style="color:#000; text-decoration:none;">{p['title']}</a></h3>
-                <p style="color:#888; font-size:13px; margin-bottom:15px;">🗓 {p['date']}</p>
-                <a href="{p['file']}" style="color:var(--main-red); font-weight:bold; text-decoration:none; font-size: 15px;">Poora lekh padhein →</a>
+            # 🎯 SMART WORK: PAGINATION & ARCHIVE ENGINE
+        card_template = lambda p: f"""
+        <div class="card" style="background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 20px;">
+            <img src="{p['img']}" onerror="this.onerror=null; this.src='https://placehold.co/800x400/111/fff?text=Digital+Kamai+Hub';" style="width: 100%; height: 200px; object-fit: cover;">
+            <div style="padding: 20px;">
+                <p style="color: #888; font-size: 13px; margin-bottom: 10px;">📅 {p['date']}</p>
+                <h3 style="margin-bottom: 15px; font-size: 18px; line-height: 1.4;"><a href="{p['file']}" style="color: #111; text-decoration: none;">{p['title']}</a></h3>
+                <a href="{p['file']}" style="color: #da251c; font-weight: bold; text-decoration: none; font-size: 15px;">Poora lekh padhein ➔</a>
             </div>
         </div>
-    """ for p in posts_db])
+        """
+        
+        # 10 posts for Home, All posts for Archive
+        home_cards = "".join([card_template(p) for p in posts_db[:10]])
+        all_cards = "".join([card_template(p) for p in posts_db])
 
-    with open("index.html", "w", encoding="utf-8") as f:
-        f.write(f"<!DOCTYPE html><html lang='hi'><head><meta name='google-site-verification' content='hjQKPcCjWtLzjl1g3I19cddaZ3ODDzEndKg3T91sQsI' /><script async src='https://www.googletagmanager.com/gtag/js?id=G-NSLHLYVTDM'></script><script>window.dataLayer = window.dataLayer || []; function gtag(){{dataLayer.push(arguments);}} gtag('js', new Date()); gtag('config', 'G-NSLHLYVTDM');</script><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Digital Kamai Hub</title>{premium_css}</head><body>{header_html}<div style='max-width:1100px; margin:40px auto; padding:0 20px;'><h2 style='font-size:32px; border-bottom:3px solid #da251c; padding-bottom:10px; display:inline-block; margin-bottom:30px;'>🔥 Taaza Khabrein</h2><div class='grid'>{home_cards}</div></div>{footer_html}</body></html>")
-    
+        # Homepage Save Karein
+        with open("index.html", "w", encoding="utf-8") as f:
+            f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Digital Kamai Hub</title>{premium_css}</head><body>{header_html}<div class='container'><h1 style='text-align:center; margin-bottom: 40px;'>🔥 Taaza Khabrein</h1><div class='grid'>{home_cards}</div><div style='text-align: center; margin-top: 40px;'><a href='all-posts.html' style='background: #da251c; color: white; padding: 12px 25px; text-decoration: none; font-weight: bold; border-radius: 6px; font-size: 16px; display: inline-block; box-shadow: 0 4px 10px rgba(218,37,28,0.3);'>Puraani Khabrein Dekhein ➔</a></div></div>{footer_html}</body></html>")
+
+        # Archive Page Save Karein
+        with open("all-posts.html", "w", encoding="utf-8") as f:
+            f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Sabhi Khabrein - Digital Kamai Hub</title>{premium_css}</head><body>{header_html}<div class='container'><h1 style='color: #da251c; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 30px;'>📚 Sabhi Articles (Archive)</h1><div class='grid'>{all_cards}</div></div>{footer_html}</body></html>")
+            
     
     # 🛡️ THE LEGAL SHIELD (PREMIUM PAGES FOR ADSENSE APPROVAL)
     pages = {
