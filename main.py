@@ -591,30 +591,87 @@ try:
     </ul>
         """),
         "contact": ("Contact Us", """
-    <div style="max-width: 600px; margin: 0 auto; background: #fff; padding: 40px 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
-        <h2 style="color: var(--main-red); text-align: center; font-size: 28px; margin-bottom: 10px;">Get in Touch</h2>
-        <p style="text-align: center; color: #666; font-size: 15px; margin-bottom: 35px;">Aapke sawal, feedback ya business inquiry ke liye humein message karein. Humari team 24 ghante mein aapse sampark karegi.</p>
-        
-        <form action="https://formsubmit.co/ajax/ramesh.chandra89056@gmail.com" method="POST" style="display: flex; flex-direction: column; gap: 20px;">
+    <div style="background-color: #f9f9f9; padding: 40px 15px; font-family: sans-serif; text-align: center;">
+        <h1 style="color: #C00000; font-weight: bold; font-size: 30px; margin-bottom: 10px;">Contact Us</h1>
+        <p style="font-size: 16px; color: #555; max-width: 600px; margin: 0 auto 30px; line-height: 1.6;">
+            Humse sampark karein! Apne sawal, feedback, ya business inquiry neeche diye gaye form ke madhyam se seedha hamari team tak pahunchayein.
+        </p>
+
+        <div style="background-color: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); max-width: 500px; margin: 0 auto; border-top: 5px solid #C00000; text-align: left;">
             
-            <div>
-                <label style="font-size: 13px; font-weight: bold; color: #444; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">Aapka Naam</label>
-                <input type="text" name="name" required style="width: 100%; padding: 14px 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; outline: none; background: #fafafa;" placeholder="Eg: Mohit Kumar">
+            <form id="my-contact-form" action="https://formsubmit.co/ajax/ramesh.chandra89056@gmail.com" method="POST">
+                <input type="text" name="_honey" style="display:none">
+                <input type="hidden" name="_next" value="https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/">
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Aapka Naam (Name):</label>
+                    <input type="text" name="name" placeholder="Aapka Name" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px;">
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Aapka Email (Gmail/Other):</label>
+                    <input type="email" name="email" placeholder="example@gmail.com" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px;">
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Vishay (Subject):</label>
+                    <input type="text" name="subject" placeholder="Feedback/Inquiry" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px;">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Aapka Sandesh (Message):</label>
+                    <textarea name="message" rows="5" placeholder="Apna sawal yahan likhein..." required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; resize: vertical;"></textarea>
+                </div>
+
+                <button type="submit" style="width: 100%; background-color: #C00000; color: white; border: none; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: background-color 0.3s; box-shadow: 0 3px 6px rgba(0,0,0,0.1);">
+                    Bhejein (Send Message)
+                </button>
+            </form>
+            
+            <div id="success-message" style="display:none; margin-top: 20px; padding: 20px; background-color: #e7f4e4; border: 2px solid #28a745; border-radius: 8px; text-align: center;">
+                <h3 style="color: #28a745; margin-top: 0;">✅ Safaltapoorvak Bheja Gaya!</h3>
+                <p style="color: #333; font-size: 16px;">
+                    Dhanyawad! Aapka sandesh humein mil gaya hai. <br>
+                    <b>Hum 24 se 48 ghante ke andar aapki email par jawab denge.</b> <br>
+                    Tab tak hamare naye articles padhte rahiye!
+                </p>
             </div>
-            
-            <div>
-                <label style="font-size: 13px; font-weight: bold; color: #444; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">Email Address</label>
-                <input type="email" name="email" required style="width: 100%; padding: 14px 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; outline: none; background: #fafafa;" placeholder="example@gmail.com">
-            </div>
-            
-            <div>
-                <label style="font-size: 13px; font-weight: bold; color: #444; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">Aapka Sandesh</label>
-                <textarea name="message" rows="4" required style="width: 100%; padding: 14px 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; outline: none; resize: vertical; background: #fafafa;" placeholder="Apna sawal yahan likhein..."></textarea>
-            </div>
-            
-            <button type="submit" style="background: var(--main-red); color: white; border: none; padding: 16px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 15px rgba(218,37,28,0.2);">Sandesh Bhejein 🚀</button>
-        </form>
+        </div>
     </div>
+
+    <script>
+      const contactForm = document.getElementById('my-contact-form');
+      const successMessage = document.getElementById('success-message');
+
+      contactForm.addEventListener('submit', function(e) {
+        e.preventDefault(); 
+        const formData = new FormData(contactForm);
+        const submitButton = contactForm.querySelector('button');
+        submitButton.disabled = true;
+        submitButton.innerText = "Bheja ja raha hai...";
+
+        fetch(contactForm.action, {
+          method: 'POST',
+          body: formData,
+          headers: { 'Accept': 'application/json' }
+        })
+        .then(response => {
+          if (response.ok) {
+            contactForm.style.display = 'none'; 
+            successMessage.style.display = 'block'; 
+          } else {
+            alert("Maaf kijiye, koi galti hui. Kripya dobara koshish karein.");
+            submitButton.disabled = false;
+            submitButton.innerText = "Bhejein (Send Message)";
+          }
+        })
+        .catch(error => {
+          alert("Network ki dikkat hai. Kripya check karein.");
+          submitButton.disabled = false;
+          submitButton.innerText = "Bhejein (Send Message)";
+        });
+      });
+    </script>
         """)
         
     }
