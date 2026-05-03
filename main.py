@@ -589,7 +589,34 @@ try:
         <li><strong>Risk (Jokhim):</strong> Trading aur investment mein jokhim hota hai. Kisi bhi aarthik nuksan ke liye Digital Kamai Hub ya uske founder (Mohit) zimmewar nahi honge.</li>
         <li><strong>Affiliate Disclosure:</strong> Is blog par kuch affiliate links ho sakte hain. Agar aap unse kuch kharidte hain, toh humein chota sa commission mil sakta hai, jisse aapka koi extra paisa nahi lagta.</li>
     </ul>
+        """),
+        "contact": ("Contact Us", """
+    <div style="max-width: 600px; margin: 0 auto; background: #fff; padding: 40px 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
+        <h2 style="color: var(--main-red); text-align: center; font-size: 28px; margin-bottom: 10px;">Get in Touch</h2>
+        <p style="text-align: center; color: #666; font-size: 15px; margin-bottom: 35px;">Aapke sawal, feedback ya business inquiry ke liye humein message karein. Humari team 24 ghante mein aapse sampark karegi.</p>
+        
+        <form action="YOUR_FORMSPREE_LINK_HERE" method="POST" style="display: flex; flex-direction: column; gap: 20px;">
+            
+            <div>
+                <label style="font-size: 13px; font-weight: bold; color: #444; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">Aapka Naam</label>
+                <input type="text" name="name" required style="width: 100%; padding: 14px 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; outline: none; background: #fafafa;" placeholder="Eg: Mohit Kumar">
+            </div>
+            
+            <div>
+                <label style="font-size: 13px; font-weight: bold; color: #444; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">Email Address</label>
+                <input type="email" name="email" required style="width: 100%; padding: 14px 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; outline: none; background: #fafafa;" placeholder="example@gmail.com">
+            </div>
+            
+            <div>
+                <label style="font-size: 13px; font-weight: bold; color: #444; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">Aapka Sandesh</label>
+                <textarea name="message" rows="4" required style="width: 100%; padding: 14px 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; outline: none; resize: vertical; background: #fafafa;" placeholder="Apna sawal yahan likhein..."></textarea>
+            </div>
+            
+            <button type="submit" style="background: var(--main-red); color: white; border: none; padding: 16px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 15px rgba(218,37,28,0.2);">Sandesh Bhejein 🚀</button>
+        </form>
+    </div>
         """)
+        
     }
     
     
