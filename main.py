@@ -265,7 +265,6 @@ try:
         footer { background: var(--dark-bg); color: #888; padding: 60px 20px 30px; margin-top: 60px; text-align: center; }
         .footer-links a { color: #ccc; text-decoration: none; margin: 0 15px; font-size: 15px; }
         
-        /* Mobile Responsive Smart Fix */
         @media (max-width: 600px) {
             .grid { grid-template-columns: repeat(2, 1fr) !important; gap: 15px !important; }
             .container { padding: 15px !important; margin: 15px auto !important; }
@@ -280,20 +279,13 @@ try:
             .hero-img, .article-img { margin: 15px 0 !important; border-radius: 8px !important; }
         }
         
-        /* Ticker Container */
-        .ticker-wrap {
-          width: 100%; overflow: hidden; background-color: #f1f1f1; border-bottom: 2px solid #C00000; box-sizing: border-box;
-        }
-        .ticker-content {
-          display: flex; white-space: nowrap; animation: tickerAnimation 15s linear infinite; color: #333; font-family: sans-serif; font-size: 14px; font-weight: bold; padding: 10px 0;
-        }
+        .ticker-wrap { width: 100%; overflow: hidden; background-color: #f1f1f1; border-bottom: 2px solid #C00000; box-sizing: border-box; }
+        .ticker-content { display: flex; white-space: nowrap; animation: tickerAnimation 15s linear infinite; color: #333; font-family: sans-serif; font-size: 14px; font-weight: bold; padding: 10px 0; }
         .ticker-content span { color: #C00000; }
-        @keyframes tickerAnimation {
-          0% { transform: translateX(100%); }
-          100% { transform: translateX(-100%); }
-        }
+        @keyframes tickerAnimation { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
     </style>
     """
+    
 
     schema_markup = f"""
     <script type="application/ld+json">
