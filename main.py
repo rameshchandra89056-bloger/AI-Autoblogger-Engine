@@ -379,59 +379,7 @@ try:
     }}
     </script>
     """
-    header_html = f"""
-        <div class="ticker-wrap">
-            <div class="ticker-content">
-                <span>TRENDING:</span> &nbsp; 2026 Best Tech, AI Income, Future Jobs, Digital Kamai Hub Ke Naye Hacks, Share Market Ka Sach!
-            </div>
-        </div>
-        <header>
-            <div class="nav-container">
-                <a href="index.html" class="logo">Digital Kamai Hub</a>
-                <div class="menu-btn" onclick="document.getElementById('mobile-menu').classList.toggle('active')">☰</div>
-                <div class="nav-links" id="mobile-menu">
-                    <a href="index.html">Home</a>
-                    <a href="all-posts.html">AI Hacks</a>
-                    <a href="all-posts.html">Share Market</a>
-                    <a href="all-posts.html">Trading Tips</a>
-                    <a href="contact.html">Contact</a>
-                </div>
-            </div>
-        </header>
-        """
-
-     footer_html = f"""
-        
-        <div style="position: fixed; left: 10px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 1000;">
-            <a href="https://api.whatsapp.com/send?text=Check out this amazing AI Finance insight: https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/{post_filename}" target="_blank" style="background: #25D366; color: white; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; font-weight: bold; font-size: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s;">W</a>
-            <a href="https://t.me/share/url?url=https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/{post_filename}&text={current_topic}" target="_blank" style="background: #0088cc; color: white; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; font-weight: bold; font-size: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s;">T</a>
-        </div>
-
-        <footer>
-            <div style="margin-bottom: 25px;">
-                <p style="color: #ccc; font-size: 14px; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">JOIN THE AI MILLIONAIRE COMMUNITY:</p>
-                <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-                    <a href="https://www.youtube.com/@TheAIMillionaire-h5g" target="_blank" style="color: #FF0000; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px; font-size: 14px;">YouTube</a>
-                    <a href="https://t.me/digitalkamaihub_2026" target="_blank" style="color: #0088cc; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px; font-size: 14px;">Telegram</a>
-                    <a href="https://www.instagram.com/aimillionaire_official" target="_blank" style="color: #E1306C; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px; font-size: 14px;">Instagram</a>
-                    <a href="https://www.facebook.com/share/1HNaL98HmM/" target="_blank" style="color: #1877F2; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px; font-size: 14px;">Facebook</a>
-                </div>
-            </div>
-
-            <div class="footer-links">
-                <a href="about.html">About Us</a> | 
-                <a href="privacy.html">Privacy Policy</a> | 
-                <a href="disclaimer.html">Disclaimer</a> | 
-                <a href="contact.html">Contact Us</a> 
-            </div>
-            <p style="margin-top:20px; font-size:13px;">&copy; {current_year} Digital Kamai Hub. All Rights Reserved.</p>
-        </footer>
-
-        <div id="cookie-banner" style="position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(17, 17, 17, 0.95); color: white; padding: 15px 20px; text-align: center; font-size: 13px; z-index: 9999; display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; border-top: 2px solid var(--main-red);">
-            <span>🍪 Hum aapko behtar anubhav dene ke liye cookies ka istemal karte hain. Hamari website ka istemal karke aap hamari Privacy Policy se sahamat hote hain.</span>
-       <button onclick="document.getElementById('cookie-banner').style.display='none'" style="background: var(--main-red); color: white; border: none; padding: 8px 25px; font-weight: bold; border-radius: 5px; cursor: pointer; box-shadow: 0 4px 10px rgba(218, 37, 28, 0.3);">Theek Hai</button>
-        </div>
-    """
+    
     
             
 
@@ -445,6 +393,53 @@ try:
     </head>
     <body>
         <div style="position: fixed; top: 0; left: 0; width: 100%; height: 5px; background-color: transparent; z-index: 9999;">
+    header_html = f"""
+<div class="ticker-wrap">
+    <div class="ticker-content">
+        <span>TRENDING:</span> &nbsp; 2026 Best Tech, AI Income, Future Jobs, Digital Kamai Hub Ke Naye Hacks, Share Market Ka Sach!
+    </div>
+</div>
+<header>
+    <div class="nav-container">
+        <a href="index.html" class="logo">Digital Kamai Hub</a>
+        <div class="menu-btn" onclick="document.getElementById('mobile-menu').classList.toggle('active')">☰</div>
+        <div class="nav-links" id="mobile-menu">
+            <a href="index.html">Home</a>
+            <a href="all-posts.html">AI Hacks</a>
+            <a href="all-posts.html">Share Market</a>
+            <a href="all-posts.html">Trading Tips</a>
+            <a href="contact.html">Contact</a>
+        </div>
+    </div>
+</header>
+"""
+
+footer_html = f"""
+<footer style="margin-top: 40px; background: #111; padding: 40px 20px; text-align: center;">
+    <div style="margin-bottom: 25px;">
+        <p style="color: #ccc; font-size: 14px; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">JOIN THE AI MILLIONAIRE COMMUNITY:</p>
+        <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <a href="https://www.youtube.com/@TheAIMillionaire-h5g" target="_blank" style="color: #FF0000; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">YouTube</a>
+            <a href="https://t.me/digitalkamaihub_2026" target="_blank" style="color: #0088cc; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Telegram</a>
+            <a href="https://www.instagram.com/aimillionaire_official" target="_blank" style="color: #E1306C; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Instagram</a>
+            <a href="https://www.facebook.com/share/1HNaL98HmW/" target="_blank" style="color: #1877F2; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Facebook</a>
+        </div>
+    </div>
+    
+    <div class="footer-links" style="margin-bottom: 20px;">
+        <a href="about.html" style="color: #ccc; text-decoration: none; margin: 0 10px;">About Us</a> | 
+        <a href="privacy.html" style="color: #ccc; text-decoration: none; margin: 0 10px;">Privacy Policy</a> | 
+        <a href="disclaimer.html" style="color: #ccc; text-decoration: none; margin: 0 10px;">Disclaimer</a> | 
+        <a href="contact.html" style="color: #ccc; text-decoration: none; margin: 0 10px;">Contact Us</a>
+    </div>
+    <p style="margin-top:20px; font-size:13px; color: #888;">&copy; {{current_year}} Digital Kamai Hub. All Rights Reserved.</p>
+</footer>
+
+<div id="cookie-banner" style="position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(17, 17, 17, 0.95); color: white; text-align: center; padding: 15px; font-size: 14px; z-index: 1000;">
+    <span>🍪 Hum aapko behtar anubhav dene ke liye cookies ka istemal karte hain. Hamari website ka istemal karke aap hamari Privacy Policy se sahamat hote hain.</span>
+    <button onclick="document.getElementById('cookie-banner').style.display='none'" style="background: var(--main-red); color: white; border: none; padding: 8px 20px; font-weight: bold; border-radius: 5px; cursor: pointer; margin-left: 15px;">Theek Hai</button>
+</div>
+"""
             <div id="smart-progress" style="height: 5px; background-color: #C00000; width: 0%; border-top-right-radius: 3px; border-bottom-right-radius: 3px; transition: width 0.1s;"></div>
         </div>
 
