@@ -334,7 +334,7 @@ try:
         </header>
     """
 
-            footer_html = f"""
+    footer_html = f"""
         <div style="position: fixed; left: 10px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 1000;">
             <a href="https://api.whatsapp.com/send?text=Check out this amazing AI Finance insight: https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/{post_filename}" target="_blank" style="background: #25D366; color: white; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; font-weight: bold; font-size: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s;">W</a>
             <a href="https://t.me/share/url?url=https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/{post_filename}&text={current_topic}" target="_blank" style="background: #0088cc; color: white; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; font-weight: bold; font-size: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s;">T</a>
@@ -362,7 +362,7 @@ try:
 
         <div id="cookie-banner" style="position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(17, 17, 17, 0.95); color: white; padding: 15px 20px; text-align: center; font-size: 13px; z-index: 9999; display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; border-top: 2px solid var(--main-red);">
             <span>🍪 Hum aapko behtar anubhav dene ke liye cookies ka istemal karte hain. Hamari website ka istemal karke aap hamari Privacy Policy se sahamat hote hain.</span>
-            <button onclick="document.getElementById('cookie-banner').style.display='none'" style="background: var(--main-red); color: white; border: none; padding: 8px 25px; font-weight: bold; border-radius: 5px; cursor: pointer; box-shadow: 0 4px 10px rgba(218, 37, 28, 0.3);">Theek Hai</button>
+       <button onclick="document.getElementById('cookie-banner').style.display='none'" style="background: var(--main-red); color: white; border: none; padding: 8px 25px; font-weight: bold; border-radius: 5px; cursor: pointer; box-shadow: 0 4px 10px rgba(218, 37, 28, 0.3);">Theek Hai</button>
         </div>
     """
     
