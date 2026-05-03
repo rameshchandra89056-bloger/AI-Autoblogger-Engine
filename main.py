@@ -675,7 +675,52 @@ try:
         """)
         
     }
-    
+
+    # 👇 YAHAN SE COPY KAREIN (Line 594 par paste karein) 👇
+for p_file, (p_title, p_content) in pages.items():
+    premium_legal_html = f"""<!DOCTYPE html>
+<html lang='hi'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>{p_title} - Digital Kamai Hub</title>
+    <style>
+        body {{ font-family: 'Segoe UI', Tahoma, sans-serif; background: #f0f2f5; margin: 0; color: #111; }}
+        header {{ background: white; border-bottom: 2px solid #eee; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }}
+        .logo {{ font-size: 24px; font-weight: 900; color: #da251c; text-decoration: none; text-transform: uppercase; }}
+        .nav-links {{ display: flex; gap: 20px; }}
+        .nav-links a {{ text-decoration: none; color: #111; font-weight: bold; font-size: 16px; transition: 0.3s; }}
+        .nav-links a:hover {{ color: #da251c; }}
+        .menu-btn {{ display: none; font-size: 28px; cursor: pointer; color: #da251c; user-select: none; }}
+        @media (max-width: 600px) {{
+            .nav-links {{ display: none; flex-direction: column; position: absolute; top: 65px; left: 0; width: 100%; background: white; padding: 15px 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); z-index: 1000; border-top: 1px solid #eee; }}
+            .nav-links.active {{ display: flex !important; }}
+            .nav-links a {{ padding-bottom: 10px; border-bottom: 1px solid #f0f0f0; margin-bottom: 10px; display: block; }}
+            .menu-btn {{ display: block; }}
+        }}
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo">Digital Kamai Hub</a>
+        <div class="menu-btn" onclick="document.getElementById('mobile-menu').classList.toggle('active')">☰</div>
+        <div class="nav-links" id="mobile-menu">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="disclaimer.html">Disclaimer</a>
+            <a href="contact.html">Contact</a>
+        </div>
+    </header>
+    <div style="max-width: 850px; margin: 40px auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); line-height: 1.7;">
+        {p_content}
+    </div>
+</body>
+</html>"""
+    with open(f"{p_file}.html", "w", encoding="utf-8") as f:
+        f.write(premium_legal_html)
+# 👆 YAHAN TAK COPY KAREIN 👆
+
     
     # ==========================================
     # 📊 द लाइव रिपोर्टिंग (DOUBLE ENGINE)
