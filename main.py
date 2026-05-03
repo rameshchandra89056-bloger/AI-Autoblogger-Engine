@@ -242,7 +242,7 @@ try:
     posts_db.insert(0, {"title": current_topic, "file": post_filename, "date": today_date, "img": main_img_url})
     with open("posts.json", "w", encoding="utf-8") as f: json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
-    # 🎨 HTML, CSS DESIGN & SEO ENGINE (LEAK-PROOF)
+    # 🎨 HTML, CSS DESIGN & SEO ENGINE (LEAK-PROOF + ONESIGNAL)
     premium_css = """
     <style>
         :root { --main-red: #da251c; --dark-bg: #111; --text-gray: #444; }
@@ -265,6 +265,7 @@ try:
         footer { background: var(--dark-bg); color: #888; padding: 60px 20px 30px; margin-top: 60px; text-align: center; }
         .footer-links a { color: #ccc; text-decoration: none; margin: 0 15px; font-size: 15px; }
         
+        /* Mobile Responsive Smart Fix */
         @media (max-width: 600px) {
             .grid { grid-template-columns: repeat(2, 1fr) !important; gap: 15px !important; }
             .container { padding: 15px !important; margin: 15px auto !important; }
@@ -279,12 +280,24 @@ try:
             .hero-img, .article-img { margin: 15px 0 !important; border-radius: 8px !important; }
         }
         
+        /* Ticker Container */
         .ticker-wrap { width: 100%; overflow: hidden; background-color: #f1f1f1; border-bottom: 2px solid #C00000; box-sizing: border-box; }
         .ticker-content { display: flex; white-space: nowrap; animation: tickerAnimation 15s linear infinite; color: #333; font-family: sans-serif; font-size: 14px; font-weight: bold; padding: 10px 0; }
         .ticker-content span { color: #C00000; }
         @keyframes tickerAnimation { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
     </style>
+
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "f11333ae-cc73-489e-a1a5-6a74129c3785",
+        });
+      });
+    </script>
     """
+    
     
 
     schema_markup = f"""
