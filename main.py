@@ -389,7 +389,7 @@ try:
             <button id="floating-tts-btn" onclick="toggleAudio()" style="position: fixed; bottom: 30px; right: 30px; background: #da251c; color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 10px 25px rgba(218, 37, 28, 0.4); z-index: 1000; transition: 0.3s; display: flex; align-items: center; gap: 10px;">
                 🎧 Article Sunein
             </button>
-            <script>
+                        <script>
                 function toggleAudio() {{
                     var audio = document.getElementById("premium-audio");
                     var btn = document.getElementById("floating-tts-btn");
@@ -397,10 +397,44 @@ try:
                     else {{ audio.pause(); btn.innerHTML = "🎧 Phir Se Sunein"; btn.style.background = "#da251c"; }}
                 }}
             </script>
+            
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {{
+                    var articleBody = document.getElementById("article-body");
+                    if (articleBody) {{
+                        var headings = articleBody.querySelectorAll("h2");
+                        if (headings.length >= 2) {{
+                            var tocBox = document.createElement("div");
+                            tocBox.style.cssText = "background: #fff9f9; border: 1px solid #ffcccc; border-left: 5px solid #da251c; padding: 20px; margin: 30px 0; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);";
+                            
+                            var tocTitle = document.createElement("h3");
+                            tocTitle.innerText = "📍 Is Article Mein Kya Hai:";
+                            tocTitle.style.cssText = "color: #da251c; margin-top: 0; margin-bottom: 15px; font-size: 20px;";
+                            tocBox.appendChild(tocTitle);
+                            
+                            headings.forEach(function(heading, index) {{
+                                var sectionId = "smart-heading-" + index;
+                                heading.id = sectionId;
+                                
+                                var link = document.createElement("a");
+                                link.href = "#" + sectionId;
+                                link.innerText = "👉 " + heading.innerText;
+                                link.style.cssText = "display: block; color: #333; text-decoration: none; font-size: 16px; font-weight: bold; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px dashed #eee;";
+                                
+                                tocBox.appendChild(link);
+                            }});
+                            
+                            headings[0].parentNode.insertBefore(tocBox, headings[0]);
+                        }}
+                    }}
+                }});
+            </script>
+
         </div>
         {footer_html}
     </body>
     </html>"""
+    
 
     with open(post_filename, "w", encoding="utf-8") as f: f.write(article_page)
 
