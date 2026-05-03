@@ -203,8 +203,18 @@ try:
     9. User ko ZERO knowledge se lekar 100% knowledge tak le jana hai.
    10. Har badi baat ko samjhane ke liye aam jindagi (Real-life) ke asaan udaharan (Examples) dene hain.
    11. Post ko padhkar user ko lagna chahiye ki koi bada bhai use asaan bhasha mein samjha raha hai.
-   12. CRITICAL RULE: Tumhe HAMESHA post ke shuru mein ek Table of Contents banana hai jiska title "📍 Is Article Mein Kya Hai:" hona chahiye. Ise strictly HTML ki <ul> aur <li> tags ke andar hi likhna hai. Agar tumne ye miss kiya, toh post reject ho jayegi!
-   
+   12. CRITICAL HTML TEMPLATE RULE: Tumhe 'Table of Contents' ke liye apna koi dimag nahi lagana hai aur koi markdown (- ya *) use nahi karna hai. Tumhe EXACTLY niche diya gaya HTML template copy karna hai aur uske andar apne points fill karne hain. Iske bahar ek bhi point nahi likhna hai!
+    
+    TEMPLATE TO COPY:
+    <div style="background: #fffafa; border-left: 5px solid #da251c; padding: 20px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+        <h3 style="color: #da251c; margin-top: 0; font-size: 20px;">📍 Is Article Mein Kya Hai:</h3>
+        <ul style="list-style-type: none; padding-left: 0; margin: 0; font-size: 18px;">
+            <li style="margin-bottom: 10px; font-weight: bold; color: #333;">👉 [Point 1 yahan likho]</li>
+            <li style="margin-bottom: 10px; font-weight: bold; color: #333;">👉 [Point 2 yahan likho]</li>
+            <li style="margin-bottom: 10px; font-weight: bold; color: #333;">👉 [Point 3 yahan likho]</li>
+        </ul>
+    </div>
+    
 """
     
     blog_content = ask_ai(html_prompt, retries=5).replace("```html", "").replace("```", "").strip()
@@ -517,16 +527,53 @@ try:
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(f"<!DOCTYPE html><html lang='hi'><head><meta name='google-site-verification' content='hjQKPcCjWtLzjl1g3I19cddaZ3ODDzEndKg3T91sQsI' /><script async src='https://www.googletagmanager.com/gtag/js?id=G-NSLHLYVTDM'></script><script>window.dataLayer = window.dataLayer || []; function gtag(){{dataLayer.push(arguments);}} gtag('js', new Date()); gtag('config', 'G-NSLHLYVTDM');</script><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Digital Kamai Hub</title>{premium_css}</head><body>{header_html}<div style='max-width:1100px; margin:40px auto; padding:0 20px;'><h2 style='font-size:32px; border-bottom:3px solid #da251c; padding-bottom:10px; display:inline-block; margin-bottom:30px;'>🔥 Taaza Khabrein</h2><div class='grid'>{home_cards}</div></div>{footer_html}</body></html>")
-            
+    
+    
+    # 🛡️ THE LEGAL SHIELD (PREMIUM PAGES FOR ADSENSE APPROVAL)
     pages = {
-        "about": ("About Us", "Digital Kamai Hub Bharat ka No.1 AI aur Technology blog hai. Mohit (The AI Millionaire) dwara sthapit, hamara uddeshya aapko digital duniya mein safal banana hai."),
-        "privacy": ("Privacy Policy", "Aapki privacy hamare liye mahatvapurna hai. Hum aapki jankari ko surakshit rakhte hain."),
-        "disclaimer": ("Disclaimer", "Is website par di gayi sabhi jankari keval shiksha ke liye hai. Kisi bhi vittiya nirnay se pehle apni research karein.")
-    }
-    for p_file, (p_title, p_content) in pages.items():
-        with open(f"{p_file}.html", "w", encoding="utf-8") as f:
-            f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>{p_title}</title>{premium_css}</head><body>{header_html}<div class='container'><h1>{p_title}</h1><p style='font-size:18px;'>{p_content}</p></div>{footer_html}</body></html>")
+        "about": ("About Us", """
+    <h2 style='color: var(--main-red); margin-bottom: 15px; font-size: 28px;'>Hamari Kahani (Our Story)</h2>
+    <p style='font-size: 18px; margin-bottom: 25px; color: #333;'>Namaste! <strong>Digital Kamai Hub</strong> mein aapka swagat hai. Yeh sirf ek blog nahi, balki ek digital revolution hai. Hamara lakshya Bharat ke har yuva ko AI (Artificial Intelligence) aur smart finance ki taqat se rubaru karana hai, taaki financial freedom sirf ek sapna na rahe.</p>
 
+    <h2 style='color: var(--main-red); margin-bottom: 15px; font-size: 24px;'>🎯 Mission & Vision</h2>
+    <p style='font-size: 18px; margin-bottom: 25px; color: #333;'>Hamara mission bilkul saaf hai: <strong>"Bacchon ka khel nahi, Smart Work!"</strong> Hum internet par maujood fake aur ghisi-piti jankari ko hata kar, aapko seedhe advance hackers wale 'Zero-Touch Automation' aur 'Wealth Creation' ke secrets dete hain.</p>
+
+    <h2 style='color: var(--main-red); margin-bottom: 15px; font-size: 24px;'>👨‍💻 Meet The Founder: Mohit (The AI Millionaire)</h2>
+    <div style='background: #fafafa; padding: 25px; border-left: 5px solid var(--main-red); border-radius: 8px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);'>
+        <p style='font-size: 17px; margin-bottom: 15px; color: #222; line-height: 1.8;'>Mohit ek <strong>Full-Stack Web Developer, AI Automation Practitioner, aur Visionary Entrepreneur</strong> hain. Ek aam zindagi se nikal kar 'The AI Millionaire' banne tak ka unka safar is baat ka saboot hai ki agar sahi skill aur 'Smart Work' ka mindset ho, toh kuch bhi haasil kiya ja sakta hai.</p>
+        <p style='font-size: 17px; color: #222; line-height: 1.8;'>Mohit ka vishwas hai ki <em>"Any manual task is a bug."</em> Isiliye unhone is platform ko banaya hai, jahan machine learning aur advance coding ke zariye paise kamane ke asli aur practical tarike sikhaye jaate hain.</p>
+    </div>
+
+    <h2 style='color: var(--main-red); margin-bottom: 15px; font-size: 24px;'>⚡ Hum Kya Karte Hain?</h2>
+    <ul style='font-size: 18px; margin-left: 20px; line-height: 1.9; color: #333; margin-bottom: 20px;'>
+        <li>🚀 <strong>AI Automation:</strong> AI tools ka istemal karke ghanton ka kaam seconds mein kaise karein.</li>
+        <li>💡 <strong>Smart Finance:</strong> Share market, trading aur online income ke advance hacks.</li>
+        <li>⚙️ <strong>Coding & Tech:</strong> Bina time barbaad kiye, seedha result dene wali technical guides.</li>
+    </ul>
+    <p style='font-size: 18px; font-weight: bold; color: #111;'>Aaiye milkar is digital daur mein apna sikka jamayein!</p>
+        """),
+        "privacy": ("Privacy Policy", """
+    <h2 style='color: var(--main-red); margin-bottom: 15px; font-size: 28px;'>Privacy Policy</h2>
+    <p style='font-size: 18px; margin-bottom: 15px; color: #333;'>Aapki privacy hamare liye sabse zyada zaroori hai. Digital Kamai Hub par hum aapka data kaise use karte hain, uski jankari yahan di gayi hai:</p>
+    <ul style='font-size: 18px; margin-left: 20px; line-height: 1.9; color: #333; margin-bottom: 20px;'>
+        <li><strong>Cookies:</strong> Hum website ka experience behtar banane aur Google AdSense ke ads dikhane ke liye cookies ka istemal karte hain.</li>
+        <li><strong>Data Security:</strong> Hum aapki email ya personal jankari kisi third-party ko nahi bechte. Aapke Push Notifications ka data OneSignal ke secure server par rehta hai.</li>
+        <li><strong>Third-Party Links:</strong> Hamari site par dusri websites ke links ho sakte hain. Un par click karne ke baad unki privacy policy laagu hogi.</li>
+    </ul>
+    <p style='font-size: 18px; color: #333;'>Agar aapko koi sawal hai, toh aap humse sampark kar sakte hain.</p>
+        """),
+        "disclaimer": ("Disclaimer", """
+    <h2 style='color: var(--main-red); margin-bottom: 15px; font-size: 28px;'>Disclaimer (Chetawani)</h2>
+    <p style='font-size: 18px; margin-bottom: 15px; color: #333;'><strong>Digital Kamai Hub</strong> par di gayi sabhi jankari (Finance, Share Market, AI Tools) keval shikhsha (Educational purposes) ke liye hai.</p>
+    <ul style='font-size: 18px; margin-left: 20px; line-height: 1.9; color: #333; margin-bottom: 20px;'>
+        <li><strong>Financial Advice Nahi:</strong> Hum SEBI registered financial advisor nahi hain. Share market ya crypto mein nivesh karne se pehle apni khud ki research zaroor karein.</li>
+        <li><strong>Risk (Jokhim):</strong> Trading aur investment mein jokhim hota hai. Kisi bhi aarthik nuksan ke liye Digital Kamai Hub ya uske founder (Mohit) zimmewar nahi honge.</li>
+        <li><strong>Affiliate Disclosure:</strong> Is blog par kuch affiliate links ho sakte hain. Agar aap unse kuch kharidte hain, toh humein chota sa commission mil sakta hai, jisse aapka koi extra paisa nahi lagta.</li>
+    </ul>
+        """)
+    }
+    
+    
     # ==========================================
     # 📊 द लाइव रिपोर्टिंग (DOUBLE ENGINE)
     # ==========================================
