@@ -9,6 +9,37 @@ import html
 import requests
 from datetime import datetime, timedelta
 
+# 🔔 ONESIGNAL AUTO-NOTIFICATION ROBOT (REST API)
+def send_push_notification(title, post_url):
+    app_id = "f11333ae-cc73-489e-a1a5-6a74129c3785" # Aapki OneSignal ID
+    api_key = os.environ.get("ONESIGNAL_API_KEY") # GitHub Secrets wali chabi
+    
+    if not api_key:
+        print("⚠️ API Key missing! Notification nahi gaya.")
+        return
+
+    header = {
+        "Content-Type": "application/json; charset=utf-8",
+        "Authorization": f"Basic {api_key}"
+    }
+
+    payload = {
+        "app_id": app_id,
+        "included_segments": ["All"],
+        "contents": {"en": f"Nayi Post: {title}"},
+        "headings": {"en": "Digital Kamai Hub: Taaza Khabar!"},
+        "url": post_url
+    }
+
+    try:
+        response = requests.post("https://onesignal.com/api/v1/notifications", headers=header, json=payload)
+        if response.status_code == 200:
+            print("✅ OneSignal SUCCESS: Sabke phone par notification chala gaya!")
+        else:
+            print(f"❌ OneSignal Error: {response.status_code}")
+    except Exception as e:
+        print(f"❌ Notification Robot Failed: {e}")
+
 # ==========================================
 # THE AI MILLIONAIRE - ULTIMATE MONEY ENGINE (FAST-FAIL DIAGNOSTICS + DESKTOP UI)
 # ==========================================
@@ -172,6 +203,8 @@ try:
     9. User ko ZERO knowledge se lekar 100% knowledge tak le jana hai.
    10. Har badi baat ko samjhane ke liye aam jindagi (Real-life) ke asaan udaharan (Examples) dene hain.
    11. Post ko padhkar user ko lagna chahiye ki koi bada bhai use asaan bhasha mein samjha raha hai.
+   12. CRITICAL RULE: Tumhe HAMESHA post ke shuru mein ek Table of Contents banana hai jiska title "📍 Is Article Mein Kya Hai:" hona chahiye. Ise strictly HTML ki <ul> aur <li> tags ke andar hi likhna hai. Agar tumne ye miss kiya, toh post reject ho jayegi!
+   
 """
     
     blog_content = ask_ai(html_prompt, retries=5).replace("```html", "").replace("```", "").strip()
@@ -510,6 +543,10 @@ try:
     public_channel_id = os.environ.get("TELEGRAM_PUBLIC_CHANNEL")
     if public_channel_id:
         send_telegram_msg(urllib.parse.quote(promo_msg), target_chat_id=public_channel_id)
+    # 🤖 AUTO-ROBOT TRIGGER (ONE-SIGNAL)
+    blog_link = f"https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/{post_filename}"
+    send_push_notification(current_topic, blog_link)
+    
         
     print("✅ Website 100% safalta aur Double Engine ke sath ban gayi hai!")
 
