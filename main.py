@@ -676,9 +676,9 @@ try:
         
     }
 
-    # 👇 YAHAN SE COPY KAREIN (Line 594 par paste karein) 👇
-for p_file, (p_title, p_content) in pages.items():
-    premium_legal_html = f"""<!DOCTYPE html>
+   # 👇 YAHAN SE COPY KAREIN (Isme space pehle se set hain) 👇
+    for p_file, (p_title, p_content) in pages.items():
+        premium_legal_html = f"""<!DOCTYPE html>
 <html lang='hi'>
 <head>
     <meta charset='UTF-8'>
@@ -717,9 +717,10 @@ for p_file, (p_title, p_content) in pages.items():
     </div>
 </body>
 </html>"""
-    with open(f"{p_file}.html", "w", encoding="utf-8") as f:
-        f.write(premium_legal_html)
-# 👆 YAHAN TAK COPY KAREIN 👆
+        with open(f"{p_file}.html", "w", encoding="utf-8") as f:
+            f.write(premium_legal_html)
+    # 👆 YAHAN TAK COPY KAREIN 👆
+
 
     
     # ==========================================
