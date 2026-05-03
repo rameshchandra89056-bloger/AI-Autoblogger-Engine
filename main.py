@@ -379,7 +379,7 @@ try:
     }}
     </script>
     """
-                header_html = f"""
+    header_html = f"""
         <div class="ticker-wrap">
             <div class="ticker-content">
                 <span>TRENDING:</span> &nbsp; 2026 Best Tech, AI Income, Future Jobs, Digital Kamai Hub Ke Naye Hacks, Share Market Ka Sach!
@@ -400,7 +400,7 @@ try:
         </header>
         """
 
-        footer_html = f"""
+     footer_html = f"""
         
         <div style="position: fixed; left: 10px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 1000;">
             <a href="https://api.whatsapp.com/send?text=Check out this amazing AI Finance insight: https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/{post_filename}" target="_blank" style="background: #25D366; color: white; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; font-weight: bold; font-size: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s;">W</a>
