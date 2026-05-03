@@ -285,7 +285,7 @@ try:
     posts_db.insert(0, {"title": current_topic, "file": post_filename, "date": today_date, "img": main_img_url})
     with open("posts.json", "w", encoding="utf-8") as f: json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
-    # 🎨 HTML, CSS DESIGN & SEO ENGINE (LEAK-PROOF + ONESIGNAL)
+    # 🎨 HTML, CSS DESIGN & SEO ENGINE (PREMIUM HAMBURGER MENU)
     premium_css = """
     <style>
         :root { --main-red: #da251c; --dark-bg: #111; --text-gray: #444; }
@@ -293,9 +293,15 @@ try:
         body { background: #f0f2f5; color: #111; line-height: 1.7; }
         .top-bar { background: var(--main-red); color: white; padding: 5px 0; text-align: center; font-size: 13px; font-weight: bold; letter-spacing: 1px; }
         header { background: white; border-bottom: 2px solid #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
-        .nav-container { max-width: 1100px; margin: 0 auto; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .nav-container { max-width: 1100px; margin: 0 auto; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: relative; }
         .logo { font-size: 28px; font-weight: 900; color: var(--main-red); text-decoration: none; text-transform: uppercase; }
-        .nav-links a { margin-left: 20px; text-decoration: none; color: #111; font-weight: bold; font-size: 16px; }
+        
+        /* Desktop Menu (कंप्यूटर के लिए) */
+        .nav-links { display: flex; align-items: center; }
+        .nav-links a { margin-left: 20px; text-decoration: none; color: #111; font-weight: bold; font-size: 16px; transition: 0.3s; }
+        .nav-links a:hover { color: var(--main-red); }
+        .menu-btn { display: none; font-size: 28px; cursor: pointer; color: var(--main-red); font-weight: bold; user-select: none; }
+        
         .container { max-width: 850px; margin: 40px auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
         h1 { font-size: 38px; line-height: 1.3; margin-bottom: 15px; color: #000; }
         .meta { font-size: 14px; color: #888; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 25px; }
@@ -308,19 +314,24 @@ try:
         footer { background: var(--dark-bg); color: #888; padding: 60px 20px 30px; margin-top: 60px; text-align: center; }
         .footer-links a { color: #ccc; text-decoration: none; margin: 0 15px; font-size: 15px; }
         
-        /* Mobile Responsive Smart Fix */
+        /* Mobile Responsive Smart Fix (मोबाइल का जादू) */
         @media (max-width: 600px) {
             .grid { grid-template-columns: repeat(2, 1fr) !important; gap: 15px !important; }
             .container { padding: 15px !important; margin: 15px auto !important; }
             h1 { font-size: 22px !important; line-height: 1.4 !important; }
             #article-body { font-size: 16px !important; }
             .logo { font-size: 20px !important; }
-            .nav-links a { margin-left: 10px !important; font-size: 14px !important; }
             .card { padding: 10px !important; }
             .card-content h3 { font-size: 13px !important; line-height: 1.3 !important; margin-bottom: 8px !important; }
             .card-content p { font-size: 11px !important; margin-bottom: 10px !important; }
             .card-content a { font-size: 12px !important; }
             .hero-img, .article-img { margin: 15px 0 !important; border-radius: 8px !important; }
+            
+            /* The Hamburger Magic (खिसकने वाला मेन्यू) */
+            .menu-btn { display: block !important; }
+            .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: white; padding: 15px 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border-top: 1px solid #eee; z-index: 1001; }
+            .nav-links.active { display: flex !important; }
+            .nav-links a { margin: 0 0 15px 0 !important; font-size: 16px !important; border-bottom: 1px solid #f0f0f0; padding-bottom: 10px; display: block; }
         }
         
         /* Ticker Container */
@@ -340,6 +351,7 @@ try:
       });
     </script>
     """
+    
     
     
 
@@ -374,12 +386,19 @@ try:
                 <span>TRENDING:</span> &nbsp; 2026 Best Tech, AI Income, Future Jobs, Digital Kamai Hub Ke Naye Haks, Share Market Ka सच!
             </div>
         </div>
-        <header>
+                <header>
             <div class="nav-container">
                 <a href="index.html" class="logo">Digital Kamai Hub</a>
-                <div class="nav-links"><a href="index.html">Home</a><a href="about.html">About</a><a href="contact.html">Contact</a></div>
+                <div class="menu-btn" onclick="document.getElementById('mobile-menu').classList.toggle('active')">☰</div>
+                <div class="nav-links" id="mobile-menu">
+                    <a href="index.html">Home</a>
+                    <a href="about.html">About Us</a>
+                    <a href="privacy.html">Privacy</a>
+                    <a href="disclaimer.html">Disclaimer</a>
+                </div>
             </div>
         </header>
+        
     """
 
     footer_html = f"""
