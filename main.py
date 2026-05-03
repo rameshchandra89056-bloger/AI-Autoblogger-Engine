@@ -413,9 +413,10 @@ try:
             {related_html}
             
             <audio id="premium-audio" src="{audio_filename}"></audio>
-            <button id="floating-tts-btn" onclick="toggleAudio()" style="position: fixed; bottom: 30px; right: 30px; background: #da251c; color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 10px 25px rgba(218, 37, 28, 0.4); z-index: 1000; transition: 0.3s; display: flex; align-items: center; gap: 10px;">
+            <button id="floating-tts-btn" onclick="toggleAudio()" style="position: fixed; bottom: 90px; right: 20px; background: #da251c; color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 10px 25px rgba(218, 37, 28, 0.4); z-index: 10000; transition: 0.3s; display: flex; align-items: center; gap: 10px;">
                 🎧 Article Sunein
             </button>
+            
                         <script>
                 function toggleAudio() {{
                     var audio = document.getElementById("premium-audio");
