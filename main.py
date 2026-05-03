@@ -379,27 +379,27 @@ try:
     }}
     </script>
     """
-
-    header_html = f"""
+        header_html = f"""
         <div class="ticker-wrap">
             <div class="ticker-content">
-                <span>TRENDING:</span> &nbsp; 2026 Best Tech, AI Income, Future Jobs, Digital Kamai Hub Ke Naye Haks, Share Market Ka सच!
+                <span>TRENDING:</span> &nbsp; 2026 Best Tech, AI Income, Future Jobs, Digital Kamai Hub Ke Naye Hacks, Share Market Ka Sach!
             </div>
         </div>
-                <header>
+        <header>
             <div class="nav-container">
                 <a href="index.html" class="logo">Digital Kamai Hub</a>
                 <div class="menu-btn" onclick="document.getElementById('mobile-menu').classList.toggle('active')">☰</div>
                 <div class="nav-links" id="mobile-menu">
                     <a href="index.html">Home</a>
-                    <a href="about.html">About Us</a>
-                    <a href="privacy.html">Privacy</a>
-                    <a href="disclaimer.html">Disclaimer</a>
+                    <a href="all-posts.html">AI Hacks</a>
+                    <a href="all-posts.html">Share Market</a>
+                    <a href="all-posts.html">Trading Tips</a>
+                    <a href="contact.html">Contact</a>
                 </div>
             </div>
         </header>
+        """
         
-    """
 
     footer_html = f"""
         <div style="position: fixed; left: 10px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 1000;">
