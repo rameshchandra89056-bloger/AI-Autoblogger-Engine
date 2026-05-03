@@ -308,7 +308,7 @@ try:
   font-weight: bold;
   padding: 10px 0;
 }
-</style>
+
 /* Red "TRENDING:" style */
 .ticker-content span {
     color: #C00000; /* Lal rang */
@@ -320,6 +320,7 @@ try:
   100% { transform: translateX(-100%); } /* Doosri taraf bahar khatam */
 }
 
+</style>
     """
 
     schema_markup = f"""
@@ -357,7 +358,7 @@ try:
         <header>
             <div class="nav-container">
                 <a href="index.html" class="logo">Digital Kamai Hub</a>
-                <div class="nav-links"><a href="index.html">Home</a><a href="about.html">About</a></div>
+                <div class="nav-links"><a href="index.html">Home</a><a href="about.html">About</a><a href="contact.html">Contact</a></div>
             </div>
         </header>
     """
