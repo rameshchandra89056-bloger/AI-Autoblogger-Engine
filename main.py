@@ -76,11 +76,10 @@ try:
                 break
 except Exception as e: pass
 
-# 🛡️ SMART FAST-FAIL ENGINE (Sirf 4 retries, No infinite loop)
-# 🔥 SMART FAST-FAIL ENGINE (With Hugging Face Plan B)
+# 🛡️ SMART FAST-FAIL ENGINE
 def ask_ai(prompt, retries=4):
     # ==========================================
-    # PLAN A: Google Gemini Engine (Pehli koshish)
+    # PLAN A: Google Gemini Engine 
     # ==========================================
     for i in range(retries):
         current_key = API_KEYS[i % len(API_KEYS)]
@@ -102,6 +101,7 @@ def ask_ai(prompt, retries=4):
         except Exception as e:
             print(f"⚠️ Network Error (Attempt {i+1}/{retries}): {e}")
             time.sleep(5)
+            
     # ==========================================
     # PLAN B: Hugging Face (Llama 3) Engine
     # ==========================================
@@ -124,7 +124,6 @@ def ask_ai(prompt, retries=4):
         "parameters": {"max_new_tokens": 1500, "return_full_text": False}
     }
     
-    # Smart Work: API Call with Crash Protection
     try:
         hf_res = requests.post(hf_url, headers=headers, json=payload, timeout=60)
         if hf_res.status_code == 200:
@@ -137,7 +136,6 @@ def ask_ai(prompt, retries=4):
     except Exception as e:
         print(f"❌ Hugging Face Network Error: {e}")
         return ""
-            
 
 def pre_warm_image(url):
     try:
@@ -201,28 +199,22 @@ try:
             blog_content = blog_content.replace("[AFFILIATE]", mega_cta_html, 1)
     blog_content = blog_content.replace("[AFFILIATE]", "") 
 
-    # 🖼️ HYBRID IMAGE ENGINE
+    # 🖼️ HYBRID IMAGE ENGINE (WITH SAFE FALLBACK)
     safe_img_base = "future finance trading wealth technology"
-    fallback_images = [
-        "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=800&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop"
-    ]
     modifiers = ["cinematic", "cyberpunk", "hyperrealistic"]
+    safe_fallback = "https://placehold.co/800x400/c00000/ffffff?text=AI+Finance+Update"
 
     for idx, mod in enumerate(modifiers):
         if "[PHOTO]" in blog_content:
             inner_prompt = urllib.parse.quote(f"{safe_img_base} {mod}")
             inner_img_url = f"https://image.pollinations.ai/prompt/{inner_prompt}?width=800&height=400&nologo=true&seed={post_id + idx + 1}"
             pre_warm_image(inner_img_url)
-            fallback_url = fallback_images[idx % len(fallback_images)]
-            img_html = f"<div style='text-align: center;'><img src='{inner_img_url}' onerror=\"this.onerror=null; this.src='{fallback_url}';\" alt='Premium Finance Illustration' class='article-img'></div>"
+            img_html = f"<div style='text-align: center;'><img src='{inner_img_url}' onerror=\"this.onerror=null; this.src='{safe_fallback}';\" alt='Premium Finance Illustration' class='article-img'></div>"
             blog_content = blog_content.replace("[PHOTO]", img_html, 1)
 
     main_prompt = urllib.parse.quote(f"{safe_img_base} masterpiece")
     main_img_url = f"https://image.pollinations.ai/prompt/{main_prompt}?width=1200&height=600&nologo=true&seed={post_id}"
     pre_warm_image(main_img_url)
-    main_fallback = "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop"
 
     # 🎙️ AUDIO ENGINE
     print("🎧 Audio player taiyaar kiya ja raha hai...")
@@ -250,7 +242,7 @@ try:
     posts_db.insert(0, {"title": current_topic, "file": post_filename, "date": today_date, "img": main_img_url})
     with open("posts.json", "w", encoding="utf-8") as f: json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
-    # 🎨 HTML, CSS DESIGN & SEO ENGINE
+    # 🎨 HTML, CSS DESIGN & SEO ENGINE (LEAK-PROOF)
     premium_css = """
     <style>
         :root { --main-red: #da251c; --dark-bg: #111; --text-gray: #444; }
@@ -273,7 +265,7 @@ try:
         footer { background: var(--dark-bg); color: #888; padding: 60px 20px 30px; margin-top: 60px; text-align: center; }
         .footer-links a { color: #ccc; text-decoration: none; margin: 0 15px; font-size: 15px; }
         
-        /* 📱 Mobile Responsive Smart Fix - DESKTOP FEEL ON MOBILE */
+        /* Mobile Responsive Smart Fix */
         @media (max-width: 600px) {
             .grid { grid-template-columns: repeat(2, 1fr) !important; gap: 15px !important; }
             .container { padding: 15px !important; margin: 15px auto !important; }
@@ -287,40 +279,20 @@ try:
             .card-content a { font-size: 12px !important; }
             .hero-img, .article-img { margin: 15px 0 !important; border-radius: 8px !important; }
         }
-    
-    /* Ticker Container */
-.ticker-wrap {
-  width: 100%;
-  overflow: hidden; /* Bahar ka hissa chupa do */
-  background-color: #f1f1f1; /* Halka background color */
-  border-bottom: 2px solid #C00000; /* Lal rang ki niche wali line */
-  box-sizing: border-box;
-}
-
-/* Ticker Content */
-.ticker-content {
-  display: flex;
-  white-space: nowrap; /* Text ko line break na hone de */
-  animation: tickerAnimation 15s linear infinite; /* Jadooyi animation */
-  color: #333; /* Text color */
-  font-family: sans-serif;
-  font-size: 14px;
-  font-weight: bold;
-  padding: 10px 0;
-}
-
-/* Red "TRENDING:" style */
-.ticker-content span {
-    color: #C00000; /* Lal rang */
-}
-
-/* The Animation Logic */
-@keyframes tickerAnimation {
-  0% { transform: translateX(100%); } /* Bahar se shuru */
-  100% { transform: translateX(-100%); } /* Doosri taraf bahar khatam */
-}
-
-</style>
+        
+        /* Ticker Container */
+        .ticker-wrap {
+          width: 100%; overflow: hidden; background-color: #f1f1f1; border-bottom: 2px solid #C00000; box-sizing: border-box;
+        }
+        .ticker-content {
+          display: flex; white-space: nowrap; animation: tickerAnimation 15s linear infinite; color: #333; font-family: sans-serif; font-size: 14px; font-weight: bold; padding: 10px 0;
+        }
+        .ticker-content span { color: #C00000; }
+        @keyframes tickerAnimation {
+          0% { transform: translateX(100%); }
+          100% { transform: translateX(-100%); }
+        }
+    </style>
     """
 
     schema_markup = f"""
@@ -350,11 +322,10 @@ try:
 
     header_html = f"""
         <div class="ticker-wrap">
-    <div class="ticker-content">
-        <span>TRENDING:</span> &nbsp; 2026 Best Tech, AI Income, Future Jobs, Digital Kamai Hub Ke Naye Haks, Share Market Ka सच!
-    </div>
-</div>
-            
+            <div class="ticker-content">
+                <span>TRENDING:</span> &nbsp; 2026 Best Tech, AI Income, Future Jobs, Digital Kamai Hub Ke Naye Haks, Share Market Ka सच!
+            </div>
+        </div>
         <header>
             <div class="nav-container">
                 <a href="index.html" class="logo">Digital Kamai Hub</a>
@@ -365,7 +336,7 @@ try:
 
     footer_html = f"""
         <footer>
-            <div class="footer-links"><a href="about.html">About Us</a> | <a href="privacy.html">Privacy Policy</a> | <a href="disclaimer.html">Disclaimer</a> | <a href ="contact.html">Contact</a> </div>
+            <div class="footer-links"><a href="about.html">About Us</a> | <a href="privacy.html">Privacy Policy</a> | <a href="disclaimer.html">Disclaimer</a> | <a href="contact.html">Contact</a> </div>
             <p style="margin-top:20px; font-size:13px;">&copy; {current_year} Digital Kamai Hub. All Rights Reserved.</p>
         </footer>
     """
@@ -379,25 +350,24 @@ try:
         {schema_markup}
     </head>
     <body>
-    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 5px; background-color: transparent; z-index: 9999;">
-    <div id="smart-progress" style="height: 5px; background-color: #C00000; width: 0%; border-top-right-radius: 3px; border-bottom-right-radius: 3px; transition: width 0.1s;"></div>
-</div>
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 5px; background-color: transparent; z-index: 9999;">
+            <div id="smart-progress" style="height: 5px; background-color: #C00000; width: 0%; border-top-right-radius: 3px; border-bottom-right-radius: 3px; transition: width 0.1s;"></div>
+        </div>
 
-<script>
-    window.addEventListener('scroll', function() {{
-        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        var scrolled = (winScroll / height) * 100;
-        document.getElementById("smart-progress").style.width = scrolled + "%";
-    }});
-</script>
+        <script>
+            window.addEventListener('scroll', function() {{
+                var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                var scrolled = (winScroll / height) * 100;
+                document.getElementById("smart-progress").style.width = scrolled + "%";
+            }});
+        </script>
             
-
         {header_html}
         <div class="container">
             <h1>{current_topic}</h1>
             <div class="meta">📅 Prakashit: {today_date} | ✍️ Lekhak: Mohit (The AI Millionaire)</div>
-            <img src="{main_img_url}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1600&auto=format&fit=crop';" class="hero-img" alt="AI Finance Image">
+            <img src="{main_img_url}" onerror="this.onerror=null; this.src='https://placehold.co/1200x600/c00000/ffffff?text=AI+Finance+Update';" class="hero-img" alt="AI Finance Image">
             
             <div class="tts-box">
                 <span>🎧</span> <span>Samay kam hai? Niche diye gaye laal button ko dabakar poora article audio mein sunein!</span>
@@ -427,7 +397,6 @@ try:
                     else {{ audio.pause(); btn.innerHTML = "🎧 Phir Se Sunein"; btn.style.background = "#da251c"; }}
                 }}
             </script>
-            
         </div>
         {footer_html}
     </body>
@@ -437,8 +406,7 @@ try:
 
     home_cards = "".join([f"""
         <div class="card" style="background:#fff; padding:15px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.08); transition: 0.3s;">
-            <img src="{p['img']}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1600&auto=format&fit=crop';" alt="Thumbnail" style="width:100%; height:180px; object-fit:cover; border-radius:8px;">
-    
+            <img src="{p['img']}" onerror="this.onerror=null; this.src='https://placehold.co/800x400/c00000/ffffff?text=AI+Finance';" alt="Thumbnail" style="width:100%; height:180px; object-fit:cover; border-radius:8px;">
             <div class="card-content" style="padding-top:15px;">
                 <h3 style="margin-bottom:10px; font-size: 18px; line-height: 1.4;"><a href="{p['file']}" style="color:#000; text-decoration:none;">{p['title']}</a></h3>
                 <p style="color:#888; font-size:13px; margin-bottom:15px;">🗓 {p['date']}</p>
@@ -448,58 +416,46 @@ try:
     """ for p in posts_db])
 
     with open("index.html", "w", encoding="utf-8") as f:
-            f.write(f"<!DOCTYPE html><html lang='hi'><head><meta name='google-site-verification' content='hjQKPcCjWtLzjl1g3I19cddaZ3ODDzEndKg3T91sQsI' /><script async src='https://www.googletagmanager.com/gtag/js?id=G-NSLHLYVTDM'></script><script>window.dataLayer = window.dataLayer || []; function gtag(){{dataLayer.push(arguments);}} gtag('js', new Date()); gtag('config', 'G-NSLHLYVTDM');</script><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Digital Kamai Hub</title>{premium_css}</head><body>{header_html}<div style='max-width:1100px; margin:40px auto; padding:0 20px;'><h2 style='font-size:32px; border-bottom:3px solid #da251c; padding-bottom:10px; display:inline-block; margin-bottom:30px;'>🔥 Taaza Khabrein</h2><div class='grid'>{home_cards}</div></div>{footer_html}</body></html>")
+        f.write(f"<!DOCTYPE html><html lang='hi'><head><meta name='google-site-verification' content='hjQKPcCjWtLzjl1g3I19cddaZ3ODDzEndKg3T91sQsI' /><script async src='https://www.googletagmanager.com/gtag/js?id=G-NSLHLYVTDM'></script><script>window.dataLayer = window.dataLayer || []; function gtag(){{dataLayer.push(arguments);}} gtag('js', new Date()); gtag('config', 'G-NSLHLYVTDM');</script><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Digital Kamai Hub</title>{premium_css}</head><body>{header_html}<div style='max-width:1100px; margin:40px auto; padding:0 20px;'><h2 style='font-size:32px; border-bottom:3px solid #da251c; padding-bottom:10px; display:inline-block; margin-bottom:30px;'>🔥 Taaza Khabrein</h2><div class='grid'>{home_cards}</div></div>{footer_html}</body></html>")
             
     pages = {
         "about": ("About Us", "Digital Kamai Hub Bharat ka No.1 AI aur Technology blog hai. Mohit (The AI Millionaire) dwara sthapit, hamara uddeshya aapko digital duniya mein safal banana hai."),
         "privacy": ("Privacy Policy", "Aapki privacy hamare liye mahatvapurna hai. Hum aapki jankari ko surakshit rakhte hain."),
         "disclaimer": ("Disclaimer", "Is website par di gayi sabhi jankari keval shiksha ke liye hai. Kisi bhi vittiya nirnay se pehle apni research karein.")
     }
-
     for p_file, (p_title, p_content) in pages.items():
         with open(f"{p_file}.html", "w", encoding="utf-8") as f:
             f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>{p_title}</title>{premium_css}</head><body>{header_html}<div class='container'><h1>{p_title}</h1><p style='font-size:18px;'>{p_content}</p></div>{footer_html}</body></html>")
 
-        # ---------------------------------------------------------
-        
     # ==========================================
-    # 📊 द लाइव रिपोर्टिंग (DOUBLE ENGINE WITH DIAGNOSTICS)
+    # 📊 द लाइव रिपोर्टिंग (DOUBLE ENGINE)
     # ==========================================
     ist_time = datetime.utcnow() + timedelta(hours=5, minutes=30)
     time_str = ist_time.strftime("%I:%M %p (IST)")
     total_posts = len(posts_db)
     blog_url = f"https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/{post_filename}"
     
-    # 1. आपके पर्सनल बॉट के लिए टेक्निकल मैसेज (कंट्रोल रूम)
     personal_msg = f"✅ SUCCESS: नया ब्लॉग पोस्ट पब्लिश हो गया!\n⏰ समय: {time_str}\n📝 कुल ब्लॉग पोस्ट: {total_posts}\n🌐 लाइव लिंक: {blog_url}"
-    send_telegram_msg(urllib.parse.quote(personal_msg)) # यह पुरानी ID पर जाएगा
+    send_telegram_msg(urllib.parse.quote(personal_msg))
     
-    # 2. पब्लिक चैनल के लिए मार्केटिंग मैसेज (दुकान)
-    promo_msg = f"🚀 नई धमाकेदार पोस्ट लाइव हो गई है!\n\n"
-    promo_msg += f"🔥 टॉपिक: {current_topic}\n\n"
-    promo_msg += f"💡 जानिए AI और फाइनेंस के वो सीक्रेट्स जो आपको 2026 में 10X कमाई करवा सकते हैं।\n\n"
-    promo_msg += f"👉 तुरंत पढ़ें (फ्री): {blog_url}\n\n"
-    promo_msg += f"💎 The AI Millionaire"
+    promo_msg = f"🚀 नई धमाकेदार पोस्ट लाइव हो गई है!\n\n🔥 टॉपिक: {current_topic}\n\n💡 जानिए AI और फाइनेंस के वो सीक्रेट्स जो आपको 2026 में 10X कमाई करवा सकते हैं।\n\n👉 तुरंत पढ़ें (फ्री): {blog_url}\n\n💎 The AI Millionaire"
     
     public_channel_id = os.environ.get("TELEGRAM_PUBLIC_CHANNEL")
     if public_channel_id:
-        send_telegram_msg(urllib.parse.quote(promo_msg), target_chat_id=public_channel_id) # यह नए चैनल पर जाएगा
-    else:
-        print("⚠️ DEBUG: TELEGRAM_PUBLIC_CHANNEL secret nahi mila!")
+        send_telegram_msg(urllib.parse.quote(promo_msg), target_chat_id=public_channel_id)
         
-    print("✅ Website 100% safalta aur Double Engine (with Diagnostics) ke sath ban gayi hai!")
+    print("✅ Website 100% safalta aur Double Engine ke sath ban gayi hai!")
 
 # ==========================================
 # 🚨 द हैकर शील्ड (ERROR CATCHER)
 # ==========================================
 except Exception as e:
     error_msg = f"❌ BLOG ERROR: गुरुजी, ब्लॉग बनाते समय गड़बड़ हुई!\n⚠️ कारण: {e}"
-    send_telegram_msg(urllib.parse.quote(error_msg)) # एरर सिर्फ आपको पर्सनल बॉट पर दिखेगा
+    send_telegram_msg(urllib.parse.quote(error_msg))
     print(error_msg)
     sys.exit(1)
 
-
-    # =======================================================
+# =======================================================
 # 🚀 SMART WORK: AUTO-SITEMAP GENERATOR (ZERO-TOUCH ENGINE)
 # =======================================================
 def generate_auto_sitemap():
@@ -510,13 +466,12 @@ def generate_auto_sitemap():
         sitemap_content = '<?xml version="1.0" encoding="UTF-8"?>\n'
         sitemap_content += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
         
-        from datetime import datetime
-        today_date = datetime.now().strftime("%Y-%m-%d")
+        today_date_sm = datetime.now().strftime("%Y-%m-%d")
         
         for file in html_files:
             sitemap_content += '  <url>\n'
             sitemap_content += f'    <loc>{base_url}/{file}</loc>\n'
-            sitemap_content += f'    <lastmod>{today_date}</lastmod>\n'
+            sitemap_content += f'    <lastmod>{today_date_sm}</lastmod>\n'
             sitemap_content += '    <changefreq>daily</changefreq>\n'
             sitemap_content += '  </url>\n'
             
@@ -528,6 +483,4 @@ def generate_auto_sitemap():
     except Exception as e:
         print(f"⚠️ Sitemap Engine Error: {e}")
 
-# मशीन रन होते ही इसे फायर करना है
 generate_auto_sitemap()
-
