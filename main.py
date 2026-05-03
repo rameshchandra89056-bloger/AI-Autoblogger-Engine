@@ -379,21 +379,8 @@ try:
     }}
     </script>
     """
-    
-    
-            
-
-    article_page = f"""<!DOCTYPE html>
-    <html lang="hi">
-    <head>
-        <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{current_topic}</title>
-        {premium_css}
-        {schema_markup}
-    </head>
-    <body>
-        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 5px; background-color: transparent; z-index: 9999;">
-    header_html = f"""
+    # ☰ PREMIUM HEADER WITH CATEGORIES
+header_html = f"""
 <div class="ticker-wrap">
     <div class="ticker-content">
         <span>TRENDING:</span> &nbsp; 2026 Best Tech, AI Income, Future Jobs, Digital Kamai Hub Ke Naye Hacks, Share Market Ka Sach!
@@ -414,6 +401,7 @@ try:
 </header>
 """
 
+# 🦶 PREMIUM FOOTER
 footer_html = f"""
 <footer style="margin-top: 40px; background: #111; padding: 40px 20px; text-align: center;">
     <div style="margin-bottom: 25px;">
@@ -435,6 +423,8 @@ footer_html = f"""
     <p style="margin-top:20px; font-size:13px; color: #888;">&copy; {{current_year}} Digital Kamai Hub. All Rights Reserved.</p>
 </footer>
 
+    article_page = f"""<!DOCTYPE html>
+    
 <div id="cookie-banner" style="position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(17, 17, 17, 0.95); color: white; text-align: center; padding: 15px; font-size: 14px; z-index: 1000;">
     <span>🍪 Hum aapko behtar anubhav dene ke liye cookies ka istemal karte hain. Hamari website ka istemal karke aap hamari Privacy Policy se sahamat hote hain.</span>
     <button onclick="document.getElementById('cookie-banner').style.display='none'" style="background: var(--main-red); color: white; border: none; padding: 8px 20px; font-weight: bold; border-radius: 5px; cursor: pointer; margin-left: 15px;">Theek Hai</button>
