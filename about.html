@@ -1,96 +1,59 @@
-<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>About Us</title>
+<!DOCTYPE html>
+<html lang='hi'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>About Us - Digital Kamai Hub</title>
     <style>
-        :root { --main-red: #da251c; --dark-bg: #111; --text-gray: #444; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { background: #f0f2f5; color: #111; line-height: 1.7; }
-        .top-bar { background: var(--main-red); color: white; padding: 5px 0; text-align: center; font-size: 13px; font-weight: bold; letter-spacing: 1px; }
-        header { background: white; border-bottom: 2px solid #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
-        .nav-container { max-width: 1100px; margin: 0 auto; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 28px; font-weight: 900; color: var(--main-red); text-decoration: none; text-transform: uppercase; }
-        .nav-links a { margin-left: 20px; text-decoration: none; color: #111; font-weight: bold; font-size: 16px; }
-        .container { max-width: 850px; margin: 40px auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
-        h1 { font-size: 38px; line-height: 1.3; margin-bottom: 15px; color: #000; }
-        .meta { font-size: 14px; color: #888; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 25px; }
-        .hero-img { width: 100%; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 2px solid #f9f9f9; object-fit: cover; background-color: #fafafa; }
-        .article-img { width: 100%; border-radius: 12px; margin: 35px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 2px solid #f9f9f9; object-fit: cover; background-color: #fafafa; }
-        #article-body { font-size: 20px; color: var(--text-gray); }
-        #article-body h2 { color: #000; margin: 35px 0 15px 0; border-left: 5px solid var(--main-red); padding-left: 15px; background: #fafafa; padding: 10px 15px; border-radius: 0 8px 8px 0; }
-        .tts-box { background: #fff3f3; padding: 15px; border-left: 4px solid var(--main-red); margin-bottom: 25px; font-weight: bold; color: #da251c; border-radius: 0 8px 8px 0; display: flex; align-items: center; gap: 10px;}
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
-        footer { background: var(--dark-bg); color: #888; padding: 60px 20px 30px; margin-top: 60px; text-align: center; }
-        .footer-links a { color: #ccc; text-decoration: none; margin: 0 15px; font-size: 15px; }
-        
-        /* Mobile Responsive Smart Fix */
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f0f2f5; margin: 0; color: #111; }
+        header { background: white; border-bottom: 2px solid #eee; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }
+        .logo { font-size: 24px; font-weight: 900; color: #da251c; text-decoration: none; text-transform: uppercase; }
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { text-decoration: none; color: #111; font-weight: bold; font-size: 16px; transition: 0.3s; }
+        .nav-links a:hover { color: #da251c; }
+        .menu-btn { display: none; font-size: 28px; cursor: pointer; color: #da251c; user-select: none; }
         @media (max-width: 600px) {
-            .grid { grid-template-columns: repeat(2, 1fr) !important; gap: 15px !important; }
-            .container { padding: 15px !important; margin: 15px auto !important; }
-            h1 { font-size: 22px !important; line-height: 1.4 !important; }
-            #article-body { font-size: 16px !important; }
-            .logo { font-size: 20px !important; }
-            .nav-links a { margin-left: 10px !important; font-size: 14px !important; }
-            .card { padding: 10px !important; }
-            .card-content h3 { font-size: 13px !important; line-height: 1.3 !important; margin-bottom: 8px !important; }
-            .card-content p { font-size: 11px !important; margin-bottom: 10px !important; }
-            .card-content a { font-size: 12px !important; }
-            .hero-img, .article-img { margin: 15px 0 !important; border-radius: 8px !important; }
+            .nav-links { display: none; flex-direction: column; position: absolute; top: 65px; left: 0; width: 100%; background: white; padding: 15px 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); z-index: 1000; border-top: 1px solid #eee; }
+            .nav-links.active { display: flex !important; }
+            .nav-links a { padding-bottom: 10px; border-bottom: 1px solid #f0f0f0; margin-bottom: 10px; display: block; }
+            .menu-btn { display: block; }
         }
-        
-        /* Ticker Container */
-        .ticker-wrap { width: 100%; overflow: hidden; background-color: #f1f1f1; border-bottom: 2px solid #C00000; box-sizing: border-box; }
-        .ticker-content { display: flex; white-space: nowrap; animation: tickerAnimation 15s linear infinite; color: #333; font-family: sans-serif; font-size: 14px; font-weight: bold; padding: 10px 0; }
-        .ticker-content span { color: #C00000; }
-        @keyframes tickerAnimation { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
     </style>
-
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script>
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(async function(OneSignal) {
-        await OneSignal.init({
-          appId: "f11333ae-cc73-489e-a1a5-6a74129c3785",
-        });
-      });
-    </script>
-    </head><body>
-        <div class="ticker-wrap">
-            <div class="ticker-content">
-                <span>TRENDING:</span> &nbsp; 2026 Best Tech, AI Income, Future Jobs, Digital Kamai Hub Ke Naye Haks, Share Market Ka सच!
-            </div>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo">Digital Kamai Hub</a>
+        <div class="menu-btn" onclick="document.getElementById('mobile-menu').classList.toggle('active')">☰</div>
+        <div class="nav-links" id="mobile-menu">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="disclaimer.html">Disclaimer</a>
+            <a href="contact.html">Contact</a>
         </div>
-        <header>
-            <div class="nav-container">
-                <a href="index.html" class="logo">Digital Kamai Hub</a>
-                <div class="nav-links"><a href="index.html">Home</a><a href="about.html">About</a><a href="contact.html">Contact</a></div>
-            </div>
-        </header>
-    <div class='container'><h1>About Us</h1><p style='font-size:18px;'>Digital Kamai Hub Bharat ka No.1 AI aur Technology blog hai. Mohit (The AI Millionaire) dwara sthapit, hamara uddeshya aapko digital duniya mein safal banana hai.</p></div>
-        <div style="position: fixed; left: 10px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 1000;">
-            <a href="https://api.whatsapp.com/send?text=Check out this amazing AI Finance insight: https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/post_1777791939.html" target="_blank" style="background: #25D366; color: white; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; font-weight: bold; font-size: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s;">W</a>
-            <a href="https://t.me/share/url?url=https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/post_1777791939.html&text=2026 में AI: बड़े खिलाड़ियों का खेल खत्म? अब हर ट्रेडर बनेगा करोड़पति!" target="_blank" style="background: #0088cc; color: white; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; font-weight: bold; font-size: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s;">T</a>
-        </div>
+    </header>
+    <div style="max-width: 850px; margin: 40px auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); line-height: 1.7;">
+        
+    <h2 style='color: var(--main-red); margin-bottom: 15px; font-size: 28px;'>Hamari Kahani (Our Story)</h2>
+    <p style='font-size: 18px; margin-bottom: 25px; color: #333;'>Namaste! <strong>Digital Kamai Hub</strong> mein aapka swagat hai. Yeh sirf ek blog nahi, balki ek digital revolution hai. Hamara lakshya Bharat ke har yuva ko AI (Artificial Intelligence) aur smart finance ki taqat se rubaru karana hai, taaki financial freedom sirf ek sapna na rahe.</p>
 
-        <footer>
-            <div style="margin-bottom: 25px;">
-                <p style="color: #ccc; font-size: 14px; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">JOIN THE AI MILLIONAIRE COMMUNITY:</p>
-                <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-                    <a href="https://www.youtube.com/@TheAIMillionaire-h5g" target="_blank" style="color: #FF0000; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px; font-size: 14px;">YouTube</a>
-                    <a href="https://t.me/digitalkamaihub_2026" target="_blank" style="color: #0088cc; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px; font-size: 14px;">Telegram</a>
-                    <a href="https://www.instagram.com/aimillionaire_official" target="_blank" style="color: #E1306C; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px; font-size: 14px;">Instagram</a>
-                    <a href="https://www.facebook.com/share/1HNaL98HmM/" target="_blank" style="color: #1877F2; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px; font-size: 14px;">Facebook</a>
-                </div>
-            </div>
+    <h2 style='color: var(--main-red); margin-bottom: 15px; font-size: 24px;'>🎯 Mission & Vision</h2>
+    <p style='font-size: 18px; margin-bottom: 25px; color: #333;'>Hamara mission bilkul saaf hai: <strong>"Bacchon ka khel nahi, Smart Work!"</strong> Hum internet par maujood fake aur ghisi-piti jankari ko hata kar, aapko seedhe advance hackers wale 'Zero-Touch Automation' aur 'Wealth Creation' ke secrets dete hain.</p>
 
-            <div class="footer-links">
-                <a href="about.html">About Us</a> | 
-                <a href="privacy.html">Privacy Policy</a> | 
-                <a href="disclaimer.html">Disclaimer</a> | 
-                <a href="contact.html">Contact Us</a> 
-            </div>
-            <p style="margin-top:20px; font-size:13px;">&copy; 2026 Digital Kamai Hub. All Rights Reserved.</p>
-        </footer>
+    <h2 style='color: var(--main-red); margin-bottom: 15px; font-size: 24px;'>👨‍💻 Meet The Founder: Mohit (The AI Millionaire)</h2>
+    <div style='background: #fafafa; padding: 25px; border-left: 5px solid var(--main-red); border-radius: 8px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);'>
+        <p style='font-size: 17px; margin-bottom: 15px; color: #222; line-height: 1.8;'>Mohit ek <strong>Full-Stack Web Developer, AI Automation Practitioner, aur Visionary Entrepreneur</strong> hain. Ek aam zindagi se nikal kar 'The AI Millionaire' banne tak ka unka safar is baat ka saboot hai ki agar sahi skill aur 'Smart Work' ka mindset ho, toh kuch bhi haasil kiya ja sakta hai.</p>
+        <p style='font-size: 17px; color: #222; line-height: 1.8;'>Mohit ka vishwas hai ki <em>"Any manual task is a bug."</em> Isiliye unhone is platform ko banaya hai, jahan machine learning aur advance coding ke zariye paise kamane ke asli aur practical tarike sikhaye jaate hain.</p>
+    </div>
 
-        <div id="cookie-banner" style="position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(17, 17, 17, 0.95); color: white; padding: 15px 20px; text-align: center; font-size: 13px; z-index: 9999; display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap; border-top: 2px solid var(--main-red);">
-            <span>🍪 Hum aapko behtar anubhav dene ke liye cookies ka istemal karte hain. Hamari website ka istemal karke aap hamari Privacy Policy se sahamat hote hain.</span>
-       <button onclick="document.getElementById('cookie-banner').style.display='none'" style="background: var(--main-red); color: white; border: none; padding: 8px 25px; font-weight: bold; border-radius: 5px; cursor: pointer; box-shadow: 0 4px 10px rgba(218, 37, 28, 0.3);">Theek Hai</button>
-        </div>
-    </body></html>
+    <h2 style='color: var(--main-red); margin-bottom: 15px; font-size: 24px;'>⚡ Hum Kya Karte Hain?</h2>
+    <ul style='font-size: 18px; margin-left: 20px; line-height: 1.9; color: #333; margin-bottom: 20px;'>
+        <li>🚀 <strong>AI Automation:</strong> AI tools ka istemal karke ghanton ka kaam seconds mein kaise karein.</li>
+        <li>💡 <strong>Smart Finance:</strong> Share market, trading aur online income ke advance hacks.</li>
+        <li>⚙️ <strong>Coding & Tech:</strong> Bina time barbaad kiye, seedha result dene wali technical guides.</li>
+    </ul>
+    <p style='font-size: 18px; font-weight: bold; color: #111;'>Aaiye milkar is digital daur mein apna sikka jamayein!</p>
+        
+    </div>
+</body>
+</html>
