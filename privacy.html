@@ -36,18 +36,21 @@
         }
         
         /* Ticker Container */
-        .ticker-wrap {
-          width: 100%; overflow: hidden; background-color: #f1f1f1; border-bottom: 2px solid #C00000; box-sizing: border-box;
-        }
-        .ticker-content {
-          display: flex; white-space: nowrap; animation: tickerAnimation 15s linear infinite; color: #333; font-family: sans-serif; font-size: 14px; font-weight: bold; padding: 10px 0;
-        }
+        .ticker-wrap { width: 100%; overflow: hidden; background-color: #f1f1f1; border-bottom: 2px solid #C00000; box-sizing: border-box; }
+        .ticker-content { display: flex; white-space: nowrap; animation: tickerAnimation 15s linear infinite; color: #333; font-family: sans-serif; font-size: 14px; font-weight: bold; padding: 10px 0; }
         .ticker-content span { color: #C00000; }
-        @keyframes tickerAnimation {
-          0% { transform: translateX(100%); }
-          100% { transform: translateX(-100%); }
-        }
+        @keyframes tickerAnimation { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
     </style>
+
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "f11333ae-cc73-489e-a1a5-6a74129c3785",
+        });
+      });
+    </script>
     </head><body>
         <div class="ticker-wrap">
             <div class="ticker-content">
@@ -62,8 +65,8 @@
         </header>
     <div class='container'><h1>Privacy Policy</h1><p style='font-size:18px;'>Aapki privacy hamare liye mahatvapurna hai. Hum aapki jankari ko surakshit rakhte hain.</p></div>
         <div style="position: fixed; left: 10px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 1000;">
-            <a href="https://api.whatsapp.com/send?text=Check out this amazing AI Finance insight: https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/post_1777778423.html" target="_blank" style="background: #25D366; color: white; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; font-weight: bold; font-size: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s;">W</a>
-            <a href="https://t.me/share/url?url=https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/post_1777778423.html&text=AI का वित्तीय त्वरक: 2026 में शेयर बाज़ार से धन-वर्षा का अभूतपूर्व रहस्य!" target="_blank" style="background: #0088cc; color: white; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; font-weight: bold; font-size: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s;">T</a>
+            <a href="https://api.whatsapp.com/send?text=Check out this amazing AI Finance insight: https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/post_1777784746.html" target="_blank" style="background: #25D366; color: white; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; font-weight: bold; font-size: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s;">W</a>
+            <a href="https://t.me/share/url?url=https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/post_1777784746.html&text=2026: AI का धन-चुंबक – आपके खाते में सीधी मार्केट कमाई का अदृश्य हाथ!" target="_blank" style="background: #0088cc; color: white; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; text-decoration: none; font-weight: bold; font-size: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s;">T</a>
         </div>
 
         <footer>
