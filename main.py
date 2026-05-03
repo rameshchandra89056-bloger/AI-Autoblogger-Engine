@@ -379,7 +379,7 @@ try:
     }}
     </script>
     """
-    # ☰ PREMIUM HEADER WITH CATEGORIES
+    # 1. PREMIUM HEADER
 header_html = f"""
 <div class="ticker-wrap">
     <div class="ticker-content">
@@ -401,7 +401,7 @@ header_html = f"""
 </header>
 """
 
-# 🦶 PREMIUM FOOTER
+# 2. PREMIUM FOOTER (Zero Error)
 footer_html = f"""
 <footer style="margin-top: 40px; background: #111; padding: 40px 20px; text-align: center;">
     <div style="margin-bottom: 25px;">
@@ -413,7 +413,6 @@ footer_html = f"""
             <a href="https://www.facebook.com/share/1HNaL98HmW/" target="_blank" style="color: #1877F2; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Facebook</a>
         </div>
     </div>
-    
     <div class="footer-links" style="margin-bottom: 20px;">
         <a href="about.html" style="color: #ccc; text-decoration: none; margin: 0 10px;">About Us</a> | 
         <a href="privacy.html" style="color: #ccc; text-decoration: none; margin: 0 10px;">Privacy Policy</a> | 
@@ -422,28 +421,37 @@ footer_html = f"""
     </div>
     <p style="margin-top:20px; font-size:13px; color: #888;">&copy; {{current_year}} Digital Kamai Hub. All Rights Reserved.</p>
 </footer>
-
-    article_page = f"""<!DOCTYPE html>
-    
 <div id="cookie-banner" style="position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(17, 17, 17, 0.95); color: white; text-align: center; padding: 15px; font-size: 14px; z-index: 1000;">
-    <span>🍪 Hum aapko behtar anubhav dene ke liye cookies ka istemal karte hain. Hamari website ka istemal karke aap hamari Privacy Policy se sahamat hote hain.</span>
+    <span>Hum aapko behtar anubhav dene ke liye cookies ka istemal karte hain. Hamari website ka istemal karke aap hamari Privacy Policy se sahamat hote hain.</span>
     <button onclick="document.getElementById('cookie-banner').style.display='none'" style="background: var(--main-red); color: white; border: none; padding: 8px 20px; font-weight: bold; border-radius: 5px; cursor: pointer; margin-left: 15px;">Theek Hai</button>
 </div>
 """
-            <div id="smart-progress" style="height: 5px; background-color: #C00000; width: 0%; border-top-right-radius: 3px; border-bottom-right-radius: 3px; transition: width 0.1s;"></div>
-        </div>
 
-        <script>
-            window.addEventListener('scroll', function() {{
-                var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-                var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                var scrolled = (winScroll / height) * 100;
-                document.getElementById("smart-progress").style.width = scrolled + "%";
-            }});
-        </script>
-            
-        {header_html}
-        <div class="container">
+# 3. ARTICLE PAGE ENGINE
+article_page = f"""<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{current_topic}} - Digital Kamai Hub</title>
+    {{premium_css}}
+    {{schema_markup}}
+</head>
+<body>
+    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 5px; background-color: transparent; z-index: 9999;">
+        <div id="smart-progress" style="height: 5px; background-color: #da251c; width: 0%; border-top-right-radius: 3px; border-bottom-right-radius: 3px;"></div>
+    </div>
+    <script>
+        window.addEventListener('scroll', function() {{
+            var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            var scrolled = (winScroll / height) * 100;
+            document.getElementById("smart-progress").style.width = scrolled + "%";
+        }});
+    </script>
+    {{header_html}}
+    <div class="container">
+"""
+    
             <h1>{current_topic}</h1>
             <div class="meta">📅 Prakashit: {today_date} | ✍️ Lekhak: Mohit (The AI Millionaire)</div>
             <img src="{main_img_url}" onerror="this.onerror=null; this.src='https://placehold.co/1200x600/c00000/ffffff?text=AI+Finance+Update';" class="hero-img" alt="AI Finance Image">
