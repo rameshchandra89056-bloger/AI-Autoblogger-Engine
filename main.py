@@ -450,78 +450,40 @@ article_page = f"""<!DOCTYPE html>
     </script>
     {{header_html}}
     <div class="container">
-"""
-    
-            <h1>{current_topic}</h1>
-            <div class="meta">📅 Prakashit: {today_date} | ✍️ Lekhak: Mohit (The AI Millionaire)</div>
-            <img src="{main_img_url}" onerror="this.onerror=null; this.src='https://placehold.co/1200x600/c00000/ffffff?text=AI+Finance+Update';" class="hero-img" alt="AI Finance Image">
-            
-            <div class="tts-box">
-                <span>🎧</span> <span>Samay kam hai? Niche diye gaye laal button ko dabakar poora article audio mein sunein!</span>
-            </div>
-
-            <div id="article-body">{blog_content}</div>
-            
-            <div style="margin: 40px 0; padding: 25px; background: #fff; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 20px; border-top: 4px solid var(--main-red);">
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mohit&backgroundColor=f0f2f5" alt="Mohit - The AI Millionaire" style="min-width: 80px; height: 80px; border-radius: 50%; padding: 5px; border: 2px solid var(--main-red);">
-                <div>
-                    <h3 style="margin: 0; font-size: 22px; color: #111;">Mohit <span style="font-size: 16px; color: #888; font-weight: normal;">| The AI Millionaire</span></h3>
-                    <p style="margin: 8px 0 0; font-size: 15px; color: #555; line-height: 1.6;">Namaste! Main Mohit hoon. Mera mission aapko AI ki taqat se vittiya azaadi dilana aur 2026 mein smart tareeke se online kamai ke sabse advance secrets sikhana hai.</p>
-                </div>
-            </div>
-            
-            {related_html}
-            
-            <audio id="premium-audio" src="{audio_filename}"></audio>
-            <button id="floating-tts-btn" onclick="toggleAudio()" style="position: fixed; bottom: 90px; right: 20px; background: #da251c; color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 10px 25px rgba(218, 37, 28, 0.4); z-index: 10000; transition: 0.3s; display: flex; align-items: center; gap: 10px;">
-                🎧 Article Sunein
-            </button>
-            
-                        <script>
-                function toggleAudio() {{
-                    var audio = document.getElementById("premium-audio");
-                    var btn = document.getElementById("floating-tts-btn");
-                    if (audio.paused) {{ audio.play(); btn.innerHTML = "⏸️ Awaaz Rokein"; btn.style.background = "#111"; }} 
-                    else {{ audio.pause(); btn.innerHTML = "🎧 Phir Se Sunein"; btn.style.background = "#da251c"; }}
-                }}
-            </script>
-            
-            <script>
-                document.addEventListener("DOMContentLoaded", function() {{
-                    var articleBody = document.getElementById("article-body");
-                    if (articleBody) {{
-                        var headings = articleBody.querySelectorAll("h2");
-                        if (headings.length >= 2) {{
-                            var tocBox = document.createElement("div");
-                            tocBox.style.cssText = "background: #fff9f9; border: 1px solid #ffcccc; border-left: 5px solid #da251c; padding: 20px; margin: 30px 0; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);";
-                            
-                            var tocTitle = document.createElement("h3");
-                            tocTitle.innerText = "📍 Is Article Mein Kya Hai:";
-                            tocTitle.style.cssText = "color: #da251c; margin-top: 0; margin-bottom: 15px; font-size: 20px;";
-                            tocBox.appendChild(tocTitle);
-                            
-                            headings.forEach(function(heading, index) {{
-                                var sectionId = "smart-heading-" + index;
-                                heading.id = sectionId;
-                                
-                                var link = document.createElement("a");
-                                link.href = "#" + sectionId;
-                                link.innerText = "👉 " + heading.innerText;
-                                link.style.cssText = "display: block; color: #333; text-decoration: none; font-size: 16px; font-weight: bold; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px dashed #eee;";
-                                
-                                tocBox.appendChild(link);
-                            }});
-                            
-                            headings[0].parentNode.insertBefore(tocBox, headings[0]);
-                        }}
-                    }}
-                }});
-            </script>
-
+        <h1 style="color: #111; margin-bottom: 15px;">{{current_topic}}</h1>
+        
+        <div class="meta" style="color: #666; font-size: 14px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; font-weight: bold;">
+            Date: {{today_date}} | Author: Mohit (The AI Millionaire)
         </div>
-        {footer_html}
-    </body>
-    </html>"""
+        
+        <img src="{{main_img_url}}" onerror="this.onerror=null; this.src='https://placehold.co/1200x600/da251c/ffffff?text=Digital+Kamai+Hub';" style="width: 100%; border-radius: 10px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); object-fit: cover;">
+        
+        <div style="background: #fffafa; border-left: 4px solid #da251c; padding: 15px; border-radius: 4px; margin-bottom: 25px;">
+            <p style="margin: 0; color: #da251c; font-weight: bold; font-size: 15px;">Note: Niche diye gaye laal button ko dabakar poora article audio mein sunein.</p>
+        </div>
+        
+        <div id="article-body">
+            {{blog_content}}
+        </div>
+        
+        <div style="margin-top: 40px; padding: 25px; background: #fff; border: 1px solid #eee; border-radius: 8px; border-left: 5px solid #111;">
+            <h3 style="margin: 0 0 10px 0; color: #111; font-size: 18px;">Lekhak: Mohit | The AI Millionaire</h3>
+            <p style="margin: 0; color: #555; font-size: 15px; line-height: 1.6;">Namaste! Main Mohit hoon. Mera mission aapko AI ki taqat se vittiya azaadi dilana aur 2026 mein smart tareeke se online kamai ke advance secrets sikhana hai.</p>
+        </div>
+        
+        <div style="margin-top: 30px;">
+            {{related_html}}
+        </div>
+        
+        <audio id="premium-audio" src="{{audio_filename}}"></audio>
+        <button id="floating-tts-btn" onclick="toggleAudio()" style="display: block; width: 100%; background: #da251c; color: white; border: none; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 30px; box-shadow: 0 4px 15px rgba(218,37,28,0.3);">
+            Play Audio
+        </button>
+    </div>
+    {{footer_html}}
+</body>
+</html>"""
+
     
 
     with open(post_filename, "w", encoding="utf-8") as f: f.write(article_page)
