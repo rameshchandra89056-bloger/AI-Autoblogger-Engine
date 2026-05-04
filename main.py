@@ -379,7 +379,7 @@ try:
     }}
     </script>
     """
-header_html = f"""
+        header_html = f"""
         <div class="ticker-wrap">
             <div class="ticker-content">
                 <span>TRENDING:</span> &nbsp; 2026 Best Tech, AI Income, Future Jobs, Digital Kamai Hub Ke Naye Hacks, Share Market Ka Sach!
@@ -400,7 +400,7 @@ header_html = f"""
         </header>
         """
 
-footer_html = f"""
+        footer_html = f"""
         <footer style="margin-top: 40px; background: #111; padding: 40px 20px; text-align: center;">
             <div style="margin-bottom: 25px;">
                 <p style="color: #ccc; font-size: 14px; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">JOIN THE AI MILLIONAIRE COMMUNITY:</p>
@@ -425,7 +425,7 @@ footer_html = f"""
         </div>
         """
 
-article_page = f"""<!DOCTYPE html>
+        article_page = f"""<!DOCTYPE html>
         <html lang="hi">
         <head>
             <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
