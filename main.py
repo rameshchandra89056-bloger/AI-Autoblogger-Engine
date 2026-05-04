@@ -478,7 +478,7 @@ try:
     with open(post_filename, "w", encoding="utf-8") as f: f.write(article_page)
 
             # 🎯 SMART WORK: PAGINATION & ARCHIVE ENGINE
-        card_template = lambda p: f"""
+    card_template = lambda p: f"""
         <div class="card" style="background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 20px;">
             <img src="{p['img']}" onerror="this.onerror=null; this.src='https://placehold.co/800x400/111/fff?text=Digital+Kamai+Hub';" style="width: 100%; height: 200px; object-fit: cover;">
             <div style="padding: 20px;">
