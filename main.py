@@ -490,7 +490,7 @@ try:
         """
         
         # 10 posts for Home, All posts for Archive
-        home_cards = "".join([card_template(p) for p in posts_db[:10]])
+    home_cards = "".join([card_template(p) for p in posts_db[:10]])
         all_cards = "".join([card_template(p) for p in posts_db])
 
         # Homepage Save Karein
