@@ -379,101 +379,101 @@ try:
     }}
     </script>
     """
-    header_html = f"""
-<div class="ticker-wrap">
-    <div class="ticker-content">
-        <span>TRENDING:</span> &nbsp; 2026 Best Tech, AI Income, Future Jobs, Digital Kamai Hub Ke Naye Hacks, Share Market Ka Sach!
-    </div>
-</div>
-<header>
-    <div class="nav-container">
-        <a href="index.html" class="logo">Digital Kamai Hub</a>
-        <div class="menu-btn" onclick="document.getElementById('mobile-menu').classList.toggle('active')">&#9776;</div>
-        <div class="nav-links" id="mobile-menu">
-            <a href="index.html">Home</a>
-            <a href="all-posts.html">AI Hacks</a>
-            <a href="all-posts.html">Share Market</a>
-            <a href="all-posts.html">Trading Tips</a>
-            <a href="contact.html">Contact</a>
+            header_html = f"""
+        <div class="ticker-wrap">
+            <div class="ticker-content">
+                <span>TRENDING:</span> &nbsp; 2026 Best Tech, AI Income, Future Jobs, Digital Kamai Hub Ke Naye Hacks, Share Market Ka Sach!
+            </div>
         </div>
-    </div>
-</header>
-"""
+        <header>
+            <div class="nav-container">
+                <a href="index.html" class="logo">Digital Kamai Hub</a>
+                <div class="menu-btn" onclick="document.getElementById('mobile-menu').classList.toggle('active')">&#9776;</div>
+                <div class="nav-links" id="mobile-menu">
+                    <a href="index.html">Home</a>
+                    <a href="all-posts.html">AI Hacks</a>
+                    <a href="all-posts.html">Share Market</a>
+                    <a href="all-posts.html">Trading Tips</a>
+                    <a href="contact.html">Contact</a>
+                </div>
+            </div>
+        </header>
+        """
 
-    footer_html = f"""
-<footer style="margin-top: 40px; background: #111; padding: 40px 20px; text-align: center;">
-    <div style="margin-bottom: 25px;">
-        <p style="color: #ccc; font-size: 14px; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">JOIN THE AI MILLIONAIRE COMMUNITY:</p>
-        <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-            <a href="https://www.youtube.com/@TheAIMillionaire-h5g" target="_blank" style="color: #FF0000; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">YouTube</a>
-            <a href="https://t.me/digitalkamaihub_2026" target="_blank" style="color: #0088cc; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Telegram</a>
-            <a href="https://www.instagram.com/aimillionaire_official" target="_blank" style="color: #E1306C; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Instagram</a>
-            <a href="https://www.facebook.com/share/1HNaL98HmW/" target="_blank" style="color: #1877F2; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Facebook</a>
+        footer_html = f"""
+        <footer style="margin-top: 40px; background: #111; padding: 40px 20px; text-align: center;">
+            <div style="margin-bottom: 25px;">
+                <p style="color: #ccc; font-size: 14px; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">JOIN THE AI MILLIONAIRE COMMUNITY:</p>
+                <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                    <a href="https://www.youtube.com/@TheAIMillionaire-h5g" target="_blank" style="color: #FF0000; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">YouTube</a>
+                    <a href="https://t.me/digitalkamaihub_2026" target="_blank" style="color: #0088cc; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Telegram</a>
+                    <a href="https://www.instagram.com/aimillionaire_official" target="_blank" style="color: #E1306C; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Instagram</a>
+                    <a href="https://www.facebook.com/share/1HNaL98HmW/" target="_blank" style="color: #1877F2; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Facebook</a>
+                </div>
+            </div>
+            <div class="footer-links" style="margin-bottom: 20px;">
+                <a href="about.html" style="color: #ccc; text-decoration: none; margin: 0 10px;">About Us</a> | 
+                <a href="privacy.html" style="color: #ccc; text-decoration: none; margin: 0 10px;">Privacy Policy</a> | 
+                <a href="disclaimer.html" style="color: #ccc; text-decoration: none; margin: 0 10px;">Disclaimer</a> | 
+                <a href="contact.html" style="color: #ccc; text-decoration: none; margin: 0 10px;">Contact Us</a>
+            </div>
+            <p style="margin-top:20px; font-size:13px; color: #888;">&copy; {{current_year}} Digital Kamai Hub. All Rights Reserved.</p>
+        </footer>
+        <div id="cookie-banner" style="position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(17, 17, 17, 0.95); color: white; text-align: center; padding: 15px; font-size: 14px; z-index: 1000;">
+            <span>Hum aapko behtar anubhav dene ke liye cookies ka istemal karte hain. Hamari website ka istemal karke aap hamari Privacy Policy se sahamat hote hain.</span>
+            <button onclick="document.getElementById('cookie-banner').style.display='none'" style="background: #da251c; color: white; border: none; padding: 8px 20px; font-weight: bold; border-radius: 5px; cursor: pointer; margin-left: 15px;">Theek Hai</button>
         </div>
-    </div>
-    <div class="footer-links" style="margin-bottom: 20px;">
-        <a href="about.html" style="color: #ccc; text-decoration: none; margin: 0 10px;">About Us</a> | 
-        <a href="privacy.html" style="color: #ccc; text-decoration: none; margin: 0 10px;">Privacy Policy</a> | 
-        <a href="disclaimer.html" style="color: #ccc; text-decoration: none; margin: 0 10px;">Disclaimer</a> | 
-        <a href="contact.html" style="color: #ccc; text-decoration: none; margin: 0 10px;">Contact Us</a>
-    </div>
-    <p style="margin-top:20px; font-size:13px; color: #888;">&copy; {{current_year}} Digital Kamai Hub. All Rights Reserved.</p>
-</footer>
-<div id="cookie-banner" style="position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(17, 17, 17, 0.95); color: white; text-align: center; padding: 15px; font-size: 14px; z-index: 1000;">
-    <span>Hum aapko behtar anubhav dene ke liye cookies ka istemal karte hain. Hamari website ka istemal karke aap hamari Privacy Policy se sahamat hote hain.</span>
-    <button onclick="document.getElementById('cookie-banner').style.display='none'" style="background: #da251c; color: white; border: none; padding: 8px 20px; font-weight: bold; border-radius: 5px; cursor: pointer; margin-left: 15px;">Theek Hai</button>
-</div>
-"""
+        """
 
-    article_page = f"""<!DOCTYPE html>
-<html lang="hi">
-<head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{current_topic}} - Digital Kamai Hub</title>
-    {{premium_css}}
-    {{schema_markup}}
-</head>
-<body>
-    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 5px; background-color: transparent; z-index: 9999;">
-        <div id="smart-progress" style="height: 5px; background-color: #da251c; width: 0%; border-top-right-radius: 3px; border-bottom-right-radius: 3px;"></div>
-    </div>
-    <script>
-        window.addEventListener('scroll', function() {{
-            var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            var scrolled = (winScroll / height) * 100;
-            document.getElementById("smart-progress").style.width = scrolled + "%";
-        }});
-    </script>
-    {{header_html}}
-    <div class="container">
-        <h1 style="color: #111; margin-bottom: 15px;">{{current_topic}}</h1>
-        <div class="meta" style="color: #666; font-size: 14px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; font-weight: bold;">
-            Date: {{today_date}} | Author: Mohit (The AI Millionaire)
-        </div>
-        <img src="{{main_img_url}}" onerror="this.onerror=null; this.src='https://placehold.co/1200x600/da251c/ffffff?text=Digital+Kamai+Hub';" style="width: 100%; border-radius: 10px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); object-fit: cover;">
-        <div style="background: #fffafa; border-left: 4px solid #da251c; padding: 15px; border-radius: 4px; margin-bottom: 25px;">
-            <p style="margin: 0; color: #da251c; font-weight: bold; font-size: 15px;">Note: Niche diye gaye laal button ko dabakar poora article audio mein sunein.</p>
-        </div>
-        <div id="article-body">
-            {{blog_content}}
-        </div>
-        <div style="margin-top: 40px; padding: 25px; background: #fff; border: 1px solid #eee; border-radius: 8px; border-left: 5px solid #111;">
-            <h3 style="margin: 0 0 10px 0; color: #111; font-size: 18px;">Lekhak: Mohit | The AI Millionaire</h3>
-            <p style="margin: 0; color: #555; font-size: 15px; line-height: 1.6;">Namaste! Main Mohit hoon. Mera mission aapko AI ki taqat se vittiya azaadi dilana aur 2026 mein smart tareeke se online kamai ke advance secrets sikhana hai.</p>
-        </div>
-        <div style="margin-top: 30px;">
-            {{related_html}}
-        </div>
-        <audio id="premium-audio" src="{{audio_filename}}"></audio>
-        <button id="floating-tts-btn" onclick="toggleAudio()" style="display: block; width: 100%; background: #da251c; color: white; border: none; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 30px; box-shadow: 0 4px 15px rgba(218,37,28,0.3);">
-            Play Audio
-        </button>
-    </div>
-    {{footer_html}}
-</body>
-</html>"""
-
+        article_page = f"""<!DOCTYPE html>
+        <html lang="hi">
+        <head>
+            <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>{{current_topic}} - Digital Kamai Hub</title>
+            {{premium_css}}
+            {{schema_markup}}
+        </head>
+        <body>
+            <div style="position: fixed; top: 0; left: 0; width: 100%; height: 5px; background-color: transparent; z-index: 9999;">
+                <div id="smart-progress" style="height: 5px; background-color: #da251c; width: 0%; border-top-right-radius: 3px; border-bottom-right-radius: 3px;"></div>
+            </div>
+            <script>
+                window.addEventListener('scroll', function() {{
+                    var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                    var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    var scrolled = (winScroll / height) * 100;
+                    document.getElementById("smart-progress").style.width = scrolled + "%";
+                }});
+            </script>
+            {{header_html}}
+            <div class="container">
+                <h1 style="color: #111; margin-bottom: 15px;">{{current_topic}}</h1>
+                <div class="meta" style="color: #666; font-size: 14px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; font-weight: bold;">
+                    Date: {{today_date}} | Author: Mohit (The AI Millionaire)
+                </div>
+                <img src="{{main_img_url}}" onerror="this.onerror=null; this.src='https://placehold.co/1200x600/da251c/ffffff?text=Digital+Kamai+Hub';" style="width: 100%; border-radius: 10px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); object-fit: cover;">
+                <div style="background: #fffafa; border-left: 4px solid #da251c; padding: 15px; border-radius: 4px; margin-bottom: 25px;">
+                    <p style="margin: 0; color: #da251c; font-weight: bold; font-size: 15px;">Note: Niche diye gaye laal button ko dabakar poora article audio mein sunein.</p>
+                </div>
+                <div id="article-body">
+                    {{blog_content}}
+                </div>
+                <div style="margin-top: 40px; padding: 25px; background: #fff; border: 1px solid #eee; border-radius: 8px; border-left: 5px solid #111;">
+                    <h3 style="margin: 0 0 10px 0; color: #111; font-size: 18px;">Lekhak: Mohit | The AI Millionaire</h3>
+                    <p style="margin: 0; color: #555; font-size: 15px; line-height: 1.6;">Namaste! Main Mohit hoon. Mera mission aapko AI ki taqat se vittiya azaadi dilana aur 2026 mein smart tareeke se online kamai ke advance secrets sikhana hai.</p>
+                </div>
+                <div style="margin-top: 30px;">
+                    {{related_html}}
+                </div>
+                <audio id="premium-audio" src="{{audio_filename}}"></audio>
+                <button id="floating-tts-btn" onclick="toggleAudio()" style="display: block; width: 100%; background: #da251c; color: white; border: none; padding: 15px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 30px; box-shadow: 0 4px 15px rgba(218,37,28,0.3);">
+                    Play Audio
+                </button>
+            </div>
+            {{footer_html}}
+        </body>
+        </html>"""
+    
 
     with open(post_filename, "w", encoding="utf-8") as f: f.write(article_page)
 
