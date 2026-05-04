@@ -400,7 +400,7 @@ try:
 </header>
 """
 
-footer_html = f"""
+    footer_html = f"""
 <footer style="margin-top: 40px; background: #111; padding: 40px 20px; text-align: center;">
     <div style="margin-bottom: 25px;">
         <p style="color: #ccc; font-size: 14px; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">JOIN THE AI MILLIONAIRE COMMUNITY:</p>
