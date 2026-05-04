@@ -425,7 +425,7 @@ try:
 </div>
 """
 
-article_page = f"""<!DOCTYPE html>
+    article_page = f"""<!DOCTYPE html>
 <html lang="hi">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
