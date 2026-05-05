@@ -476,7 +476,7 @@ try:
     </html>
 # --- COPY END ---
 
-    with open(post_filename, "w", encoding="utf-8") as f: f.write(article_page)
+with open(post_filename, "w", encoding="utf-8") as f: f.write(article_page)
 
 if True:
     # 🔴 SMART WORK: PAGINATION & ARCHIVE ENGINE
