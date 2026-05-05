@@ -1,1 +1,97 @@
-<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>About Us - Digital Kamai Hub</title><style>body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f0f2f5; margin: 0; color: #111; } header { background: white; border-bottom: 2px solid #eee; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; } .logo { font-size: 24px; font-weight: 900; color: #da251c; text-decoration: none; text-transform: uppercase; } .nav-links { display: flex; gap: 20px; } .nav-links a { text-decoration: none; color: #111; font-weight: bold; font-size: 16px; transition: 0.3s; } .nav-links a:hover { color: #da251c; } .menu-btn { display: none; font-size: 28px; cursor: pointer; color: #da251c; user-select: none; } @media (max-width: 600px) { .nav-links { display: none; flex-direction: column; position: absolute; top: 65px; left: 0; width: 100%; background: white; padding: 15px 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); z-index: 1000; border-top: 1px solid #eee; } .nav-links.active { display: flex !important; } .nav-links a { padding-bottom: 10px; border-bottom: 1px solid #f0f0f0; margin-bottom: 10px; display: block; } .menu-btn { display: block; } }</style></head><body><header><a href='index.html' class='logo'>Digital Kamai Hub</a><div class='menu-btn' onclick="document.getElementById('mobile-menu').classList.toggle('active')">&#9776;</div><div class='nav-links' id='mobile-menu'><a href='index.html'>Home</a><a href='about.html'>About</a><a href='privacy.html'>Privacy</a><a href='disclaimer.html'>Disclaimer</a><a href='contact.html'>Contact</a></div></header><div style='max-width: 850px; margin: 40px auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); line-height: 1.7;'><h2 style='color: var(--main-red); margin-bottom: 15px; font-size: 28px;'>Hamari Kahani (Our Story)</h2><p style='font-size: 18px; margin-bottom: 25px; color: #333;'>Namaste! <strong>Digital Kamai Hub</strong> mein aapka swagat hai. Yeh sirf ek blog nahi, balki ek digital revolution hai.</p><h2 style='color: var(--main-red); margin-bottom: 15px; font-size: 24px;'>🎯 Mission & Vision</h2><p style='font-size: 18px; margin-bottom: 25px; color: #333;'>Hamara mission bilkul saaf hai: <strong>"Bacchon ka khel nahi, Smart Work!"</strong></p><h2 style='color: var(--main-red); margin-bottom: 15px; font-size: 24px;'>👨‍💻 Meet The Founder: Mohit (The AI Millionaire)</h2><div style='background: #fafafa; padding: 25px; border-left: 5px solid var(--main-red); border-radius: 8px; margin-bottom: 30px;'><p style='font-size: 17px; margin-bottom: 15px; color: #222;'>Mohit ek <strong>Full-Stack Web Developer aur Visionary Entrepreneur</strong> hain.</p></div></div></body></html>
+<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>About Us - Digital Kamai Hub</title>
+<style>
+    :root { --main-red: #da251c; --dark-bg: #111; --text-gray: #444; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    body { background: #f0f2f5; color: #111; line-height: 1.7; overflow-x: hidden; }
+    
+    header { background: white; border-bottom: 2px solid #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+    .nav-container { max-width: 1200px; margin: 0 auto; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: relative; }
+    .logo { font-size: 26px; font-weight: 900; color: var(--main-red); text-decoration: none; text-transform: uppercase; }
+    
+    /* 🔴 THE VERTICAL MENU MAGIC (Mobile Responsive) 🔴 */
+    .nav-links { display: flex; align-items: center; }
+    .nav-links a { margin-left: 20px; text-decoration: none; color: #111; font-weight: bold; font-size: 16px; transition: 0.3s; }
+    .nav-links a:hover { color: var(--main-red); }
+    .menu-btn { display: none; font-size: 30px; cursor: pointer; color: var(--main-red); font-weight: bold; user-select: none; }
+    
+    .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+    .article-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+    #article-body { font-size: 20px; color: var(--text-gray); }
+    #article-body h2 { color: #000; margin: 35px 0 15px 0; border-left: 5px solid var(--main-red); padding-left: 15px; background: #fafafa; padding: 10px 15px; border-radius: 0 8px 8px 0; }
+    
+    /* 🔥 PREMIUM TIMELINE (DANDI UI) FOR DESKTOP & MOBILE 🔥 */
+    .timeline { position: relative; max-width: 900px; margin: 40px auto; }
+    .timeline::after { content: ''; position: absolute; width: 4px; background: var(--main-red); top: 0; bottom: 0; left: 50%; margin-left: -2px; border-radius: 5px; }
+    .timeline-card { padding: 10px 40px; position: relative; background: inherit; width: 50%; box-sizing: border-box; }
+    .timeline-card.left { left: 0; }
+    .timeline-card.right { left: 50%; }
+    .timeline-card::after { content: ''; position: absolute; width: 22px; height: 22px; right: -11px; background-color: white; border: 4px solid var(--main-red); top: 20px; border-radius: 50%; z-index: 1; }
+    .timeline-card.right::after { left: -11px; }
+    .timeline-content { padding: 20px; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: transform 0.3s; }
+    .timeline-content:hover { transform: translateY(-5px); }
+    .timeline-content img { width: 100%; border-radius: 8px; height: 180px; object-fit: cover; margin-bottom: 15px; }
+    
+    footer { background: var(--dark-bg); color: #888; padding: 60px 20px 30px; margin-top: 60px; text-align: center; }
+    .footer-links a { color: #ccc; text-decoration: none; margin: 0 10px; font-size: 14px; }
+    
+    /* 🔴 MOBILE RESPONSIVE (Laptop Jaise Premium) 🔴 */
+    @media (max-width: 768px) {
+        .article-box { padding: 20px; }
+        h1 { font-size: 24px !important; }
+        #article-body { font-size: 16px; }
+        
+        /* Menu Mobile UI (Vertical) */
+        .menu-btn { display: block; }
+        .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: #ffffff; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-top: 2px solid var(--main-red); z-index: 1001; padding: 10px 0; }
+        .nav-links.active { display: flex !important; }
+        .nav-links a { margin: 0; padding: 15px 25px; border-bottom: 1px solid #f0f0f0; width: 100%; text-align: left; font-size: 18px; }
+        .nav-links a:hover { background: #fffafa; padding-left: 30px; }
+        
+        /* Mobile Timeline Fix */
+        .timeline::after { left: 20px; }
+        .timeline-card { width: 100%; padding-left: 50px; padding-right: 0; }
+        .timeline-card.right { left: 0; }
+        .timeline-card::after, .timeline-card.right::after { left: 10px; right: auto; width: 16px; height: 16px; top: 25px; }
+        .timeline-content { padding: 15px; }
+        .timeline-content img { height: 120px; }
+    }
+    
+    .ticker-wrap { width: 100%; overflow: hidden; background-color: #f1f1f1; border-bottom: 2px solid #C00000; box-sizing: border-box; }
+    .ticker-content { display: flex; white-space: nowrap; animation: tickerAnimation 15s linear infinite; color: #333; font-family: sans-serif; font-size: 14px; font-weight: bold; padding: 10px 0; }
+    .ticker-content span { color: #C00000; }
+    @keyframes tickerAnimation { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+</style>
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>window.OneSignalDeferred = window.OneSignalDeferred || []; OneSignalDeferred.push(async function(OneSignal) { await OneSignal.init({ appId: "f11333ae-cc73-489e-a1a5-6a74129c3785" }); });</script>
+</head><body>
+<div class="ticker-wrap"><div class="ticker-content"><span>TRENDING:</span> &nbsp; 2026 Best Tech, AI Income, Future Jobs, Digital Kamai Hub Ke Naye Hacks, Share Market Ka Sach!</div></div>
+<header>
+    <div class="nav-container">
+        <a href="index.html" class="logo">Digital Kamai Hub</a>
+        <div class="menu-btn" onclick="document.getElementById('mobile-menu').classList.toggle('active')">&#9776;</div>
+        <div class="nav-links" id="mobile-menu">
+            <a href="index.html">Home</a>
+            <a href="category_ai.html">AI Hacks</a>
+            <a href="category_trading.html">Trading</a>
+            <a href="category_finance.html">Finance</a>
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact</a>
+        </div>
+    </div>
+</header>
+<div class='container'><div class='article-box'><h2 style='color: var(--main-red); margin-bottom: 15px; font-size: 28px;'>Hamari Kahani (Our Story)</h2><p style='font-size: 18px; margin-bottom: 25px; color: #333;'>Namaste! <strong>Digital Kamai Hub</strong> mein aapka swagat hai. Yeh sirf ek blog nahi, balki ek digital revolution hai.</p><h2 style='color: var(--main-red); margin-bottom: 15px; font-size: 24px;'>🎯 Mission & Vision</h2><p style='font-size: 18px; margin-bottom: 25px; color: #333;'>Hamara mission bilkul saaf hai: <strong>"Bacchon ka khel nahi, Smart Work!"</strong></p><h2 style='color: var(--main-red); margin-bottom: 15px; font-size: 24px;'>👨‍💻 Meet The Founder: Mohit (The AI Millionaire)</h2><div style='background: #fafafa; padding: 25px; border-left: 5px solid var(--main-red); border-radius: 8px; margin-bottom: 30px;'><p style='font-size: 17px; margin-bottom: 15px; color: #222;'>Mohit ek <strong>Full-Stack Web Developer aur Visionary Entrepreneur</strong> hain. Any manual task is a bug.</p></div></div></div>
+<footer style="margin-top: 40px; background: #111; padding: 40px 20px; text-align: center;">
+    <div style="margin-bottom: 25px;">
+        <p style="color: #ccc; font-size: 14px; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">JOIN THE AI MILLIONAIRE COMMUNITY:</p>
+        <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+            <a href="https://www.youtube.com/@TheAIMillionaire-h5g" target="_blank" style="color: #FF0000; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">YouTube</a>
+            <a href="https://t.me/digitalkamaihub_2026" target="_blank" style="color: #0088cc; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Telegram</a>
+            <a href="https://www.instagram.com/aimillionaire_official" target="_blank" style="color: #E1306C; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Instagram</a>
+        </div>
+    </div>
+    <div class="footer-links" style="margin-bottom: 20px;">
+        <a href="about.html">About Us</a> | <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms & Conditions</a> | <a href="disclaimer.html">Disclaimer</a> | <a href="contact.html">Contact Us</a>
+    </div>
+    <p style="margin-top:20px; font-size:13px; color: #888;">&copy; 2026 Digital Kamai Hub. All Rights Reserved.</p>
+</footer>
+</body></html>
