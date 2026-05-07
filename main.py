@@ -7,6 +7,7 @@ import time
 import re
 import html
 import requests
+import random
 from datetime import datetime, timedelta
 
 # ==========================================
@@ -61,13 +62,23 @@ try:
                 break
 except: pass
 
-# 🛡️ THE BULLETPROOF AI ENGINE
+# 🛡️ THE BULLETPROOF AI ENGINE (WITH SAFETY FILTER BYPASS)
 def ask_ai(prompt, retries=4):
     for i in range(retries):
         current_key = API_KEYS[i % len(API_KEYS)]
         api_url = f"https://generativelanguage.googleapis.com/v1beta/{available_model}:generateContent?key={current_key}"
         try:
-            data = json.dumps({"contents": [{"parts": [{"text": prompt}]}]}).encode("utf-8")
+            # 🔥 GOOGLE SAFETY FILTERS DISABLED 🔥
+            payload_data = {
+                "contents": [{"parts": [{"text": prompt}]}],
+                "safetySettings": [
+                    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+                    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+                    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+                    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
+                ]
+            }
+            data = json.dumps(payload_data).encode("utf-8")
             req = urllib.request.Request(api_url, data=data, headers={"Content-Type": "application/json"})
             with urllib.request.urlopen(req, timeout=30) as response:
                 res = json.loads(response.read().decode("utf-8"))
@@ -83,29 +94,42 @@ def ask_ai(prompt, retries=4):
         if hf_res.status_code == 200: 
             return hf_res.json()[0].get('generated_text', '').strip()
     except: pass
-    return "" # 🔥 YAHAN SAFETY SHIELD ADD KI HAI (Returns empty string, NOT None) 🔥
+    return ""
 
 def pre_warm_image(url):
     try: urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'}), timeout=10)
     except: pass
 
 # ==========================================
-# 3. CONTENT GENERATION (SAFE TRY BLOCK)
+# 3. CONTENT GENERATION (PLAN A, B, AND C)
 # ==========================================
 current_topic = ""
 blog_content = ""
+
+# 🚨 PLAN C: EMERGENCY BACKUP TOPICS
+emergency_topics = [
+    "2026 Mein AI Se Paise Kaise Kamaye: Secret Hacks",
+    "Top 5 Share Market Tips Jo Apko Pata Honi Chahiye",
+    "Bina Investment Ke Online Business Kaise Shuru Karein",
+    "Digital Kamai Hub: Mobile Se Paise Kamane Ke Tarike",
+    "Future Tech: Wo Jobs Jo AI 2026 Mein Create Karega"
+]
+
 try:
     topic_prompt = f"Tum ek trend analyst ho. {current_year} mein 'Finance', 'Trading', 'Stock Market', ya 'AI se online kamai' par ek bahut hi high-paying aur viral Hindi blog title do. Purane titles: {[p['title'] for p in posts_db[:5]]} se alag ho. Sirf mukhya Title likhna. 'Title:', 'Title {current_year}:' ya aise koi bhi faltu shabd aage mat lagana."
     
     raw_topic = ask_ai(topic_prompt)
-    if not raw_topic: raise Exception("API Down: AI ne Topic Generate Nahi Kiya") # 🛡️ Safe Check
-    
-    current_topic = raw_topic.replace('"', '').replace("'", "").replace("*", "").replace("टाइटल:", "").replace("Title:", "").strip()
+    if not raw_topic: 
+        send_telegram_msg(urllib.parse.quote("⚠️ AI API Down. Emergency Topic use kar rahe hain."))
+        current_topic = random.choice(emergency_topics) # 🔥 PLAN C ACTIVATED 🔥
+    else:
+        current_topic = raw_topic.replace('"', '').replace("'", "").replace("*", "").replace("टाइटल:", "").replace("Title:", "").strip()
 
     html_prompt = f"Tum ek expert lekin bahut friendly teacher ho. Tumhe niche diye gaye topic par ek blog post likhni hai. Vishay: '{current_topic}'। Kam se kam 1000 shabdon ka ek bahut hi vistar se likha gaya shandar Hindi blog post likho. Niyam: 1. Post ke beech mein 4 alag-alag jagah bilkul aise hi likh do: [PHOTO] 2. Post ke beech mein theek 2 alag-alag jagah bilkul aise hi likh do: [AFFILIATE] 3. Ek 'Real Life Case Study' aur 'Step-by-Step Guide' likhein. 4. Sirf HTML code (h2, p, strong, ul) dein. 5. Bhasha aam insani honi chahiye. TEMPLATE TO COPY FOR TOC: <div style='background: #fffafa; border-left: 5px solid #da251c; padding: 20px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);'><h3 style='color: #da251c; margin-top: 0; font-size: 20px;'>📍 Is Article Mein Kya Hai:</h3><ul style='list-style-type: none; padding-left: 0; margin: 0; font-size: 18px;'><li style='margin-bottom: 10px; font-weight: bold; color: #333;'>👉 [Point 1 yahan likho]</li><li style='margin-bottom: 10px; font-weight: bold; color: #333;'>👉 [Point 2 yahan likho]</li></ul></div>"
     
     raw_content = ask_ai(html_prompt, retries=5)
-    if not raw_content: raise Exception("API Down: AI ne Blog Content Generate Nahi Kiya") # 🛡️ Safe Check
+    if not raw_content: 
+        raise Exception("Google aur HuggingFace dono fail ho gaye. Content generate nahi hua.")
     
     blog_content = raw_content.replace("```html", "").replace("```", "").strip()
     
@@ -114,7 +138,7 @@ except Exception as e:
     sys.exit(1)
 
 # ==========================================
-# 4. POST-PROCESSING (0-SPACE INDENT = NO ERRORS)
+# 4. POST-PROCESSING 
 # ==========================================
 affiliate_offers = [
     {"title": "🚀 Aaj hi apni 100X kamai shuru karein!", "desc": "AI aur smart trading ki duniya mein kadam rakhne ke liye pramanit platform.", "btn": "👉 Yahan Free Account Banayein 👈", "link": "#"},
