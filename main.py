@@ -41,22 +41,33 @@ if os.path.exists("posts.json"):
         try: posts_db = [p for p in json.load(f) if "img" in p]
         except: pass
 
-available_model = "models/gemini-1.5-flash"
-
-def ask_ai(prompt, retries=4):
+# --- ADVANCED AI ENGINE WITH ERROR LOGGING & BACKUP ---
+def ask_ai(prompt, retries=3):
     for i in range(retries):
         current_key = API_KEYS[i % len(API_KEYS)]
-        api_url = f"https://generativelanguage.googleapis.com/v1beta/{available_model}:generateContent?key={current_key}"
+        api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={current_key}"
         try:
-            payload_data = {
-                "contents": [{"parts": [{"text": prompt}]}],
-                "safetySettings": [{"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"}, {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"}, {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"}, {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}]
-            }
+            # Removed BLOCK_NONE temporarily as it causes 400 errors on some free tier keys
+            payload_data = {"contents": [{"parts": [{"text": prompt}]}]}
             req = urllib.request.Request(api_url, data=json.dumps(payload_data).encode("utf-8"), headers={"Content-Type": "application/json"})
             with urllib.request.urlopen(req, timeout=30) as response:
                 text = json.loads(response.read().decode("utf-8"))['candidates'][0]['content']['parts'][0]['text'].strip()
                 if len(text) > 10: return text
-        except: time.sleep(5)
+        except Exception as e:
+            print(f"⚠️ Google API Error (Attempt {i+1}): {e}")
+            try: print(f"Details: {e.read().decode('utf-8')}")
+            except: pass
+            time.sleep(4)
+    
+    # Plan B: HuggingFace Llama-3 Backup (Never Fail Logic)
+    print("🔄 Switching to HuggingFace Backup...")
+    hf_key = os.environ.get("HUGGINGFACE_API_KEY", "").strip()
+    if hf_key:
+        try:
+            hf_res = requests.post("https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct", headers={"Authorization": f"Bearer {hf_key}", "Content-Type": "application/json"}, json={"inputs": f"System: Tum ek expert Hindi blogger ho. Sirf HTML output do.\nUser: {prompt}", "parameters": {"max_new_tokens": 1000, "return_full_text": False}}, timeout=30)
+            if hf_res.status_code == 200: return hf_res.json()[0].get('generated_text', '').strip()
+            else: print(f"⚠️ HF Error: {hf_res.text}")
+        except Exception as e: print(f"⚠️ HF Exception: {e}")
     return ""
 
 def pre_warm_image(url):
@@ -69,30 +80,34 @@ emergency_topics = ["2026 Mein AI Se Paise Kaise Kamaye: Secret Hacks", "Top 5 S
 
 try:
     start_time = time.time()
+    print("🚀 Starting AI Bot...")
     
     # 1. SMART TOPIC GENERATION
     raw_topic = ask_ai(f"Tum ek trend analyst ho. {current_year} mein 'Finance', 'Trading', ya 'AI se online kamai' par ek viral Hindi blog title do. Purane titles: {[p['title'] for p in posts_db[:3]]} se alag ho. Sirf mukhya Title likhna.")
     
     if not raw_topic: 
         current_topic = random.choice(emergency_topics)
+        print("⚠️ Used Emergency Topic")
     else: 
         current_topic = raw_topic.replace('"', '').replace("'", "").replace("*", "").replace("टाइटल:", "").replace("Title:", "").strip()
 
     print(f"🎯 Topic: {current_topic}")
 
     # --- ADVANCED PROMPT CHUNKING START ---
-    
+    print("⏳ Chunk 1 generating...")
     intro_prompt = f"Topic: '{current_topic}'. Tum ek expert Hindi blogger ho. Ek damdar Introduction (2 paragraphs) aur ek TOC (Table of Contents) likho. Template for TOC: <div style='background: #fffafa; border-left: 5px solid #da251c; padding: 20px; border-radius: 8px; margin-bottom: 25px;'><h3 style='color: #da251c; margin-top: 0;'>📍 Is Article Mein Kya Hai:</h3><ul><li>👉 Point 1</li><li>👉 Point 2</li></ul></div>. Sirf HTML code do. Conclusion nahi."
-    chunk_1 = ask_ai(intro_prompt, retries=3)
+    chunk_1 = ask_ai(intro_prompt, retries=2)
     
+    print("⏳ Chunk 2 generating...")
     body_prompt = f"Topic: '{current_topic}'. Ab main body likho. 2 detailed sub-headings (<h2>) aur paragraphs (<p>). Ek 'Real Life Case Study' add karo. Niyam: Har section ke baad exactly 1 baar [PHOTO] tag likho (kul 2 [PHOTO] tags hone chahiye). Sirf HTML code. Bhasha asaan Hindi."
-    chunk_2 = ask_ai(body_prompt, retries=3)
+    chunk_2 = ask_ai(body_prompt, retries=2)
     
+    print("⏳ Chunk 3 generating...")
     conclusion_prompt = f"Topic: '{current_topic}'. Ab ek strong Conclusion aur 3 FAQ likho. Niyam: Pura HTML format. Beech mein exactly 2 baar [AFFILIATE] tag likho."
-    chunk_3 = ask_ai(conclusion_prompt, retries=3)
+    chunk_3 = ask_ai(conclusion_prompt, retries=2)
 
     if not (chunk_1 and chunk_2 and chunk_3):
-        raise Exception("API Timeout: Chunking fail ho gayi.")
+        raise Exception("API Timeout: Chunking fail ho gayi. Llama-3 backup bhi fail ho gaya.")
 
     raw_content = chunk_1 + "\n" + chunk_2 + "\n" + chunk_3
     blog_content = raw_content.replace("```html", "").replace("```", "").strip()
@@ -100,7 +115,7 @@ try:
     end_time = time.time()
     exec_time = round((end_time - start_time) / 60, 2)
     
-    send_telegram_msg(urllib.parse.quote(f"🟢 SYSTEM RUN SUCCESS\n\n📝 Topic: {current_topic}\n⏱️ Time: {exec_time} Mins\n✅ Status: API Chunks Merged"))
+    send_telegram_msg(urllib.parse.quote(f"🟢 SYSTEM RUN SUCCESS\n\n📝 Topic: {current_topic}\n⏱️ Time: {exec_time} Mins\n✅ Status: AI Chunks Merged"))
 
 except Exception as e:
     send_telegram_msg(urllib.parse.quote(f"🔴 SYSTEM RUN FAILED\n\n⚠️ Error: {str(e)[:150]}"))
