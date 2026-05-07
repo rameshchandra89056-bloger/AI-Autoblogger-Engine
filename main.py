@@ -17,13 +17,7 @@ def send_push_notification(title, post_url):
     api_key = os.environ.get("ONESIGNAL_API_KEY")
     if not api_key: return
     header = {"Content-Type": "application/json; charset=utf-8", "Authorization": f"Basic {api_key}"}
-    payload = {
-        "app_id": app_id, 
-        "included_segments": ["All"], 
-        "contents": {"en": f"Nayi Post: {title}"}, 
-        "headings": {"en": "Digital Kamai Hub: Taaza Khabar!"}, 
-        "url": post_url
-    }
+    payload = {"app_id": app_id, "included_segments": ["All"], "contents": {"en": f"Nayi Post: {title}"}, "headings": {"en": "Digital Kamai Hub: Taaza Khabar!"}, "url": post_url}
     try: requests.post("https://onesignal.com/api/v1/notifications", headers=header, json=payload)
     except: pass
 
@@ -67,6 +61,7 @@ try:
                 break
 except: pass
 
+# 🛡️ THE BULLETPROOF AI ENGINE
 def ask_ai(prompt, retries=4):
     for i in range(retries):
         current_key = API_KEYS[i % len(API_KEYS)]
@@ -85,8 +80,10 @@ def ask_ai(prompt, retries=4):
     hf_url = "https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct"
     try:
         hf_res = requests.post(hf_url, headers={"Authorization": f"Bearer {hf_key}", "Content-Type": "application/json"}, json={"inputs": f"System: You are an expert AI blogger.\nUser: {prompt}", "parameters": {"max_new_tokens": 1500, "return_full_text": False}}, timeout=60)
-        if hf_res.status_code == 200: return hf_res.json()[0].get('generated_text', '').strip()
-    except: return ""
+        if hf_res.status_code == 200: 
+            return hf_res.json()[0].get('generated_text', '').strip()
+    except: pass
+    return "" # 🔥 YAHAN SAFETY SHIELD ADD KI HAI (Returns empty string, NOT None) 🔥
 
 def pre_warm_image(url):
     try: urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'}), timeout=10)
@@ -99,28 +96,19 @@ current_topic = ""
 blog_content = ""
 try:
     topic_prompt = f"Tum ek trend analyst ho. {current_year} mein 'Finance', 'Trading', 'Stock Market', ya 'AI se online kamai' par ek bahut hi high-paying aur viral Hindi blog title do. Purane titles: {[p['title'] for p in posts_db[:5]]} se alag ho. Sirf mukhya Title likhna. 'Title:', 'Title {current_year}:' ya aise koi bhi faltu shabd aage mat lagana."
+    
     raw_topic = ask_ai(topic_prompt)
+    if not raw_topic: raise Exception("API Down: AI ne Topic Generate Nahi Kiya") # 🛡️ Safe Check
+    
     current_topic = raw_topic.replace('"', '').replace("'", "").replace("*", "").replace("टाइटल:", "").replace("Title:", "").strip()
-    if not current_topic: raise Exception("Topic Generate Nahi Hua")
 
-    html_prompt = f"""Tum ek expert lekin bahut friendly teacher ho. Tumhe niche diye gaye topic par ek blog post likhni hai. Vishay: '{current_topic}'। 
-    Kam se kam 1000 shabdon ka ek bahut hi vistar se likha gaya shandar Hindi blog post likho.
-    Niyam:
-    1. Post ke beech mein 4 alag-alag jagah bilkul aise hi likh do: [PHOTO]
-    2. Post ke beech mein theek 2 alag-alag jagah bilkul aise hi likh do: [AFFILIATE]
-    3. Ek 'Real Life Case Study' aur 'Step-by-Step Guide' likhein.
-    4. Sirf HTML code (h2, p, strong, ul) dein.
-    5. Bhasha aam insani honi chahiye.
-    TEMPLATE TO COPY FOR TOC: 
-    <div style='background: #fffafa; border-left: 5px solid #da251c; padding: 20px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);'>
-        <h3 style='color: #da251c; margin-top: 0; font-size: 20px;'>📍 Is Article Mein Kya Hai:</h3>
-        <ul style='list-style-type: none; padding-left: 0; margin: 0; font-size: 18px;'>
-            <li style='margin-bottom: 10px; font-weight: bold; color: #333;'>👉 [Point 1 yahan likho]</li>
-            <li style='margin-bottom: 10px; font-weight: bold; color: #333;'>👉 [Point 2 yahan likho]</li>
-        </ul>
-    </div>"""
-    blog_content = ask_ai(html_prompt, retries=5).replace("```html", "").replace("```", "").strip()
-    if not blog_content: raise Exception("Blog Content Generate Nahi Hua")
+    html_prompt = f"Tum ek expert lekin bahut friendly teacher ho. Tumhe niche diye gaye topic par ek blog post likhni hai. Vishay: '{current_topic}'। Kam se kam 1000 shabdon ka ek bahut hi vistar se likha gaya shandar Hindi blog post likho. Niyam: 1. Post ke beech mein 4 alag-alag jagah bilkul aise hi likh do: [PHOTO] 2. Post ke beech mein theek 2 alag-alag jagah bilkul aise hi likh do: [AFFILIATE] 3. Ek 'Real Life Case Study' aur 'Step-by-Step Guide' likhein. 4. Sirf HTML code (h2, p, strong, ul) dein. 5. Bhasha aam insani honi chahiye. TEMPLATE TO COPY FOR TOC: <div style='background: #fffafa; border-left: 5px solid #da251c; padding: 20px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);'><h3 style='color: #da251c; margin-top: 0; font-size: 20px;'>📍 Is Article Mein Kya Hai:</h3><ul style='list-style-type: none; padding-left: 0; margin: 0; font-size: 18px;'><li style='margin-bottom: 10px; font-weight: bold; color: #333;'>👉 [Point 1 yahan likho]</li><li style='margin-bottom: 10px; font-weight: bold; color: #333;'>👉 [Point 2 yahan likho]</li></ul></div>"
+    
+    raw_content = ask_ai(html_prompt, retries=5)
+    if not raw_content: raise Exception("API Down: AI ne Blog Content Generate Nahi Kiya") # 🛡️ Safe Check
+    
+    blog_content = raw_content.replace("```html", "").replace("```", "").strip()
+    
 except Exception as e:
     send_telegram_msg(urllib.parse.quote(f"❌ ERROR: {e}"))
     sys.exit(1)
@@ -134,12 +122,7 @@ affiliate_offers = [
 ]
 for offer in affiliate_offers:
     if "[AFFILIATE]" in blog_content:
-        mega_cta_html = f"""
-        <div style="background: linear-gradient(135deg, #111, #da251c); color: white; padding: 35px 25px; border-radius: 12px; margin: 40px 0; text-align: center; box-shadow: 0 10px 30px rgba(218, 37, 28, 0.3);">
-            <h3 style="color: #fff; margin-top: 0; font-size: 24px; letter-spacing: 0.5px;">{offer['title']}</h3>
-            <p style="font-size: 16px; opacity: 0.9; margin-bottom: 25px; line-height: 1.6;">{offer['desc']}</p>
-            <a href="{offer['link']}" target="_blank" style="display: inline-block; background: #fff; color: #da251c; font-weight: bold; padding: 15px 35px; border-radius: 50px; text-decoration: none; font-size: 18px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">{offer['btn']}</a>
-        </div>"""
+        mega_cta_html = f"<div style='background: linear-gradient(135deg, #111, #da251c); color: white; padding: 35px 25px; border-radius: 12px; margin: 40px 0; text-align: center; box-shadow: 0 10px 30px rgba(218, 37, 28, 0.3);'><h3 style='color: #fff; margin-top: 0; font-size: 24px; letter-spacing: 0.5px;'>{offer['title']}</h3><p style='font-size: 16px; opacity: 0.9; margin-bottom: 25px; line-height: 1.6;'>{offer['desc']}</p><a href='{offer['link']}' target='_blank' style='display: inline-block; background: #fff; color: #da251c; font-weight: bold; padding: 15px 35px; border-radius: 50px; text-decoration: none; font-size: 18px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);'>{offer['btn']}</a></div>"
         blog_content = blog_content.replace("[AFFILIATE]", mega_cta_html, 1)
 blog_content = blog_content.replace("[AFFILIATE]", "") 
 
@@ -196,7 +179,6 @@ premium_css = """
     #article-body { font-size: 20px; color: var(--text-gray); }
     #article-body h2 { color: #000; margin: 35px 0 15px 0; border-left: 5px solid var(--main-red); padding-left: 15px; background: #fafafa; padding: 10px 15px; border-radius: 0 8px 8px 0; }
     
-    /* 🔥 PREMIUM TIMELINE (DANDI UI) FOR DESKTOP & MOBILE 🔥 */
     .timeline { position: relative; max-width: 900px; margin: 40px auto; }
     .timeline::after { content: ''; position: absolute; width: 4px; background: var(--main-red); top: 0; bottom: 0; left: 50%; margin-left: -2px; border-radius: 5px; }
     .timeline-card { padding: 10px 40px; position: relative; background: inherit; width: 50%; box-sizing: border-box; }
@@ -211,20 +193,17 @@ premium_css = """
     footer { background: var(--dark-bg); color: #888; padding: 60px 20px 30px; margin-top: 60px; text-align: center; }
     .footer-links a { color: #ccc; text-decoration: none; margin: 0 10px; font-size: 14px; }
     
-    /* 🔴 MOBILE RESPONSIVE 🔴 */
     @media (max-width: 768px) {
         .article-box { padding: 20px; }
         h1 { font-size: 24px !important; }
         #article-body { font-size: 16px; }
         
-        /* Menu Mobile UI (Vertical) */
         .menu-btn { display: block; }
         .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: #ffffff; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-top: 2px solid var(--main-red); z-index: 1001; padding: 10px 0; }
         .nav-links.active { display: flex !important; }
         .nav-links a { margin: 0; padding: 15px 25px; border-bottom: 1px solid #f0f0f0; width: 100%; text-align: left; font-size: 18px; }
         .nav-links a:hover { background: #fffafa; padding-left: 30px; }
         
-        /* Mobile Timeline Fix */
         .timeline::after { left: 20px; }
         .timeline-card { width: 100%; padding-left: 50px; padding-right: 0; }
         .timeline-card.right { left: 0; }
@@ -245,9 +224,7 @@ premium_css = """
   OneSignalDeferred.push(async function(OneSignal) {
     await OneSignal.init({
       appId: "f11333ae-cc73-489e-a1a5-6a74129c3785",
-      notifyButton: {
-        enable: true,
-      },
+      notifyButton: { enable: true },
     });
   });
 </script>
@@ -260,14 +237,8 @@ schema_markup = f"""
   "@type": "Article",
   "headline": "{current_topic}",
   "image": "{main_img_url}",
-  "author": {{
-    "@type": "Person",
-    "name": "Mohit (The AI Millionaire)"
-  }},
-  "publisher": {{
-    "@type": "Organization",
-    "name": "Digital Kamai Hub"
-  }},
+  "author": {{ "@type": "Person", "name": "Mohit (The AI Millionaire)" }},
+  "publisher": {{ "@type": "Organization", "name": "Digital Kamai Hub" }},
   "datePublished": "{today_date}"
 }}
 </script>
