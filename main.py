@@ -83,11 +83,11 @@ try:
     if not raw_topic: current_topic = random.choice(emergency_topics)
     else: current_topic = clean_ad_garbage(raw_topic.replace('"', '').replace("'", "").replace("*", "").replace("टाइटल:", "").replace("Title:", "")).strip()
 
-    # --- THE 0 TO 100 KNOWLEDGE PROMPTS ---
-    intro_prompt = f"Topic: '{current_topic}'. Ek lamba Introduction likho jo kisi anjaan (beginner) ko bhi samajh aa jaye (0% knowledge level). Ek aam insaan ki real-life kahani se shuru karo. Uske baad TOC likho. Template for TOC: <div style='background: #fffafa; border-left: 5px solid #da251c; padding: 20px; border-radius: 8px; margin-bottom: 25px;'><h3 style='color: #da251c; margin-top: 0;'>📍 Is Article Mein Kya Hai:</h3><ul><li>👉 Point 1</li><li>👉 Point 2</li></ul></div>. Sirf HTML code do (<h2>, <p>)."
+    # --- CLICKABLE TOC & 0-100 KNOWLEDGE LOGIC ---
+    intro_prompt = f"Topic: '{current_topic}'. Ek lamba Introduction likho jo kisi anjaan (beginner) ko bhi samajh aa jaye. Uske baad ek Clickable TOC likho. Niyam: TOC mein aise links banao: <ul style='list-style:none; padding:0;'><li>👉 <a href='#basic' style='color:#da251c; text-decoration:none; font-weight:bold;'>1. Basic Samajh</a></li> <li>👉 <a href='#deep' style='color:#da251c; text-decoration:none; font-weight:bold;'>2. Deep Detail</a></li> <li>👉 <a href='#pro' style='color:#da251c; text-decoration:none; font-weight:bold;'>3. Pro Hacks</a></li></ul>. Sirf HTML code do (<h2>, <p>, <a>). Markdown nahi."
     chunk_1 = ask_ai(intro_prompt, retries=2)
     
-    body_prompt = f"Topic: '{current_topic}'. Ab main body likho. 3 sub-headings (<h2>) likho. Niyam 1: Ise 3 levels mein baanto - Pehla <h2> Basic samjhaye, Dusra <h2> deep detail de (50% level), aur Teesra <h2> Advanced Pro Hacks bataye (100% level). Niyam 2: Har section lamba hona chahiye aur example ke sath hona chahiye. Niyam 3: Har <h2> wale section ke baad exactly 1 baar [PHOTO] tag likho. Sirf HTML code do."
+    body_prompt = f"Topic: '{current_topic}'. Ab main body likho. Theek 3 sub-headings (<h2>) likho. Niyam 1: Pehle <h2> mein id='basic' lagao. Dusre <h2> mein id='deep' lagao. Teesre <h2> mein id='pro' lagao. (Jaise: <h2 id='basic'>Basic Samajh</h2>). Niyam 2: Har section lamba hona chahiye. Niyam 3: Har <h2> wale section ke baad exactly 1 baar [PHOTO] tag likho. Sirf HTML code do."
     chunk_2 = ask_ai(body_prompt, retries=2)
     
     conclusion_prompt = f"Topic: '{current_topic}'. Ek strong Conclusion aur 3 FAQs likho. Pura HTML format mein. Beech mein exactly 2 baar [AFFILIATE] tag likho."
@@ -100,7 +100,7 @@ try:
     
     end_time = time.time()
     exec_time = round((end_time - start_time) / 60, 2)
-    send_telegram_msg(urllib.parse.quote(f"🟢 SYSTEM RUN SUCCESS\n\n📝 Topic: {current_topic}\n⏱️ Time: {exec_time} Mins\n✅ Status: 0-to-100 Logic Merged"))
+    send_telegram_msg(urllib.parse.quote(f"🟢 SYSTEM RUN SUCCESS\n\n📝 Topic: {current_topic}\n⏱️ Time: {exec_time} Mins\n✅ Status: TOC, Scroll & Cookie UX Merged"))
 
 except Exception as e:
     send_telegram_msg(urllib.parse.quote(f"🔴 SYSTEM RUN FAILED\n\n⚠️ Error: {str(e)[:150]}"))
@@ -137,10 +137,35 @@ post_filename = f"post_{post_id}.html"
 posts_db.insert(0, {"title": current_topic, "file": post_filename, "date": today_date, "img": main_img_url})
 with open("posts.json", "w", encoding="utf-8") as f: json.dump(posts_db, f, ensure_ascii=False, indent=4)
 
-premium_css = """<style>:root { --main-red: #da251c; --dark-bg: #111; --text-gray: #444; } * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; } body { background: #f0f2f5; color: #111; line-height: 1.7; overflow-x: hidden; } header { background: white; border-bottom: 2px solid #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; } .nav-container { max-width: 1200px; margin: 0 auto; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: relative; } .logo { font-size: 26px; font-weight: 900; color: var(--main-red); text-decoration: none; text-transform: uppercase; } .nav-links { display: flex; align-items: center; } .nav-links a { margin-left: 20px; text-decoration: none; color: #111; font-weight: bold; font-size: 16px; transition: 0.3s; } .nav-links a:hover { color: var(--main-red); } .menu-btn { display: none; font-size: 30px; cursor: pointer; color: var(--main-red); font-weight: bold; user-select: none; } .container { max-width: 900px; margin: 40px auto; padding: 0 20px; } .article-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); } #article-body { font-size: 20px; color: var(--text-gray); } #article-body h2 { color: #000; margin: 35px 0 15px 0; border-left: 5px solid var(--main-red); padding-left: 15px; background: #fafafa; padding: 10px 15px; border-radius: 0 8px 8px 0; } .timeline { position: relative; max-width: 900px; margin: 40px auto; } .timeline::after { content: ''; position: absolute; width: 4px; background: var(--main-red); top: 0; bottom: 0; left: 50%; margin-left: -2px; border-radius: 5px; } .timeline-card { padding: 10px 40px; position: relative; background: inherit; width: 50%; box-sizing: border-box; } .timeline-card.left { left: 0; } .timeline-card.right { left: 50%; } .timeline-card::after { content: ''; position: absolute; width: 22px; height: 22px; right: -11px; background-color: white; border: 4px solid var(--main-red); top: 20px; border-radius: 50%; z-index: 1; } .timeline-card.right::after { left: -11px; } .timeline-content { padding: 20px; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: transform 0.3s; } .timeline-content:hover { transform: translateY(-5px); } .timeline-content img { width: 100%; border-radius: 8px; height: 180px; object-fit: cover; margin-bottom: 15px; } footer { background: var(--dark-bg); color: #888; padding: 60px 20px 30px; margin-top: 60px; text-align: center; } .footer-links a { color: #ccc; text-decoration: none; margin: 0 10px; font-size: 14px; } @media (max-width: 768px) { .article-box { padding: 20px; } h1 { font-size: 24px !important; } #article-body { font-size: 16px; } .menu-btn { display: block; } .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: #ffffff; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-top: 2px solid var(--main-red); z-index: 1001; padding: 10px 0; } .nav-links.active { display: flex !important; } .nav-links a { margin: 0; padding: 15px 25px; border-bottom: 1px solid #f0f0f0; width: 100%; text-align: left; font-size: 18px; } .timeline::after { left: 20px; } .timeline-card { width: 100%; padding-left: 50px; padding-right: 0; } .timeline-card.right { left: 0; } .timeline-card::after, .timeline-card.right::after { left: 10px; right: auto; width: 16px; height: 16px; top: 25px; } .timeline-content { padding: 15px; } .timeline-content img { height: 120px; } } .ticker-wrap { width: 100%; overflow: hidden; background-color: #f1f1f1; border-bottom: 2px solid #C00000; box-sizing: border-box; } .ticker-content { display: flex; white-space: nowrap; animation: tickerAnimation 15s linear infinite; color: #333; font-family: sans-serif; font-size: 14px; font-weight: bold; padding: 10px 0; } .ticker-content span { color: #C00000; } @keyframes tickerAnimation { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }</style><script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script><script>window.OneSignalDeferred = window.OneSignalDeferred || []; OneSignalDeferred.push(async function(OneSignal) { await OneSignal.init({ appId: "f11333ae-cc73-489e-a1a5-6a74129c3785", notifyButton: { enable: true } }); });</script>"""
+premium_css = """<style>:root { --main-red: #da251c; --dark-bg: #111; --text-gray: #444; } html { scroll-behavior: smooth; } * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; } body { background: #f0f2f5; color: #111; line-height: 1.7; overflow-x: hidden; } header { background: white; border-bottom: 2px solid #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; } .nav-container { max-width: 1200px; margin: 0 auto; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: relative; } .logo { font-size: 26px; font-weight: 900; color: var(--main-red); text-decoration: none; text-transform: uppercase; } .nav-links { display: flex; align-items: center; } .nav-links a { margin-left: 20px; text-decoration: none; color: #111; font-weight: bold; font-size: 16px; transition: 0.3s; } .nav-links a:hover { color: var(--main-red); } .menu-btn { display: none; font-size: 30px; cursor: pointer; color: var(--main-red); font-weight: bold; user-select: none; } .container { max-width: 900px; margin: 40px auto; padding: 0 20px; } .article-box { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); } #article-body { font-size: 20px; color: var(--text-gray); } #article-body h2 { color: #000; margin: 35px 0 15px 0; border-left: 5px solid var(--main-red); padding-left: 15px; background: #fafafa; padding: 10px 15px; border-radius: 0 8px 8px 0; scroll-margin-top: 80px; } .timeline { position: relative; max-width: 900px; margin: 40px auto; } .timeline::after { content: ''; position: absolute; width: 4px; background: var(--main-red); top: 0; bottom: 0; left: 50%; margin-left: -2px; border-radius: 5px; } .timeline-card { padding: 10px 40px; position: relative; background: inherit; width: 50%; box-sizing: border-box; } .timeline-card.left { left: 0; } .timeline-card.right { left: 50%; } .timeline-card::after { content: ''; position: absolute; width: 22px; height: 22px; right: -11px; background-color: white; border: 4px solid var(--main-red); top: 20px; border-radius: 50%; z-index: 1; } .timeline-card.right::after { left: -11px; } .timeline-content { padding: 20px; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: transform 0.3s; } .timeline-content:hover { transform: translateY(-5px); } .timeline-content img { width: 100%; border-radius: 8px; height: 180px; object-fit: cover; margin-bottom: 15px; } footer { background: var(--dark-bg); color: #888; padding: 60px 20px 30px; margin-top: 60px; text-align: center; } .footer-links a { color: #ccc; text-decoration: none; margin: 0 10px; font-size: 14px; } @media (max-width: 768px) { .article-box { padding: 20px; } h1 { font-size: 24px !important; } #article-body { font-size: 16px; } .menu-btn { display: block; } .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: #ffffff; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border-top: 2px solid var(--main-red); z-index: 1001; padding: 10px 0; } .nav-links.active { display: flex !important; } .nav-links a { margin: 0; padding: 15px 25px; border-bottom: 1px solid #f0f0f0; width: 100%; text-align: left; font-size: 18px; } .timeline::after { left: 20px; } .timeline-card { width: 100%; padding-left: 50px; padding-right: 0; } .timeline-card.right { left: 0; } .timeline-card::after, .timeline-card.right::after { left: 10px; right: auto; width: 16px; height: 16px; top: 25px; } .timeline-content { padding: 15px; } .timeline-content img { height: 120px; } } .ticker-wrap { width: 100%; overflow: hidden; background-color: #f1f1f1; border-bottom: 2px solid #C00000; box-sizing: border-box; } .ticker-content { display: flex; white-space: nowrap; animation: tickerAnimation 15s linear infinite; color: #333; font-family: sans-serif; font-size: 14px; font-weight: bold; padding: 10px 0; } .ticker-content span { color: #C00000; } @keyframes tickerAnimation { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }</style>"""
 schema_markup = f"""<script type="application/ld+json">{{ "@context": "https://schema.org", "@type": "Article", "headline": "{current_topic}", "image": "{main_img_url}", "author": {{ "@type": "Person", "name": "Mohit (The AI Millionaire)" }}, "publisher": {{ "@type": "Organization", "name": "Digital Kamai Hub" }}, "datePublished": "{today_date}" }}</script>"""
 header_html = """<div class="ticker-wrap"><div class="ticker-content"><span>TRENDING:</span> &nbsp; 2026 Best Tech, AI Income, Future Jobs, Digital Kamai Hub Ke Naye Hacks, Share Market Ka Sach!</div></div><header><div class="nav-container"><a href="index.html" class="logo">Digital Kamai Hub</a><div class="menu-btn" onclick="document.getElementById('mobile-menu').classList.toggle('active')">&#9776;</div><div class="nav-links" id="mobile-menu"><a href="index.html">Home</a><a href="category_ai.html">AI Hacks</a><a href="category_trading.html">Trading</a><a href="category_finance.html">Finance</a><a href="about.html">About</a><a href="contact.html">Contact</a></div></div></header>"""
-footer_html = f"""<footer style="margin-top: 40px; background: #111; padding: 40px 20px; text-align: center;"><div style="margin-bottom: 25px;"><p style="color: #ccc; font-size: 14px; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">JOIN THE AI MILLIONAIRE COMMUNITY:</p><div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;"><a href="https://www.youtube.com/@TheAIMillionaire-h5g" target="_blank" style="color: #FF0000; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">YouTube</a><a href="https://t.me/digitalkamaihub_2026" target="_blank" style="color: #0088cc; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Telegram</a><a href="https://www.instagram.com/aimillionaire_official" target="_blank" style="color: #E1306C; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Instagram</a></div></div><div class="footer-links" style="margin-bottom: 20px;"><a href="about.html">About Us</a> | <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms</a> | <a href="disclaimer.html">Disclaimer</a> | <a href="contact.html">Contact</a></div><p style="margin-top:20px; font-size:13px; color: #888;">&copy; {current_year} Digital Kamai Hub. All Rights Reserved.</p></footer>"""
+
+# --- NEW: COOKIES, SCROLL TO TOP, AND RESUME JS IN FOOTER ---
+footer_html = f"""<footer style="margin-top: 40px; background: #111; padding: 40px 20px; text-align: center;"><div style="margin-bottom: 25px;"><p style="color: #ccc; font-size: 14px; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">JOIN THE AI MILLIONAIRE COMMUNITY:</p><div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;"><a href="https://www.youtube.com/@TheAIMillionaire-h5g" target="_blank" style="color: #FF0000; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">YouTube</a><a href="https://t.me/digitalkamaihub_2026" target="_blank" style="color: #0088cc; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Telegram</a><a href="https://www.instagram.com/aimillionaire_official" target="_blank" style="color: #E1306C; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Instagram</a></div></div><div class="footer-links" style="margin-bottom: 20px;"><a href="about.html">About Us</a> | <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms</a> | <a href="disclaimer.html">Disclaimer</a> | <a href="contact.html">Contact</a></div><p style="margin-top:20px; font-size:13px; color: #888;">&copy; {current_year} Digital Kamai Hub. All Rights Reserved.</p></footer>
+<button id="scrollTopBtn" onclick="window.scrollTo({{top: 0, behavior: 'smooth'}})" style="display:none; position:fixed; bottom:30px; right:20px; z-index:99; background:#da251c; color:white; border:none; padding:15px 20px; border-radius:50%; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.3); font-size:20px; font-weight:bold;">↑</button>
+<div id="cookieConsent" style="position:fixed; bottom:0; left:0; width:100%; background:#111; color:#fff; text-align:center; padding:15px; z-index:10000; font-size:14px; display:none; box-shadow:0 -5px 15px rgba(0,0,0,0.2);">🍪 Hum behtar anubhav aur AdSense ke liye cookies ka upyog karte hain. <button onclick="acceptCookies()" style="background:#da251c; color:#fff; border:none; padding:5px 15px; border-radius:5px; margin-left:10px; cursor:pointer; font-weight:bold;">Theek Hai</button></div>
+<script>
+window.addEventListener('scroll', function() {{
+    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {{ document.getElementById('scrollTopBtn').style.display = 'block'; }} 
+    else {{ document.getElementById('scrollTopBtn').style.display = 'none'; }}
+    localStorage.setItem('scrollpos_' + window.location.href, window.scrollY);
+}});
+if (!localStorage.getItem('cookiesAccepted')) {{ document.getElementById('cookieConsent').style.display = 'block'; }}
+function acceptCookies() {{ localStorage.setItem('cookiesAccepted', 'true'); document.getElementById('cookieConsent').style.display = 'none'; }}
+document.addEventListener('DOMContentLoaded', function() {{
+    var savedScroll = localStorage.getItem('scrollpos_' + window.location.href);
+    if (savedScroll && savedScroll > 300) {{
+        var toast = document.createElement('div');
+        toast.innerHTML = '📚 Aapne pichli baar yahan tak padha tha. <button id="scroll-btn" style="background:#da251c;color:#fff;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;margin-left:10px;font-weight:bold;">Wapas Wahin Jayein</button>';
+        toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:15px;border-radius:8px;z-index:9999;box-shadow:0 5px 15px rgba(0,0,0,0.3);font-size:14px;display:flex;align-items:center;white-space:nowrap;';
+        document.body.appendChild(toast);
+        document.getElementById('scroll-btn').onclick = function() {{ window.scrollTo({{top: parseInt(savedScroll), behavior: 'smooth'}}); toast.style.display = 'none'; }};
+        setTimeout(function(){{ toast.style.display = 'none'; }}, 8000);
+    }}
+}});
+</script>
+"""
 
 top_buttons_html = f"""
 <audio id="premium-audio" src="{audio_filename}"></audio>
@@ -167,54 +192,28 @@ ajax_form_html = """
 document.getElementById('ajax-vip-form').addEventListener('submit', function(e) {
     e.preventDefault();
     var btn = document.getElementById('vip-btn');
-    var email = document.getElementById('vip-email').value;
     btn.innerText = 'Wait...';
     btn.disabled = true;
     fetch('https://formsubmit.co/ajax/rameshchandra89056@gmail.com', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ email: email, _subject: 'New VIP Subscriber' })
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ email: document.getElementById('vip-email').value, _subject: 'New VIP Subscriber' })
     }).then(response => response.json()).then(data => {
         document.getElementById('ajax-vip-form').style.display = 'none';
         document.getElementById('vip-msg').style.display = 'block';
-    }).catch(error => {
-        btn.innerText = 'Error! Try Again';
-        btn.disabled = false;
-    });
+    }).catch(error => { btn.innerText = 'Error! Try Again'; btn.disabled = false; });
 });
 </script>
 """
 
-resume_reading_js = """
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var savedScroll = localStorage.getItem('scrollpos_' + window.location.href);
-    if (savedScroll && savedScroll > 200) {
-        var toast = document.createElement('div');
-        toast.innerHTML = '📚 Aapne pichli baar yahan tak padha tha. <button id="scroll-btn" style="background:#da251c;color:#fff;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;margin-left:10px;">Wapas Wahin Jayein</button>';
-        toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:15px;border-radius:8px;z-index:9999;box-shadow:0 5px 15px rgba(0,0,0,0.3);font-size:14px;display:flex;align-items:center;';
-        document.body.appendChild(toast);
-        document.getElementById('scroll-btn').onclick = function() {
-            window.scrollTo({top: parseInt(savedScroll), behavior: 'smooth'});
-            toast.style.display = 'none';
-        };
-        setTimeout(function(){ toast.style.display = 'none'; }, 8000);
-    }
-});
-window.addEventListener('scroll', function() {
-    localStorage.setItem('scrollpos_' + window.location.href, window.scrollY);
-});
-</script>
-"""
-
-article_page = f"""<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>{current_topic} - Digital Kamai Hub</title>{premium_css}{schema_markup}</head><body><div style="position: fixed; top: 0; left: 0; width: 100%; height: 5px; background-color: transparent; z-index: 9999;"><div id="smart-progress" style="height: 5px; background-color: #da251c; width: 0%; border-top-right-radius: 3px; border-bottom-right-radius: 3px;"></div></div><script>window.addEventListener('scroll', function() {{ var winScroll = document.body.scrollTop || document.documentElement.scrollTop; var height = document.documentElement.scrollHeight - document.documentElement.clientHeight; var scrolled = (winScroll / height) * 100; document.getElementById("smart-progress").style.width = scrolled + "%"; }}); function toggleAudio() {{ var audio = document.getElementById("premium-audio"); var btn = document.getElementById("audio-btn"); if (audio.paused) {{ audio.play(); btn.innerHTML = "⏸️ Pause Audio"; }} else {{ audio.pause(); btn.innerHTML = "▶️ Play Audio"; }} }}</script>{header_html}<div class="container"><div class="article-box"><h1 style="color: #111; margin-bottom: 15px;">{current_topic}</h1><div style="color: #666; font-size: 14px; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; font-weight: bold;">Date: {today_date} | Author: Mohit (The AI Millionaire)</div>{top_buttons_html}<img src="{main_img_url}" onerror="this.onerror=null; this.src='https://placehold.co/1200x600/da251c/ffffff?text=Digital+Kamai+Hub';" style="width: 100%; border-radius: 10px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); object-fit: cover;"><div id="article-body">{blog_content}</div>{ajax_form_html}</div></div>{footer_html}{resume_reading_js}</body></html>"""
+article_page = f"""<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>{current_topic} - Digital Kamai Hub</title>{premium_css}{schema_markup}</head><body><div style="position: fixed; top: 0; left: 0; width: 100%; height: 5px; background-color: transparent; z-index: 9999;"><div id="smart-progress" style="height: 5px; background-color: #da251c; width: 0%; border-top-right-radius: 3px; border-bottom-right-radius: 3px;"></div></div><script>window.addEventListener('scroll', function() {{ var winScroll = document.body.scrollTop || document.documentElement.scrollTop; var height = document.documentElement.scrollHeight - document.documentElement.clientHeight; var scrolled = (winScroll / height) * 100; document.getElementById("smart-progress").style.width = scrolled + "%"; }}); function toggleAudio() {{ var audio = document.getElementById("premium-audio"); var btn = document.getElementById("audio-btn"); if (audio.paused) {{ audio.play(); btn.innerHTML = "⏸️ Pause Audio"; }} else {{ audio.pause(); btn.innerHTML = "▶️ Play Audio"; }} }}</script>{header_html}<div class="container"><div class="article-box"><h1 style="color: #111; margin-bottom: 15px;">{current_topic}</h1><div style="color: #666; font-size: 14px; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; font-weight: bold;">Date: {today_date} | Author: Mohit (The AI Millionaire)</div>{top_buttons_html}<img src="{main_img_url}" onerror="this.onerror=null; this.src='https://placehold.co/1200x600/da251c/ffffff?text=Digital+Kamai+Hub';" style="width: 100%; border-radius: 10px; margin-bottom: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); object-fit: cover;"><div id="article-body">{blog_content}</div>{ajax_form_html}</div></div>{footer_html}</body></html>"""
 with open(post_filename, "w", encoding="utf-8") as f: f.write(article_page)
 
+# --- HINDI CATEGORY FIX ---
 def get_category(title):
     t = title.lower()
-    if any(w in t for w in ['ai', 'chatgpt', 'bot', 'artificial intelligence', 'tech', 'automation']): return 'ai'
-    if any(w in t for w in ['trade', 'trading', 'share', 'stock', 'market', 'crypto', 'nifty', 'option']): return 'trading'
-    if any(w in t for w in ['finance', 'paisa', 'kamai', 'wealth', 'amir', 'money', 'income', 'bank']): return 'finance'
+    if any(w in t for w in ['ai', 'chatgpt', 'bot', 'artificial', 'tech', 'automation', 'एआई', 'टेक्नोलॉजी']): return 'ai'
+    if any(w in t for w in ['trade', 'trading', 'share', 'stock', 'market', 'crypto', 'nifty', 'शेयर', 'बाज़ार', 'ट्रेडिंग', 'मार्केट']): return 'trading'
+    if any(w in t for w in ['finance', 'paisa', 'kamai', 'wealth', 'amir', 'money', 'bank', 'वित्तीय', 'कमाई', 'पैसा', 'धन']): return 'finance'
     return 'trending'
 
 categorized_posts = {'ai': [], 'trading': [], 'finance': [], 'trending': []}
@@ -255,7 +254,7 @@ try:
 except: pass
 
 blog_url = f"https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/{post_filename}"
-send_telegram_msg(urllib.parse.quote(f"✅ FINAL SUCCESS: Lamba JSON Form Blog live!\n📝 Kul Post: {len(posts_db)}\n🌐 Link: {blog_url}"))
+send_telegram_msg(urllib.parse.quote(f"✅ FACTORY V1 SUCCESS: Naya Blog Live!\n📝 Kul Post: {len(posts_db)}\n🌐 Link: {blog_url}"))
 if os.environ.get("TELEGRAM_PUBLIC_CHANNEL"): send_telegram_msg(urllib.parse.quote(f"🚀 Nayi post live ho gayi hai!\n\n🔥 Topic: {current_topic}\n\n👉 Padhein: {blog_url}"), target_chat_id=os.environ.get("TELEGRAM_PUBLIC_CHANNEL"))
 send_push_notification(current_topic, blog_url)
 print("✅ Website 100% safalta ke sath ban gayi hai!")
