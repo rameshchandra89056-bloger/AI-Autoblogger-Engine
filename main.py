@@ -14,15 +14,12 @@ def clean_ad_garbage(text):
     if "🌸 Ad" in text: text = text.split("🌸 Ad")[0]
     if "--- Support" in text: text = text.split("--- Support")[0]
     if "pollinations.ai" in text: text = text.split("pollinations.ai")[0]
-    
-    # SMART WORK: Convert AI Markdown to Beautiful HTML
-    text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', text) # Bold
-    text = re.sub(r'\*(.*?)\*', r'<em>\1</em>', text) # Italic
+    text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', text)
+    text = re.sub(r'\*(.*?)\*', r'<em>\1</em>', text)
     text = re.sub(r'```html', '', text)
     text = re.sub(r'```', '', text)
-    text = re.sub(r'## (.*?)\n', r'<h2>\1</h2>', text) # H2 conversion if AI forgets tags
-    text = re.sub(r'### (.*?)\n', r'<h3>\1</h3>', text) # H3 conversion
-    
+    text = re.sub(r'## (.*?)\n', r'<h2>\1</h2>', text)
+    text = re.sub(r'### (.*?)\n', r'<h3>\1</h3>', text)
     return text.strip()
 
 def send_push_notification(title, post_url):
@@ -41,7 +38,6 @@ def send_telegram_msg(message, target_chat_id=None):
     try: requests.get(f"https://api.telegram.org/bot{token}/sendMessage", params={"chat_id": chat_id, "text": urllib.parse.unquote(message)}, timeout=10)
     except: pass
 
-# --- SECURE API ---
 raw_keys = os.environ.get("GEMINI_API_KEY", "")
 API_KEYS = [k.strip() for k in raw_keys.split(",") if k.strip()]
 if not API_KEYS:
@@ -88,7 +84,6 @@ def pre_warm_image(url):
 current_topic = ""
 blog_content = ""
 
-# PREMIUM FALLBACK TEXT (Agar AI fail ho, toh bhi 1000 words jaisa lamba lage)
 EMERGENCY_INTRO = f"<p>Dosto, 2026 mein technology aur aarthik duniya itni tezi se badal rahi hai ki jo aaj update nahi hoga, wo kal bahot piche chhut jayega. Maine apni aankhon se dekha hai ki kaise Kanpur ke ek chote se dukandar ne AI ka sahi istemal karke apne business ko 10x scale kar liya. Aaj main aapko bilkul shunya (0) se lekar expert level (100) tak ki aisi jankari dunga, jise padh kar aap turant action le payenge.</p><div style='background: #fffafa; border-left: 5px solid #da251c; padding: 20px; border-radius: 8px; margin-bottom: 25px;'><h3 style='color: #da251c; margin-top: 0;'>📍 Is Article Mein Kya Hai:</h3><ul style='list-style:none; padding:0; line-height: 1.8;'><li>👉 <a href='#basic' style='color:#da251c; text-decoration:none; font-weight:bold;'>1. Basic Samajh (0 se shuruaat)</a></li><li>👉 <a href='#deep' style='color:#da251c; text-decoration:none; font-weight:bold;'>2. Top Tools aur Deep Setup Guide</a></li><li>👉 <a href='#pro' style='color:#da251c; text-decoration:none; font-weight:bold;'>3. Pro Execution aur Scale-up Hacks</a></li></ul></div>"
 EMERGENCY_BODY = "<h2 id='basic'>1. Basic Samajh: Shunya Se Shuruaat</h2><p>Sabse pehle yeh samajhna zaroori hai ki hum jis tool ya market ki baat kar rahe hain, wo asal mein kaam kaise karta hai. Duniya mein 90% log sirf isliye fail hote hain kyunki wo direct paisa kamane ki sochte hain, bina foundation banaye. Aapko basics par dhyan dena hoga, market ki terminology samajhni hogi, aur ek clear roadmap banana hoga. Ek kisaan jaise pehle zameen tayar karta hai, waise hi aapko apna mind aur digital setup tayar karna hoga.</p>[PHOTO]<h2 id='deep'>2. Top Tools aur Deep Setup Guide</h2><p>Bina hatheyar ke jung nahi jiti jaati. 2026 mein aapke paas sahi AI aur automation tools hone chahiye. Sabse pehla tool hai aapka Research software, jahan aap data analyze karenge. Dusra tool hai execution platform, chahe wo trading app ho ya content generator. Aapko API keys integrate karni hogi, webhooks lagane honge, aur apne system ko ek 'Digital Factory' ki tarah set karna hoga. Step-by-step documentation padhein aur hamesha test mode (paper trading ya dev environment) mein kaam shuru karein.</p>[PHOTO]<h2 id='pro'>3. Pro Execution aur Scale-up Hacks</h2><p>Jab aapka pehla profit aaye, toh use turant kharch na karein. Usay waapas apne system mein reinvest karein. Pro level par aane ke liye aapko 'Compound Effect' ka istemal karna padega. Ek script jab 100% safely kaam karne lage, toh uski 10 aur copies banayein jo alag-alag niches mein kaam karein. Yahi Smart Work hai. Jo kaam aap manual karte the, ab wo aapke 10 bots kar rahe hain.</p>[PHOTO]"
 EMERGENCY_OUTRO = "<h2>Nishkarsh (Conclusion)</h2><p>Dosto, ummeed karta hoon yeh deep dive jankari aapke dimaag ke taale khol degi. Main yahan hawai baatein nahi karta, sirf action aur logic par baat karta hoon. Niche diye gaye resources ko check karein aur aaj hi shuru karein.</p>[AFFILIATE]<h2>Akshar Puche Jane Wale Sawal (FAQs)</h2><p><strong>Q1: Kya isme risk hai?</strong><br>A: Duniya ka har bada kaam risk ke sath aata hai, par calculated risk hi kamyabi dilata hai.</p><p><strong>Q2: Kitna waqt lagega?</strong><br>A: Agar aap din ke 2 ghante bhi fully focused hokar denge, toh 3 mahine mein aap master ban sakte hain.</p>[AFFILIATE]"
@@ -100,19 +95,18 @@ try:
     else: current_topic = clean_ad_garbage(raw_topic.replace('"', '').replace("'", "").replace("*", "").replace("टाइटल:", "").replace("Title:", "")).strip()
 
     print("⏳ Chunk 1 generating...")
-    # PROMPT FIX: Forced 1000 words logic without breaking APIs
     intro_prompt = f"Topic: '{current_topic}'. Tum ek CEO aur expert mentor ho. Ek bohot lamba aur gahra (deep) Introduction likho (kam se kam 300 words). 0% knowledge wale user ko target karo. Ek real-life desi udaharan do (auto driver, kisaan, ya chote dukandar ka). Uske baad ek Clickable TOC (Table of Contents) zaroor do. Format for TOC: <div style='background: #fffafa; border-left: 5px solid #da251c; padding: 20px; border-radius: 8px; margin-bottom: 25px;'><h3 style='color: #da251c; margin-top: 0;'>📍 Is Article Mein Kya Hai:</h3><ul style='list-style:none; padding:0;'><li>👉 <a href='#basic' style='color:#da251c; text-decoration:none; font-weight:bold;'>1. Basic Samajh (0 to 30%)</a></li> <li>👉 <a href='#deep' style='color:#da251c; text-decoration:none; font-weight:bold;'>2. Tools aur Deep Detail (30 to 70%)</a></li> <li>👉 <a href='#pro' style='color:#da251c; text-decoration:none; font-weight:bold;'>3. Pro Hacks (70 to 100%)</a></li></ul></div>. Poora output proper HTML tags (<p>, <h2>) mein do."
     chunk_1 = ask_ai(intro_prompt)
     if not chunk_1: chunk_1 = EMERGENCY_INTRO
     
-    time.sleep(10) # Heavy Cool-down
+    time.sleep(10) 
     
     print("⏳ Chunk 2 generating...")
     body_prompt = f"Topic: '{current_topic}'. Ab article ki main body likho. Total 3 sub-headings (<h2>) likho. Niyam 1: Pehle <h2> mein id='basic', dusre mein id='deep', teesre mein id='pro' lagao. Niyam 2: Har section mein deep jankari do (har ek section kam se kam 300 words ka ho, total 1000 words lagne chahiye). Niyam 3: Asali Tools, Websites ya Softwares ke naam do aur unhe chalane ke exact steps batao. Hawa mein baatein mat karna. Niyam 4: Har <h2> wale section ke baad exactly 1 baar [PHOTO] tag likho. Pura HTML format mein do."
     chunk_2 = ask_ai(body_prompt)
     if not chunk_2: chunk_2 = EMERGENCY_BODY
     
-    time.sleep(10) # Heavy Cool-down
+    time.sleep(10) 
     
     print("⏳ Chunk 3 generating...")
     conclusion_prompt = f"Topic: '{current_topic}'. Ek bohot detailed Conclusion likho aur kam se kam 3 FAQs (Sawal-Jawab) likho jo user ke dimaag mein aate hain. Beech-beech mein exactly 2 baar [AFFILIATE] tag likho. Poora HTML mein do."
@@ -120,11 +114,11 @@ try:
     if not chunk_3: chunk_3 = EMERGENCY_OUTRO
 
     raw_content = chunk_1 + "\n" + chunk_2 + "\n" + chunk_3
-    blog_content = clean_ad_garbage(raw_content) # Post-processing cleanup
+    blog_content = clean_ad_garbage(raw_content) 
     
     end_time = time.time()
     exec_time = round((end_time - start_time) / 60, 2)
-    send_telegram_msg(urllib.parse.quote(f"🟢 SYSTEM RUN SUCCESS\n\n🎯 Category: {todays_category}\n📝 Topic: {current_topic}\n⏱️ Time: {exec_time} Mins\n✅ Status: Deep Knowledge Engine Active"))
+    send_telegram_msg(urllib.parse.quote(f"🟢 SYSTEM RUN SUCCESS\n\n🎯 Category: {todays_category}\n📝 Topic: {current_topic}\n⏱️️ Time: {exec_time} Mins\n✅ Status: Adsterra Monetization Engine Active"))
 
 except Exception as e:
     send_telegram_msg(urllib.parse.quote(f"🔴 SYSTEM RUN FAILED\n\n⚠️ Error: {str(e)[:150]}"))
@@ -165,6 +159,7 @@ premium_css = """<style>:root { --main-red: #da251c; --dark-bg: #111; --text-gra
 schema_markup = f"""<script type="application/ld+json">{{ "@context": "https://schema.org", "@type": "Article", "headline": "{current_topic}", "image": "{main_img_url}", "author": {{ "@type": "Person", "name": "Mohit (The AI Millionaire)" }}, "publisher": {{ "@type": "Organization", "name": "Digital Kamai Hub" }}, "datePublished": "{today_date}" }}</script>"""
 header_html = """<div class="ticker-wrap"><div class="ticker-content"><span>TRENDING:</span> &nbsp; 2026 Best Tech, AI Income, Future Jobs, Digital Kamai Hub Ke Naye Hacks, Share Market Ka Sach!</div></div><header><div class="nav-container"><a href="index.html" class="logo">Digital Kamai Hub</a><div class="menu-btn" onclick="document.getElementById('mobile-menu').classList.toggle('active')">&#9776;</div><div class="nav-links" id="mobile-menu"><a href="index.html">Home</a><a href="category_ai.html">AI Hacks</a><a href="category_trading.html">Trading</a><a href="category_finance.html">Finance</a><a href="about.html">About</a><a href="all-posts.html">All Articles</a><a href="contact.html">Contact</a><div class="search-container"><input type="text" id="site-search" class="search-input" placeholder="Search articles..."><button onclick="searchArticles()" class="search-btn">🔍</button></div></div></div></header><script>function searchArticles() { var query = document.getElementById('site-search').value.toLowerCase(); if(query.length > 2) { window.location.href = 'all-posts.html?q=' + encodeURIComponent(query); } }</script>"""
 
+# 💰 YAHAN MAINE TUMHARA ADSTERRA CODE LAGA DIYA HAI 💰
 footer_html = f"""<footer style="margin-top: 40px; background: #111; padding: 40px 20px; text-align: center;"><div style="margin-bottom: 25px;"><p style="color: #ccc; font-size: 14px; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">JOIN THE AI MILLIONAIRE COMMUNITY:</p><div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;"><a href="https://www.youtube.com/@TheAIMillionaire-h5g" target="_blank" style="color: #FF0000; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">YouTube</a><a href="https://t.me/digitalkamaihub_2026" target="_blank" style="color: #0088cc; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Telegram</a><a href="https://www.instagram.com/aimillionaire_official" target="_blank" style="color: #E1306C; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Instagram</a><a href="https://www.facebook.com/share/18wcH7GqjA/" target="_blank" style="color: #1877F2; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Facebook</a></div></div><div class="footer-links" style="margin-bottom: 20px;"><a href="about.html">About Us</a> | <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms</a> | <a href="disclaimer.html">Disclaimer</a> | <a href="contact.html">Contact</a></div><p style="margin-top:20px; font-size:13px; color: #888;">&copy; {current_year} Digital Kamai Hub. All Rights Reserved.</p></footer>
 <button id="scrollTopBtn" onclick="window.scrollTo({{top: 0, behavior: 'smooth'}})" style="display:none; position:fixed; bottom:30px; right:20px; z-index:99; background:#da251c; color:white; border:none; padding:15px 20px; border-radius:50%; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.3); font-size:20px; font-weight:bold;">↑</button>
 <div id="cookieConsent" style="position:fixed; bottom:0; left:0; width:100%; background:#111; color:#fff; text-align:center; padding:15px; z-index:10000; font-size:14px; display:none; box-shadow:0 -5px 15px rgba(0,0,0,0.2);">🍪 Hum behtar anubhav aur AdSense ke liye cookies ka upyog karte hain. <button onclick="acceptCookies()" style="background:#da251c; color:#fff; border:none; padding:5px 15px; border-radius:5px; margin-left:10px; cursor:pointer; font-weight:bold;">Theek Hai</button></div>
@@ -188,6 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {{
     }}
 }});
 </script>
+<script src="https://pl31601171.profitableratecpmnetwork.com/1f/d8/5e/1fd85e18370bd0dd9187ebabdb13185f.js"></script>
 """
 
 top_buttons_html = f"""
@@ -279,4 +275,10 @@ pages = {
 for p_file, (p_title, p_content) in pages.items():
     with open(f"{p_file}.html", "w", encoding="utf-8") as f: f.write(f"<!DOCTYPE html><html lang='hi'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>{p_title} - Digital Kamai Hub</title>{premium_css}</head><body>{header_html}<div class='container'><div class='article-box'>{p_content}</div></div>{footer_html}</body></html>")
 
-print("✅ Website 100% safalta ke sath Theek ho gayi hai!")
+try:
+    sitemap_content = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    for file in [f for f in os.listdir() if f.endswith('.html')]: sitemap_content += f'  <url>\n    <loc>https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/{file}</loc>\n    <lastmod>{datetime.now().strftime("%Y-%m-%d")}</lastmod>\n    <changefreq>daily</changefreq>\n  </url>\n'
+    with open('sitemap.xml', 'w', encoding='utf-8') as f: f.write(sitemap_content + '</urlset>')
+except: pass
+
+print("✅ Website 100% Monetize ho chuki hai! Ads ab live hain.")
