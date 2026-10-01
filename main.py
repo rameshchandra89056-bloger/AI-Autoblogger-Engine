@@ -38,6 +38,16 @@ def send_telegram_msg(message, target_chat_id=None):
     try: requests.get(f"https://api.telegram.org/bot{token}/sendMessage", params={"chat_id": chat_id, "text": urllib.parse.unquote(message)}, timeout=10)
     except: pass
 
+# --- NAYA TELEGRAM BOT (PUBLIC CHANNEL KE LIYE) ---
+def send_public_telegram_msg(title, post_url):
+    pub_token = os.environ.get("PUBLIC_BOT_TOKEN")
+    pub_chat_id = os.environ.get("PUBLIC_CHANNEL_ID")
+    if not pub_token or not pub_chat_id: return
+    message = f"🔥 *Naya Dhamakedaar Article Live Ho Chuka Hai!*\n\n📌 *{title}*\n\n👇 *Pura article padhne ke liye yahan click karein:*\n🔗 {post_url}"
+    try: requests.post(f"https://api.telegram.org/bot{pub_token}/sendMessage", json={"chat_id": pub_chat_id, "text": message, "parse_mode": "Markdown"}, timeout=15)
+    except: pass
+# --------------------------------------------------
+
 raw_keys = os.environ.get("GEMINI_API_KEY", "")
 API_KEYS = [k.strip() for k in raw_keys.split(",") if k.strip()]
 if not API_KEYS:
@@ -118,11 +128,31 @@ try:
     
     end_time = time.time()
     exec_time = round((end_time - start_time) / 60, 2)
-    send_telegram_msg(urllib.parse.quote(f"🟢 SYSTEM RUN SUCCESS\n\n🎯 Category: {todays_category}\n📝 Topic: {current_topic}\n⏱️️ Time: {exec_time} Mins\n✅ Status: Adsterra Monetization Engine Active"))
+    send_telegram_msg(urllib.parse.quote(f"🟢 SYSTEM RUN SUCCESS\n\n🎯 Category: {todays_category}\n📝 Topic: {current_topic}\n⏱ Time: {exec_time} Mins\n✅ Status: Adsterra Monetization Engine Active"))
 
 except Exception as e:
     send_telegram_msg(urllib.parse.quote(f"🔴 SYSTEM RUN FAILED\n\n⚠️ Error: {str(e)[:150]}"))
-    sys.exit(1)
+    sys.exit(1)header><div class="nav-container"><a href="index.html" class="logo">Digital Kamai Hub</a><div class="menu-btn" onclick="document.getElementById('mobile-menu').classList.toggle('active')">&#9776;</div><div class="nav-links" id="mobile-menu"><a href="index.html">Home</a><a href="category_ai.html">AI Hacks</a><a href="category_trading.html">Trading</a><a href="category_finance.html">Finance</a><a href="about.html">About</a><a href="all-posts.html">All Articles</a><a href="contact.html">Contact</a><div class="search-container"><input type="text" id="site-search" class="search-input" placeholder="Search articles..."><button onclick="searchArticles()" class="search-btn">🔍</button></div></div></div></header><script>function searchArticles() { var query = document.getElementById('site-search').value.toLowerCase(); if(query.length > 2) { window.location.href = 'all-posts.html?q=' + encodeURIComponent(query); } }</script>"""
+
+# 💰 YAHAN MAINE TUMHARA ADSTERRA CODE LAGA DIYA HAI 💰
+footer_html = f"""<footer style="margin-top: 40px; background: #111; padding: 40px 20px; text-align: center;"><div style="margin-bottom: 25px;"><p style="color: #ccc; font-size: 14px; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">JOIN THE AI MILLIONAIRE COMMUNITY:</p><div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;"><a href="https://www.youtube.com/@TheAIMillionaire-h5g" target="_blank" style="color: #FF0000; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">YouTube</a><a href="https://t.me/digitalkamaihub_2026" target="_blank" style="color: #0088cc; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Telegram</a><a href="https://www.instagram.com/aimillionaire_official" target="_blank" style="color: #E1306C; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Instagram</a><a href="https://www.facebook.com/share/18wcH7GqjA/" target="_blank" style="color: #1877F2; text-decoration: none; font-weight: bold; background: white; padding: 8px 15px; border-radius: 5px;">Facebook</a></div></div><div class="footer-links" style="margin-bottom: 20px;"><a href="about.html">About Us</a> | <a href="privacy.html">Privacy Policy</a> | <a href="terms.html">Terms</a> | <a href="disclaimer.html">Disclaimer</a> | <a href="contact.html">Contact</a></div><p style="margin-top:20px; font-size:13px; color: #888;">&copy; {current_year} Digital Kamai Hub. All Rights Reserved.</p></footer>
+<button id="scrollTopBtn" onclick="window.scrollTo({{top: 0, behavior: 'smooth'}})" style="display:none; position:fixed; bottom:30px; right:20px; z-index:99; background:#da251c; color:white; border:none; padding:15px 20px; border-radius:50%; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.3); font-size:20px; font-weight:bold;">↑</button>
+<div id="cookieConsent" style="position:fixed; bottom:0; left:0; width:100%; background:#111; color:#fff; text-align:center; padding:15px; z-index:10000; font-size:14px; display:none; box-shadow:0 -5px 15px rgba(0,0,0,0.2);">🍪 Hum behtar anubhav aur AdSense ke liye cookies ka upyog karte hain. <button onclick="acceptCookies()" style="background:#da251c; color:#fff; border:none; padding:5px 15px; border-radius:5px; margin-left:10px; cursor:pointer; font-weight:bold;">Theek Hai</button></div>
+<script>
+window.addEventListener('scroll', function() {{
+    if (window.scrollY > 100) {{ document.getElementById('scrollTopBtn').style.display = 'block'; }} 
+    else {{ document.getElementById('scrollTopBtn').style.display = 'none'; }}
+    localStorage.setItem('scrollpos_' + window.location.pathname, window.scrollY);
+}});
+if (!localStorage.getItem('cookiesAccepted')) {{ document.getElementById('cookieConsent').style.display = 'block'; }}
+function acceptCookies() {{ localStorage.setItem('cookiesAccepted', 'true'); document.getElementById('cookieConsent').style.display = 'none'; }}
+document.addEventListener('DOMContentLoaded', function() {{
+    var savedScroll = localStorage.getItem('scrollpos_' + window.location.pathname);
+    if (savedScroll && parseInt(savedScroll) > 100) {{
+        var toast = document.createElement('div');
+        toast.innerHTML = '📚 Aapne pichli baar yahan tak padha tha. <button id="scroll-btn" style="background:#da251c;color:#fff;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;margin-left:10px;font-weight:bold;">Wahin Jayein</button>';
+        toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:15px;border-radius:8px;z-index:9999;box-shadow:0 5px 15px rgba(0,0,0,0.3);font-size:14px;display:flex;align-items:center;white-space:nowrap;';
+        document.body.appendChild(toast);
 
 # --- BACKEND LOGIC ---
 affiliate_offers = [
@@ -280,5 +310,11 @@ try:
     for file in [f for f in os.listdir() if f.endswith('.html')]: sitemap_content += f'  <url>\n    <loc>https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/{file}</loc>\n    <lastmod>{datetime.now().strftime("%Y-%m-%d")}</lastmod>\n    <changefreq>daily</changefreq>\n  </url>\n'
     with open('sitemap.xml', 'w', encoding='utf-8') as f: f.write(sitemap_content + '</urlset>')
 except: pass
+
+# --- NAYE BOT SE PUBLIC CHANNEL PAR LINK BHEJNA ---
+post_full_url = f"https://rameshchandra89056-bloger.github.io/AI-Autoblogger-Engine/{post_filename}"
+send_public_telegram_msg(current_topic, post_full_url)
+print("📢 Public Telegram Notification bhi successfully bhej di gayi hai!")
+# --------------------------------------------------
 
 print("✅ Website 100% Monetize ho chuki hai! Ads ab live hain.")
