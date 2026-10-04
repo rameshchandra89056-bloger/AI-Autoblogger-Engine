@@ -35,7 +35,9 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           PUBLIC_BOT_TOKEN: ${{ secrets.PUBLIC_BOT_TOKEN }}
-          PUBLIC_CHANNEL_ID: ${{ secrets.PUBLIC_CHANNEL_ID }}       
+          PUBLIC_CHANNEL_ID: ${{ secrets.PUBLIC_CHANNEL_ID }} 
+          ONESIGNAL_API_KEY: ${{ secrets.ONESIGNAL_API_KEY }}
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
         run: python main.py
 
       - name: 💾 Naya blog website par save (Commit) kar rahe hain...
