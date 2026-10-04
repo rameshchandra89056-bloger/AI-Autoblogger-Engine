@@ -1,5 +1,13 @@
 [
     {
+        "title": "2026 Mein AI Se Lakho Kaise Kamaye",
+        "file": "post_hi_1791111716.html",
+        "date": "04 October 2026",
+        "img": "https://image.pollinations.ai/prompt/future%20ai%20technology%204k%20masterpiece?width=1200&height=600&nologo=true&seed=1791111716",
+        "fallback_js": "this.onerror=null; this.src='https://picsum.photos/seed/1791111716/800/400'; setTimeout(()=>{if(this.naturalHeight<50) this.src='https://api.dicebear.com/7.x/shapes/svg?seed=shape1791111716&backgroundColor=da251c'; setTimeout(()=>{if(this.naturalHeight<50) this.src='https://image-charts.com/chart?chs=800x400&cht=p3&chd=t:100&chf=bg,s,111111'; setTimeout(()=>{if(this.naturalHeight<50) this.src='https://dummyimage.com/800x400/111/fff&text=Digital+Kamai+Hub';},1000);},1000);},1000);",
+        "category": "ai"
+    },
+    {
         "title": "2026 Mein Finance Se Paise Kaise Kamaye",
         "file": "post_1791071961.html",
         "date": "03 October 2026",
