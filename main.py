@@ -10,8 +10,13 @@ import requests
 import random
 from datetime import datetime, timedelta
 
-# Auto-install missing libraries for advanced features
+# 1. Install Required Libraries
 os.system("pip install edge-tts requests google-auth > /dev/null 2>&1")
+
+# 2. ONESIGNAL WORKER FILE (Iske bina website par Ghanti nahi aati)
+worker_code = "importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js');"
+with open("OneSignalSDKWorker.js", "w", encoding="utf-8") as f:
+    f.write(worker_code)
 
 def clean_ad_garbage(text):
     if "🌸 Ad" in text: text = text.split("🌸 Ad")[0]
@@ -38,10 +43,12 @@ def send_telegram_msg(message, target_chat_id=None):
 def send_public_telegram_msg(title, post_url):
     pub_token = os.environ.get("PUBLIC_BOT_TOKEN", "").strip()
     pub_chat_id = os.environ.get("PUBLIC_CHANNEL_ID", "").strip()
-    if not pub_token or not pub_chat_id: return
+    if not pub_token or not pub_chat_id: 
+        send_telegram_msg("⚠️ ERROR: PUBLIC_BOT_TOKEN ya PUBLIC_CHANNEL_ID missing hai!")
+        return
     message = f"🔥 *Naya Dhamakedaar Article Live Ho Chuka Hai!*\n\n📌 *{title}*\n\n👇 *Pura article padhne ke liye yahan click karein:*\n🔗 {post_url}"
     try: requests.post(f"https://api.telegram.org/bot{pub_token}/sendMessage", json={"chat_id": pub_chat_id, "text": message, "parse_mode": "Markdown"}, timeout=15)
-    except: pass
+    except Exception as e: send_telegram_msg(f"⚠️ Telegram Public Bot Error: {str(e)[:50]}")
 
 def send_onesignal_push(title, post_url):
     api_key = os.environ.get("ONESIGNAL_API_KEY", "").strip()
@@ -72,7 +79,7 @@ def ping_google_indexing(url_list):
         send_telegram_msg(f"⚠️ Google Indexing Ping Failed: {str(e)[:100]}")
 
 # ==========================================
-# 🧠 AI CONTENT GENERATION SETUP
+# 🧠 AI CONTENT GENERATOR (60s TIMEOUT)
 # ==========================================
 raw_keys = os.environ.get("GEMINI_API_KEY", "")
 API_KEYS = [k.strip() for k in raw_keys.split(",") if k.strip()]
@@ -92,22 +99,23 @@ todays_category = ["AI", "Trading", "Finance"][len(posts_db) % 3]
 generated_urls = []
 primary_url_for_tg = ""
 
-def ask_ai(prompt, retries=3):
+def ask_ai(prompt, retries=5):
     for i in range(retries):
         current_key = API_KEYS[i % len(API_KEYS)]
         api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={current_key}"
         try:
             payload_data = {"contents": [{"parts": [{"text": prompt}]}], "safetySettings": [{"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"}, {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"}, {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"}, {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}]}
             req = urllib.request.Request(api_url, data=json.dumps(payload_data).encode("utf-8"), headers={"Content-Type": "application/json"})
-            with urllib.request.urlopen(req, timeout=40) as response:
+            with urllib.request.urlopen(req, timeout=60) as response:
                 text = json.loads(response.read().decode("utf-8"))['candidates'][0]['content']['parts'][0]['text'].strip()
-                if len(text) > 50: return clean_ad_garbage(text)
-        except Exception: time.sleep(8)
-    return ""
+                if len(text) > 20: return clean_ad_garbage(text)
+        except Exception: 
+            time.sleep(10)
+    return "Error generating content."
 
 languages = {
-    "hindi": {"code": "hi", "prompt_lang": "Hindi (India) written in Devanagari script. Use VERY SIMPLE, everyday conversational words. Write with HUMAN EMOTION (Manavta) and empathy. Do NOT sound like an AI."},
-    "english": {"code": "en", "prompt_lang": "Simple, conversational US English. Highly human-like, easy to understand."},
+    "hindi": {"code": "hi", "prompt_lang": "Hindi (India) written in Devanagari script. Keep it simple and natural."},
+    "english": {"code": "en", "prompt_lang": "Simple, conversational US English."},
     "marathi": {"code": "mr", "prompt_lang": "Pure, simple conversational Marathi (Devanagari)."},
     "bengali": {"code": "bn", "prompt_lang": "Pure, simple conversational Bengali."},
     "tamil": {"code": "ta", "prompt_lang": "Pure, simple conversational Tamil."}
@@ -116,25 +124,28 @@ languages = {
 try:
     start_time = time.time()
     
-    raw_topic = ask_ai(f"Tum ek expert ho. Aaj ki category '{todays_category}' hai. Mujhe {current_year} ke liye is par ek viral, attention-grabbing Hindi blog title do. Sirf Title likhna.")
-    if not raw_topic: core_title = f"2026 Mein {todays_category} Se Lakho Kaise Kamaye"
+    raw_topic = ask_ai(f"Category '{todays_category}'. Mujhe {current_year} ke liye is par ek catchy Hindi blog title do. Sirf Title likhna.")
+    if "Error" in raw_topic: core_title = f"2026 Mein {todays_category} Se Lakho Kaise Kamaye"
     else: core_title = clean_ad_garbage(raw_topic.replace('"', '').replace("'", "").replace("*", "")).strip()
 
     for lang_name, lang_data in languages.items():
-        time.sleep(3)
+        time.sleep(5)
         current_topic = ask_ai(f"Translate this blog title to {lang_name}: '{core_title}'. ONLY give the translated title.")
-        if not current_topic: current_topic = core_title
+        if "Error" in current_topic: current_topic = core_title
 
-        intro_prompt = f"Topic: '{current_topic}'. Language: {lang_data['prompt_lang']}. Act as a caring mentor teaching a beginner. Write a DEEP, LONG, and HIGHLY VALUABLE Introduction (at least 300 words). Use a relatable real-life story. No robotic words. Make them feel understood. Then provide a Clickable TOC. Format for TOC: <div style='background: #fffafa; border-left: 5px solid #da251c; padding: 20px; border-radius: 8px; margin-bottom: 25px;'><h3 style='color: #da251c; margin-top: 0;'>📍 Is Article Mein Kya Hai:</h3><ul style='list-style:none; padding:0;'><li>👉 <a href='#basic'>1. Basic Samajh (Foundation)</a></li> <li>👉 <a href='#deep'>2. Deep Details & Setup</a></li> <li>👉 <a href='#pro'>3. Pro Level Hacks</a></li></ul></div>. Use HTML tags."
+        intro_prompt = f"Topic: '{current_topic}'. Language: {lang_data['prompt_lang']}. Write a detailed Introduction (min 150 words). Then provide a Clickable TOC. Format for TOC: <div style='background: #fffafa; border-left: 5px solid #da251c; padding: 20px; border-radius: 8px; margin-bottom: 25px;'><h3 style='color: #da251c; margin-top: 0;'>📍 Is Article Mein Kya Hai:</h3><ul style='list-style:none; padding:0;'><li>👉 <a href='#basic'>1. Basic Samajh (Foundation)</a></li> <li>👉 <a href='#deep'>2. Deep Details & Setup</a></li> <li>👉 <a href='#pro'>3. Pro Level Hacks</a></li></ul></div>. Use HTML tags."
         chunk_1 = ask_ai(intro_prompt)
+        if "Error" in chunk_1: chunk_1 = f"<p>Technology is changing fast in 2026. Keep learning about {current_topic} to stay ahead.</p>"
         
-        time.sleep(8) 
-        body_prompt = f"Topic: '{current_topic}'. Language: {lang_data['prompt_lang']}. Write the MAIN BODY. Make it EXTREMELY detailed, practical, and useful. Use simple words. Write 3 long sub-headings (<h2>) with id='basic', id='deep', id='pro'. After the first <h2> section, write [PHOTO]. After the second <h2> section, write [INTERNAL_LINK]. After the third <h2> section, write [PHOTO]. Use HTML format."
+        time.sleep(10) 
+        body_prompt = f"Topic: '{current_topic}'. Language: {lang_data['prompt_lang']}. Write the MAIN BODY. Write 3 long sub-headings (<h2>) with id='basic', id='deep', id='pro'. Explain in detail. After the first <h2> section, write [PHOTO]. After the second <h2> section, write [INTERNAL_LINK]. After the third <h2> section, write [PHOTO]. Use HTML format."
         chunk_2 = ask_ai(body_prompt)
+        if "Error" in chunk_2: chunk_2 = "<h2 id='basic'>1. The Foundation</h2><p>Learn the basics.</p>[PHOTO]<h2 id='deep'>2. Setup</h2><p>Set up your system.</p>[INTERNAL_LINK]<h2 id='pro'>3. Pro Hacks</h2><p>Use advanced strategies.</p>[PHOTO]"
         
-        time.sleep(8) 
-        outro_prompt = f"Topic: '{current_topic}'. Language: {lang_data['prompt_lang']}. Write a very emotional and motivational Conclusion. Then write 4 FAQs with detailed practical answers. Insert the tag [AFFILIATE] exactly 2 times randomly. Use HTML."
+        time.sleep(10) 
+        outro_prompt = f"Topic: '{current_topic}'. Language: {lang_data['prompt_lang']}. Write a detailed Conclusion. Then write 3 FAQs with answers. Insert the tag [AFFILIATE] exactly 2 times randomly. Use HTML."
         chunk_3 = ask_ai(outro_prompt)
+        if "Error" in chunk_3: chunk_3 = "<h2>Conclusion</h2><p>Hope this helped you.</p>[AFFILIATE]"
 
         blog_content = clean_ad_garbage((chunk_1 or "") + "\n" + (chunk_2 or "") + "\n" + (chunk_3 or "")) 
 
@@ -182,7 +193,7 @@ try:
             posts_db.insert(0, {"title": current_topic, "file": post_filename, "date": today_date, "img": main_primary, "fallback_js": main_js, "category": todays_category.lower()})
 
         # =======================================================
-        # 🎨 THE BEAUTIFUL OLD UI + ONESIGNAL FRONTEND
+        # 🎨 UI & HTML GENERATION (With OneSignal Script)
         # =======================================================
         onesignal_script = """
         <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
